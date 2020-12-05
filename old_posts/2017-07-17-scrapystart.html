@@ -1,0 +1,115 @@
+<h2 id="正文">正文</h2>
+
+<p>   scrapy是一个开源的爬虫框架，由于实习需要，今天就看了一下，用这个框架的话很省很多时间啊，以前写爬虫时使用requests或者urllib，都是从无一点一点向上写，现在scrapy帮我们实现了一些底层的东西，比如获得一个页面。下面讲一下scrapy的基本用法。</p>
+
+<!--more-->
+
+<p>   scrapy的基本结构：</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/scrapy.png?raw=true" alt="scrapy" />
+   包含的组件：</p>
+<ul>
+  <li>引擎(Scrapy Engine)</li>
+  <li>调度器(Scheduler)</li>
+  <li>下载器(Downloader)</li>
+  <li>蜘蛛(Spiders)</li>
+  <li>项目管道(Item Pipeline)</li>
+  <li>下载器中间件(Downloader Middlewares)</li>
+  <li>蜘蛛中间件(Spider Middlewares)</li>
+  <li>调度中间件(Scheduler Middlewares)</li>
+</ul>
+
+<p>   工作流程：
+–&gt;绿线是数据流向</p>
+<ul>
+  <li>从初始的URL开始，Scheduler会将其交给Downloader进行下载</li>
+  <li>下载之后会交给Spider进行分析</li>
+  <li>Spider分析出来的结果有两种
+    <ul>
+      <li>一种是需要进一步抓取的链接，如”下一页”的链接，它们会被传回Scheduler</li>
+      <li>另一种是需要保存的数据，它们被送到Item Pipeline里进行后期的处理（详细分析，过滤，存储等）</li>
+    </ul>
+  </li>
+  <li>在数据流动的通道里还可以安装各种各样的中间件，进行必要的处理。</li>
+</ul>
+
+<h2 id="scrapy基本命令">scrapy基本命令</h2>
+
+<p>   创建scrapy项目：</p>
+
+<p><code class="language-plaintext highlighter-rouge">scrapy startproject first_crawl</code></p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/scrapy1.png?raw=true" alt="scrapy1" /></p>
+
+<p>   通过tree命令查看项目结构:</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/scrapy2.png?raw=true" alt="scrapy2" /></p>
+<h3 id="scrapy-shell">scrapy shell</h3>
+
+<p><code class="language-plaintext highlighter-rouge">scrapy shell http://你要调试xpath的网址</code></p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/scrapy3.png?raw=true" alt="scrapy3" /></p>
+
+<h2 id="爬取腾讯视频的所有电视剧">爬取腾讯视频的所有电视剧</h2>
+
+<p>   编写item，item的定义再<code class="language-plaintext highlighter-rouge">items.py</code>文件中。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TVItem</span><span class="p">(</span><span class="n">scrapy</span><span class="p">.</span><span class="n">Item</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">scrapy</span><span class="p">.</span><span class="n">Field</span><span class="p">()</span>
+    <span class="n">iid</span> <span class="o">=</span> <span class="n">scrapy</span><span class="p">.</span><span class="n">Field</span><span class="p">()</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">scrapy</span><span class="p">.</span><span class="n">Field</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>   编写Spiders，spider 可以使用<code class="language-plaintext highlighter-rouge">scrapy genspider spider_name</code>生成。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TengxunSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="p">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">'tengxun'</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s">'http://v.qq.com/x/list/tv'</span><span class="p">]</span>
+    <span class="c1">#  start_urls = ['http://v.qq.com/x/list/tv?&amp;offset=4980']
+</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">tv</span> <span class="ow">in</span> <span class="n">response</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span>
+                <span class="s">'/html/body/div[3]/div/div/div[1]/div[2]/div/ul/li'</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">TVItem</span><span class="p">()</span>
+            <span class="n">item</span><span class="p">[</span><span class="s">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tv</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">'div[1]/strong/a/text()'</span><span class="p">).</span><span class="n">extract_first</span><span class="p">()</span>
+            <span class="n">item</span><span class="p">[</span><span class="s">'iid'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tv</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">'div[1]/strong/a/@href'</span><span class="p">).</span><span class="n">extract_first</span><span class="p">()</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">content</span><span class="p">[</span><span class="s">'score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tv</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span>
+                <span class="s">'div[1]/div/em[1]/text()'</span><span class="p">).</span><span class="n">extract_first</span><span class="p">(</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="n">tv</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">'div[1]/div/em[2]/text()'</span><span class="p">).</span><span class="n">extract_first</span><span class="p">()</span>
+            <span class="n">actors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">tvp</span> <span class="ow">in</span> <span class="n">tv</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">'div[2]/a/text()'</span><span class="p">):</span>
+                <span class="n">actors</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">tvp</span><span class="p">.</span><span class="n">extract</span><span class="p">())</span>
+            <span class="n">content</span><span class="p">[</span><span class="s">'actors'</span><span class="p">]</span> <span class="o">=</span> <span class="n">actors</span>
+            <span class="c1">#  item['content'] = json.dumps(content)
+</span>            <span class="n">item</span><span class="p">[</span><span class="s">'content'</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span>
+            <span class="c1">#  print(item['name'])
+</span>            <span class="c1">#  print(item['score_l'])
+</span>            <span class="c1">#  print(item['score_s'])
+</span>            <span class="c1">#  print(item['actors'])
+</span>            <span class="k">yield</span> <span class="n">item</span>
+        <span class="n">next_page</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span>
+            <span class="s">'/html/body/div[3]/div/div/div[2]/a[2]/@href'</span><span class="p">).</span><span class="n">extract_first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">next_page</span> <span class="o">!=</span> <span class="s">'javascript:;'</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">next_page</span><span class="p">))</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">next_page</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="p">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">parse</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>   编写<code class="language-plaintext highlighter-rouge">pipeline.py</code>文件。</p>
+
+<p><code class="language-plaintext highlighter-rouge">python
+class TVPipeline(object):
+    def process_item(self, item, spider):
+        tmp = item['iid'][item['iid'].rfind('/') + 1:]
+        tmp = tmp[:tmp.rfind('.')]
+        item['iid'] = 'tv' + tmp
+        #  with open('tv.txt', 'a+') as f:
+        #      f.write(item['iid'] + '      ' + item['title'] +
+        #              '       ' + item['content'] + '\n')
+        return item
+       </code>
+   这样就完成了一个爬取电视剧的爬虫。</p>
+
+<h2 id="参考链接">参考链接</h2>

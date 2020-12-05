@@ -1,0 +1,86 @@
+<h2 id="目录">目录</h2>
+
+<ul>
+  <li><a href="#jumpwhereis">whereis</a></li>
+  <li><a href="#jumpwhich">which</a></li>
+  <li><a href="#jumpfind">find</a></li>
+  <li><a href="#jumplocate">locate</a></li>
+</ul>
+
+<h2 id="正文">正文</h2>
+
+<p>    &lt;font color=#0099ff&gt;Linux&lt;/font&gt;中有的时候需要检索文件和命令。这个时候<code class="language-plaintext highlighter-rouge">Linux</code>提供的强大查找命令就派上了用场。</p>
+
+<!--more-->
+
+<h3 id="whereis"><span id="jumpwhereis">whereis</span></h3>
+
+<p>   搜索程序的位置。注意，它只能用于&lt;font color=#00fff&gt;程序名 &lt;/font&gt;。</p>
+
+<ul>
+  <li>whereis -b (bin) 搜索二进制文件</li>
+  <li>whereis -m (man) 搜索man page说明文件</li>
+  <li>whereis -s (source) 搜索源文件</li>
+  <li>如果省略参数则，返回所有信心</li>
+</ul>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/whereis.png?raw=true" alt="whereis" /></p>
+
+<h3 id="which"><span id="jumpwhich">which</span></h3>
+
+<p>   作用于系统中的命令（包括用户安装的）。从PATH环境变量中指定的路径目录中查找目标命令，并返回第一个结果。所以它的执行结果就跟PATH中的路径顺序有关了，这样它就可以查看一个命令到底是执行的哪个位置的程序，比如用户装了两个 python程序，都是python2.7版本，但是安装的位置不一样（比如一个是系统自带，一个是 anaconda自带）那么怎么区分在终端敲python时执行的是哪一个呢？which就能完成区分的功能。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/which.png?raw=true" alt="which" /></p>
+
+<h3 id="find"><span id="jumpfind">find</span></h3>
+
+<p>   &lt;font color=#00fff&gt;find&lt;/font&gt;是Linux提供的一个非常强大的一个文件查找命令。他能在给定的文件系统上查找任何你想要的文件。</p>
+
+<p>命令格式：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find [目录] [属性] [属性值] [指定动作]
+</code></pre></div></div>
+
+<p>具体含义：</p>
+
+<ul>
+  <li>[目录] 要查找的目录，默认当前目录</li>
+  <li>[属性] 要查找的文件的条件属性，换句话说，就是要根据什么来查找。如：(name, size, user, uid, 权限等)</li>
+  <li>[属性值] 如果前面指定了查找条件属性，那么就需要在这一给定属性值，告诉命令具体根据属性的什么属性值查找文件。</li>
+  <li>[指定动作] 在找到相应条件的文件后，对其指定的动作，如<code class="language-plaintext highlighter-rouge">-ls</code>表示找到文件后用ls 命令展示在终端</li>
+</ul>
+
+<p>常用应用：</p>
+
+<ul>
+  <li>find [dir] -name</li>
+  <li>find [dir] -group</li>
+  <li>find [dir] -uid</li>
+  <li>find [dir] -type</li>
+  <li>find [dir] -size {n(等于n) -n(小于n) +n(大于n)}</li>
+  <li>find [dir] -size -4 -size +2  找大于2小于4的</li>
+  <li>find -ctime 1 找创建一天的</li>
+  <li>find -cmin 1 创建时间至少是一天的</li>
+  <li>find -cmin +1 创建时间至少大于一天的</li>
+  <li>find -cmin -10</li>
+  <li>find -newer file1 找比file新的文件</li>
+  <li>find /mnt -perm 222 找权限是222的文件</li>
+  <li>find -perm +222 只要有一位大于等于就匹配(或关系)</li>
+  <li>find -perm -222 每一位都需要有w即可，(和关系)</li>
+  <li>find -perm -2(o)</li>
+  <li>find -perm -22(g-o)</li>
+  <li>find -perm -222(u-g-o)</li>
+</ul>
+
+<h3 id="locate"><span id="jumplocate">locate</span></h3>
+
+<p>locate 从/var/lib/mlocate/mlocate.db中查找要查找的文件，这个数据库默认每天更新一次，可以手动用命令:<code class="language-plaintext highlighter-rouge">upatedb</code>命令更新数据库。它的功能和<code class="language-plaintext highlighter-rouge">find -name</code>类似，但是它的效率高，因为<code class="language-plaintext highlighter-rouge">locate</code>查找数据库，而<code class="language-plaintext highlighter-rouge">find</code>是检索磁盘文件系统。</p>
+
+<ul>
+  <li>locate -i(ignore case)</li>
+</ul>
+
+<h2 id="参考链接">参考链接</h2>
+<ul>
+  <li><a href="http://www.cnblogs.com/wanqieddy/archive/2011/07/15/2107071.html">Linux下的五个查找命令：grep、find、locate、whereis、 which</a></li>
+</ul>

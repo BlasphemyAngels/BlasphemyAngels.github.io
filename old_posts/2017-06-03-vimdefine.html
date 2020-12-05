@@ -1,0 +1,66 @@
+<h2 id="正文">正文</h2>
+
+<p>   在vim编辑文件时，有时会遇到要执行同一个动作序列多次的情况，这时就会用到宏录制。</p>
+
+<p>下面我们就从例子出发讲解宏录制。</p>
+
+<!--more-->
+
+<p>比如文本中的内容是：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">this</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">dog</span>
+<span class="n">hehehehe</span>
+<span class="n">woaini</span>
+<span class="n">you</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">dog</span>
+<span class="n">fuck</span> <span class="n">you</span>
+<span class="n">ho</span> <span class="n">ho</span> <span class="n">ho</span>
+<span class="n">I</span> <span class="n">love</span> <span class="n">you</span>
+</code></pre></div></div>
+
+<p>现在问题来了，我想在文本的每一行前面加入一个<code class="language-plaintext highlighter-rouge">#</code>号。怎么办？先考虑如果是一行的话怎么改？</p>
+
+<p>先把光标停在行的第一个字符，然后按<code class="language-plaintext highlighter-rouge">i</code>键进入插入模式，然后输入<code class="language-plaintext highlighter-rouge">#</code>，再按<code class="language-plaintext highlighter-rouge">Esc</code>键退出插入模式，最后按<code class="language-plaintext highlighter-rouge">j</code>键到达下一行行首。这样就改完了一行，如果改下一行可以在下一行行首按<code class="language-plaintext highlighter-rouge">.</code>键，但是就这样一行一行的改？那么如果有一百行咋办？那么这就需要宏录制了，宏录制的原理就是将一系列的操作记录下来，然后如果有要进行这系列操作多次的话，只需要播放这个记录多次即可。就类似复读机。</p>
+
+<h3 id="宏录制步骤">宏录制步骤</h3>
+
+<ul>
+  <li>按下<code class="language-plaintext highlighter-rouge">q</code>间和一个字母键，如<code class="language-plaintext highlighter-rouge">qa</code>、<code class="language-plaintext highlighter-rouge">qb</code>、…</li>
+  <li>进行一系列操作</li>
+  <li>按下<code class="language-plaintext highlighter-rouge">q</code>键，这样前面进行的一系列操作就保存在名为前面按下的字母键的记录中</li>
+  <li>按下<code class="language-plaintext highlighter-rouge">number@</code>加前面按下的字母键即可让前面的一系列操作执行多次</li>
+</ul>
+
+<h3 id="实验案例">实验案例</h3>
+
+<p>还是以前面的案例为准</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">this</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">dog</span>
+<span class="n">hehehehe</span>
+<span class="n">woaini</span>
+<span class="n">you</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">dog</span>
+<span class="n">fuck</span> <span class="n">you</span>
+<span class="n">ho</span> <span class="n">ho</span> <span class="n">ho</span>
+<span class="n">I</span> <span class="n">love</span> <span class="n">you</span>
+</code></pre></div></div>
+
+<ul>
+  <li>将光标移到第一行的地一个字符上</li>
+  <li>按下<code class="language-plaintext highlighter-rouge">qa</code>键</li>
+  <li>然后按<code class="language-plaintext highlighter-rouge">i</code>键进入插入模式，然后输入<code class="language-plaintext highlighter-rouge">#</code>，再按<code class="language-plaintext highlighter-rouge">Esc</code>键退出插入模式，最后按<code class="language-plaintext highlighter-rouge">j</code>键到达下一行行首</li>
+  <li>按下<code class="language-plaintext highlighter-rouge">q</code>键</li>
+  <li>按下<code class="language-plaintext highlighter-rouge">6@a</code>键（为什么是6?一共7行，已经修改了1行，还剩6行）</li>
+  <li>完成操作</li>
+</ul>
+
+<p>实验结果：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#this is a dog
+#hehehehe
+#woaini
+#you is a dog
+#fuck you
+#ho ho ho
+#I love you
+</span></code></pre></div></div>
+
+<p>转载请注明:<a href="[https://blasphemyangels.github.io/">Artemis的博客</a>–&gt; <a href="https://blasphemyangels.github.io/2017/06/03/2017-06-03-vimdefine/">点此看原文
+</a></p>

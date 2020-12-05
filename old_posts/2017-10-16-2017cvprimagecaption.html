@@ -1,0 +1,50 @@
+<h2 id="正文">正文</h2>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+<p>   最近在看cvpr2017的papper，看到了一些有关图像描述的好文章，读了一下，做个笔记。</p>
+
+<!--more-->
+
+<h3 id="attend-to-you-personalized-image-captioningwith-context-sequence-memory-networks"><a href="https://arxiv.org/abs/1704.06485">Attend to You: Personalized Image Captioningwith Context Sequence Memory Networks</a></h3>
+
+<p>   亮点在于亮点：</p>
+<ul>
+  <li>个性化图像描述</li>
+  <li>使用上下文序列记忆网络进行学习，而非RNNs，LSTMs</li>
+</ul>
+
+<p>   文章指出了两个应用，一个是在社交网络中，人们拍了照片要发图的时候，能够自动生成描述，二是自动生成标签。
+   文章使用一个记忆仓库存储多种类型的上下文信息，每次将捕捉到的单词加入到记忆中，保留长时间信息，随后使用记忆生成下一个词。这样避免了因梯度消失而引起的信息损失。随后使用CNN记忆架构学习周围信息进行上下文理解。</p>
+
+<h4 id="context-sequence-memory-networkcsmn">Context Sequence Memory Network(CSMN)</h4>
+<p>   CSMN网络架构如下：
+<img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/csmn.png?raw=true" alt="csmn" /></p>
+
+<p>   模型建立了一个记忆仓库，记忆仓库中含有三种类型的记忆：</p>
+<ul>
+  <li>图像记忆</li>
+  <li>用户偏好记忆</li>
+  <li>序列历史记忆</li>
+</ul>
+
+<p>   如上图中的a图，将图像先用CNN处理，取CNN中的某一层数据作为图像特征，然后将图像特征乘以一个向量W即可得到最终图像记忆，向量W是可训练的参数。而用户偏好的计算是使用<code class="language-plaintext highlighter-rouge">TF-IDF</code>算法得到用户的前<code class="language-plaintext highlighter-rouge">TOP-K</code>个单词。然后用<code class="language-plaintext highlighter-rouge">one-hot</code>向量表示这些单词，再乘以一个向量W即得到的向量就是用户偏好记忆。同样向量W是可训练的参数。</p>
+
+<p>   而序列历史记忆则是将前面预测到的单词连接在一起即可。如图中\(y_1,…,y_{t-1}\)就是序列历史记忆。每次生成新单词后会将其加入到序列历史记忆中。</p>
+
+<p>   可以发现每种记忆一共训练了两份，分别以<code class="language-plaintext highlighter-rouge">a</code>和<code class="language-plaintext highlighter-rouge">c</code>为下标。每份记忆训练的W也是不同的，所以最终得到的两种记忆有可能是不同的（因为训练得到的<code class="language-plaintext highlighter-rouge">W</code>是不同的）。</p>
+
+<p>   那么训练的两份记忆是用来干啥的呢？下面一边介绍模型的预测流程一边说明：</p>
+
+<p>   先将上一次预测到的单词经过一个线性变换得到一个查询\(q_t\)，然后使用使用查询与第一份记忆做点乘并做<code class="language-plaintext highlighter-rouge">softmax</code>操作，这样就得到了记忆注意力向量\(p_t\)，\(p_t\)的作用是选择哪些记忆会对下一个单词的产生起效果。将\(p_t\)与第二份记忆相乘即可得到能对下一个单词的产生起作用的记忆。随后对得到的记忆进行卷积操作，通过使用不同的卷积核，我们能够通过卷积得到不同的记忆单元的组合表示。随后通过线性变换和<code class="language-plaintext highlighter-rouge">softmax</code>即可得到下一个单词的概率。每次产生新的单词会更新序列历史记忆。</p>
+
+<p>   对于hashtag的预测，我们只需要去掉word output memory即可。</p>
+
+<h4 id="为什么记忆cnn有用">为什么记忆CNN有用</h4>
+
+<p>   尽管卷积记忆网络不能对结构化的时序数据建模，除非加入时序信息。但是文章提出的网络有所不同，序列记忆能够使得CNN捕捉时序信息。用户偏好记忆可以使得CNN能够正确的捕捉上下文单词的重要性。例如用户当前相关的单词有<code class="language-plaintext highlighter-rouge">fashion</code>、<code class="language-plaintext highlighter-rouge">street</code>和<code class="language-plaintext highlighter-rouge">landscape</code>，如果<code class="language-plaintext highlighter-rouge">fashion</code>在用户偏好记忆的最上面，而<code class="language-plaintext highlighter-rouge">street</code>在与<code class="language-plaintext highlighter-rouge">fashion</code>相关的词旁边，那么用户的偏好可以被认为是：<code class="language-plaintext highlighter-rouge">street fashion</code>，而如果<code class="language-plaintext highlighter-rouge">landscape</code>在最上面，<code class="language-plaintext highlighter-rouge">street</code>在<code class="language-plaintext highlighter-rouge">landscape</code>相关词周围，那么用户偏好被认为是<code class="language-plaintext highlighter-rouge">landscape</code>。如果不使用记忆CNN，那么<code class="language-plaintext highlighter-rouge">street</code>的这两种用法是很难区分的。</p>
+
+<h4 id="实验">实验</h4>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/attenp_exp.png?raw=true" alt="exp" /></p>
+
+<p>###</p>

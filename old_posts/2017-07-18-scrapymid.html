@@ -1,0 +1,121 @@
+<h2 id="正文">正文</h2>
+
+<p>   前段时间我们写了爬取电视剧，今天我把它改变成了爬取游戏，然后boss又来需求了，让这两个并行爬取（因为后面会使用并行爬取加快爬取速度），然后就自己鼓捣了一下。</p>
+
+<!--more-->
+<p>   先跑去<a href="https://doc.scrapy.org/en/latest/topics/practices.html">官网</a>看了一下。</p>
+
+<p>   找到了如何并行运行爬虫：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.crawler</span> <span class="kn">import</span> <span class="n">CrawlerProcess</span>
+
+<span class="k">class</span> <span class="nc">MySpider1</span><span class="p">(</span><span class="n">scrapy</span><span class="p">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="c1"># Your first spider definition
+</span>    <span class="p">...</span>
+
+<span class="k">class</span> <span class="nc">MySpider2</span><span class="p">(</span><span class="n">scrapy</span><span class="p">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="c1"># Your second spider definition
+</span>    <span class="p">...</span>
+
+<span class="n">process</span> <span class="o">=</span> <span class="n">CrawlerProcess</span><span class="p">()</span>
+<span class="n">process</span><span class="p">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">MySpider1</span><span class="p">)</span>
+<span class="n">process</span><span class="p">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">MySpider2</span><span class="p">)</span>
+<span class="n">process</span><span class="p">.</span><span class="n">start</span><span class="p">()</span> <span class="c1"># the script will block here until all crawling jobs are finished
+</span></code></pre></div></div>
+
+<p>   这是一个简单的python脚本，使用<code class="language-plaintext highlighter-rouge">python script_name</code>即可运行它，然后自己写了个脚本运行，发现这种方法有个缺陷：不能经过pipeline处理。</p>
+
+<p>   那怎么办？要想使用pipeline，需要使用<code class="language-plaintext highlighter-rouge">scrapy</code>的命令，如<code class="language-plaintext highlighter-rouge">scrapy crawl spider_name</code>，但是现有的scrapy命令不提供咱们要实现的功能怎么办？自定义呗^-^，于是一查，果然scrapy提供了自定义命令：</p>
+
+<ul>
+  <li>在与<code class="language-plaintext highlighter-rouge">spiders</code>同级的目录下创建目录，<code class="language-plaintext highlighter-rouge">mkdir commands</code></li>
+  <li>在<code class="language-plaintext highlighter-rouge">commands</code>目录中添加<code class="language-plaintext highlighter-rouge">__init__.py</code>文件</li>
+  <li>在<code class="language-plaintext highlighter-rouge">commands</code>目录创建<code class="language-plaintext highlighter-rouge">crawlall.py</code>文件（文件名自拟，只要跟后面的配置相同即可),并写入下面代码</li>
+  <li><code class="language-plaintext highlighter-rouge">settings.py</code>目录下创建<code class="language-plaintext highlighter-rouge">setup.py</code>，写入：
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+
+  <span class="n">setup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'scrapy-mymodule'</span><span class="p">,</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+      <span class="s">'scrapy.commands'</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">'crawlall=cnblogs.commands:crawlall'</span><span class="p">,</span>
+      <span class="p">],</span>
+    <span class="p">},</span>
+   <span class="p">)</span>
+</code></pre></div>    </div>
+    <p>   这个文件的含义是定义了一个crawlall命令，cnblogs.commands为命令文件目录，crawlall为命令名。</p>
+  </li>
+  <li>在settings.py中添加配置： <code class="language-plaintext highlighter-rouge">COMMANDS_MODULE = 'project_name.commands'</code></li>
+  <li>运行命令scrapy crawlall
+   写入setup.py中的代码
+  ```python</li>
+</ul>
+
+<p>from scrapy.commands import ScrapyCommand
+from scrapy.crawler import CrawlerRunner
+from scrapy.utils.conf import arglist_to_dict</p>
+
+<p>class Command(ScrapyCommand):
+    requires_project = True</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def syntax(self):
+    return '[options]'
+
+def short_desc(self):
+    return 'Runs all of the spiders'
+
+def add_options(self, parser):
+    ScrapyCommand.add_options(self, parser)
+    parser.add_option(
+        "-a", dest="spargs",
+        action="append", default=[], metavar="NAME=VALUE",
+        help="set spider argument (may be repeated)")
+    parser.add_option("-o", "--output", metavar="FILE",
+                      help="dump scraped items \
+                      into FILE (use - for stdout)")
+    parser.add_option("-t", "--output-format", metavar="FORMAT",
+                      help="format to use for dumping items with -o")
+
+def process_options(self, args, opts):
+    ScrapyCommand.process_options(self, args, opts)
+    try:
+        opts.spargs = arglist_to_dict(opts.spargs)
+    except ValueError:
+        raise UsageError(
+            "Invalid -a value, use -a NAME=VALUE", print_help=False)
+
+def run(self, args, opts):
+    spider_loader = self.crawler_process.spider_loader
+    for spidername in args or spider_loader.list():
+        self.crawler_process.crawl(spidername, **opts.spargs)
+    self.crawler_process.start()
+```
+</code></pre></div></div>
+
+<p>   观察上面的代码，大部分都看不懂，但是<code class="language-plaintext highlighter-rouge">run</code>函数内的东西应该能看懂，大题知道它是在拿到所有的爬虫并运行它，那么事情就简单了，我们对爬虫的调度工作就放在这里了：</p>
+
+<p>```python
+    def run(self, args, opts):
+        runner = CrawlerRunner()
+        runner.crawl(GamespiderSpider)
+        runner.crawl(TengxunSpider)
+        d = runner.join()
+        d.addBoth(lambda _: reactor.stop())</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ```
+</code></pre></div></div>
+
+<p>   运行发现可以抓取但是还是无法使用<code class="language-plaintext highlighter-rouge">pipeline</code>，对比代码发现我们的代码再<code class="language-plaintext highlighter-rouge">run,crawl</code>函数中没有传递<code class="language-plaintext highlighter-rouge">**opts.spargs</code>，那么现在一切都明了了，前面的脚本无法使用<code class="language-plaintext highlighter-rouge">pipeline</code>是因为无法得到相关参数（<code class="language-plaintext highlighter-rouge">args</code>,<code class="language-plaintext highlighter-rouge">opts</code>),这些参数与scrapy相关，包含了框架的一些行为和信息。</p>
+
+<p>```python
+    def run(self, args, opts):
+        runner = CrawlerRunner()
+        runner.crawl(GamespiderSpider, **opts.spargs)
+        runner.crawl(TengxunSpider, **opts.spargs)
+        d = runner.join()
+        d.addBoth(lambda _: reactor.stop())</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ``` &amp;ensp;&amp;ensp;&amp;ensp;改为上面的代码可以完美完成任务。
+</code></pre></div></div>
+
+<h2 id="参考链接">参考链接</h2>

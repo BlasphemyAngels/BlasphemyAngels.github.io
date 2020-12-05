@@ -1,0 +1,25 @@
+<h4 id="题目描述">题目描述</h4>
+
+<p>对于一个数字串 s，若能找到一种将其分成左右两个非空部分 s1,s2 的方案，使得：</p>
+<ul>
+  <li>s1,s2 均无前导零</li>
+  <li>存在两个正整数 a,b，使得 b 整除 a，且 a/b=s1, a*b=s2</li>
+</ul>
+
+<p>那么我们记这是一个合法的分法。特别地，如果一个串有两个或更多个不同的合法的分法，那么我们称这个数字串是双拆分数字串。</p>
+
+<p>给定一个 n，要求构造一个长度恰为 n 的双拆分数字串。如果无解，输出 -1。</p>
+
+<!--more-->
+
+<h4 id="思路">思路</h4>
+
+<p>首先根据上面的条件可以得出，一种合法的分法也就等价于<code class="language-plaintext highlighter-rouge">s2/s1=k*k</code>，也就<code class="language-plaintext highlighter-rouge">s2/s1</code>的结果是完全平方数。</p>
+
+<p>然后就是找到一个长度为<code class="language-plaintext highlighter-rouge">n</code>的数，它有两种合法的分法。</p>
+
+<p>当<code class="language-plaintext highlighter-rouge">n&lt;=3</code>时，显然无解，因为只有两个分割点，而且第二个分割点的分割使得<code class="language-plaintext highlighter-rouge">s2&lt;s1</code>。</p>
+
+<p>我们又会想到，如果一个数<code class="language-plaintext highlighter-rouge">n</code>是双拆分数，那么在<code class="language-plaintext highlighter-rouge">n</code>后面加两个<code class="language-plaintext highlighter-rouge">0</code>得到的数肯定也是双拆分数。那么问题就简单了，因为<code class="language-plaintext highlighter-rouge">n&lt;=3</code>的双拆分数不存在，我们只需找到一个长为<code class="language-plaintext highlighter-rouge">4</code>和一个长为<code class="language-plaintext highlighter-rouge">5</code>的双拆分数即可，而其他任意长度的双拆分数我们都可以使用这两个双拆分数在后面添<code class="language-plaintext highlighter-rouge">0</code>得到。</p>
+
+<p>可以写一个暴力程序得到一个长度为<code class="language-plaintext highlighter-rouge">4</code>的双拆分数为<code class="language-plaintext highlighter-rouge">1144</code>，长度为<code class="language-plaintext highlighter-rouge">5</code>的双拆分数为<code class="language-plaintext highlighter-rouge">16400</code>。当然对数学敏感的人应该很快就能构造出这两个数。</p>

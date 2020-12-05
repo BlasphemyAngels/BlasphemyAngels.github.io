@@ -1,0 +1,270 @@
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/pandas.png?raw=true" alt="pandas" /></p>
+
+<h2 id="目录">目录</h2>
+
+<ul>
+  <li><a href="#jumpceng">层级索引</a></li>
+  <li><a href="#jumpdatagroup">数据的分组和聚合</a></li>
+</ul>
+
+<!--more-->
+
+<h2 id="正文">正文</h2>
+
+<h3 id="层级索引"><span id="jumpceng">层级索引</span></h3>
+
+<h4 id="multiindex对象">MultiIndex对象</h4>
+
+<p>pandas中用来管理层级索引的对象。</p>
+
+<p>例子:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="n">ser_obj</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span><span class="n">index</span><span class="o">=</span><span class="p">[[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="k">print</span> <span class="n">ser_obj</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span>  <span class="mi">0</span>   <span class="o">-</span><span class="mf">0.674611</span>
+   <span class="mi">1</span>   <span class="o">-</span><span class="mf">0.942212</span>
+   <span class="mi">2</span>    <span class="mf">0.851033</span>
+<span class="n">b</span>  <span class="mi">0</span>    <span class="mf">0.935383</span>
+   <span class="mi">1</span>    <span class="mf">0.576104</span>
+   <span class="mi">2</span>    <span class="mf">0.434570</span>
+<span class="n">c</span>  <span class="mi">0</span>    <span class="mf">1.956513</span>
+   <span class="mi">1</span>   <span class="o">-</span><span class="mf">0.318670</span>
+   <span class="mi">2</span>    <span class="mf">0.792113</span>
+<span class="n">d</span>  <span class="mi">0</span>   <span class="o">-</span><span class="mf">1.353721</span>
+   <span class="mi">1</span>   <span class="o">-</span><span class="mf">0.195022</span>
+   <span class="mi">2</span>    <span class="mf">1.085860</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">ser_obj</span><span class="p">.</span><span class="n">index</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">ser_obj</span><span class="p">.</span><span class="n">index</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="p">.</span><span class="n">indexes</span><span class="p">.</span><span class="n">multi</span><span class="p">.</span><span class="n">MultiIndex</span><span class="s">'&gt;
+MultiIndex(levels=[[u'</span><span class="n">a</span><span class="s">', u'b', u'</span><span class="n">c</span><span class="s">', u'</span><span class="n">d</span><span class="s">'], [0, 1, 2]],
+           labels=[[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2]])
+           ```
+
+#### 选取子集
+
+```python
+# 外层选取
+print ser_obj['</span><span class="n">c</span><span class="s">']
+</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span>    <span class="mf">1.956513</span>
+<span class="mi">1</span>   <span class="o">-</span><span class="mf">0.318670</span>
+<span class="mi">2</span>    <span class="mf">0.792113</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 内层选取
+</span><span class="k">print</span> <span class="n">ser_obj</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span>    <span class="mf">0.851033</span>
+<span class="n">b</span>    <span class="mf">0.434570</span>
+<span class="n">c</span>    <span class="mf">0.792113</span>
+<span class="n">d</span>    <span class="mf">1.085860</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+
+<h4 id="交换分层顺序">交换分层顺序</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span> <span class="n">ser_obj</span><span class="p">.</span><span class="n">swaplevel</span><span class="p">()</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span>  <span class="n">a</span>   <span class="o">-</span><span class="mf">0.674611</span>
+<span class="mi">1</span>  <span class="n">a</span>   <span class="o">-</span><span class="mf">0.942212</span>
+<span class="mi">2</span>  <span class="n">a</span>    <span class="mf">0.851033</span>
+<span class="mi">0</span>  <span class="n">b</span>    <span class="mf">0.935383</span>
+<span class="mi">1</span>  <span class="n">b</span>    <span class="mf">0.576104</span>
+<span class="mi">2</span>  <span class="n">b</span>    <span class="mf">0.434570</span>
+<span class="mi">0</span>  <span class="n">c</span>    <span class="mf">1.956513</span>
+<span class="mi">1</span>  <span class="n">c</span>   <span class="o">-</span><span class="mf">0.318670</span>
+<span class="mi">2</span>  <span class="n">c</span>    <span class="mf">0.792113</span>
+<span class="mi">0</span>  <span class="n">d</span>   <span class="o">-</span><span class="mf">1.353721</span>
+<span class="mi">1</span>  <span class="n">d</span>   <span class="o">-</span><span class="mf">0.195022</span>
+<span class="mi">2</span>  <span class="n">d</span>    <span class="mf">1.085860</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+
+<h4 id="排序分层">排序分层</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span> <span class="n">ser_obj</span><span class="p">.</span><span class="n">swaplevel</span><span class="p">().</span><span class="n">sortlevel</span><span class="p">()</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span>  <span class="n">a</span>   <span class="o">-</span><span class="mf">0.674611</span>
+   <span class="n">b</span>    <span class="mf">0.935383</span>
+   <span class="n">c</span>    <span class="mf">1.956513</span>
+   <span class="n">d</span>   <span class="o">-</span><span class="mf">1.353721</span>
+<span class="mi">1</span>  <span class="n">a</span>   <span class="o">-</span><span class="mf">0.942212</span>
+   <span class="n">b</span>    <span class="mf">0.576104</span>
+   <span class="n">c</span>   <span class="o">-</span><span class="mf">0.318670</span>
+   <span class="n">d</span>   <span class="o">-</span><span class="mf">0.195022</span>
+<span class="mi">2</span>  <span class="n">a</span>    <span class="mf">0.851033</span>
+   <span class="n">b</span>    <span class="mf">0.434570</span>
+   <span class="n">c</span>    <span class="mf">0.792113</span>
+   <span class="n">d</span>    <span class="mf">1.085860</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+<h3 id="数据的分组和聚合"><span id="jumpdatagroup">数据的分组和聚合</span></h3>
+
+<h4 id="分组-groupby">分组 (groupby)</h4>
+
+<p>• 对数据集进行分组,然后对每组进行统计分析
+• SQL能够对数据进行过滤,分组聚合
+• pandas能利用groupby进行更加复杂的分组运算</p>
+
+<h3 id="分组运算过程">分组运算过程</h3>
+
+<h4 id="split-apply-combine">split-&gt;apply-&gt;combine</h4>
+
+<p>图示:</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/pandasgroup.png?raw=true" alt="pandasgroup" /></p>
+
+<p>• GroupBy对象:DataFrameGroupBy,SeriesGroupBy
+• GroupBy对象没有进行实际运算,只是包含分组的中间数据
+• 对GroupBy对象进行分组运算/多重分组运算,如mean()
+• 非数值数据不进行分组运算
+• size() 返回每个分组的元素个数</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dict_obj</span> <span class="o">=</span> <span class="p">{</span><span class="s">'key1'</span> <span class="p">:</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span>
+                      <span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">],</span>
+            <span class="s">'key2'</span> <span class="p">:</span> <span class="p">[</span><span class="s">'one'</span><span class="p">,</span> <span class="s">'one'</span><span class="p">,</span> <span class="s">'two'</span><span class="p">,</span> <span class="s">'three'</span><span class="p">,</span>
+                      <span class="s">'two'</span><span class="p">,</span> <span class="s">'two'</span><span class="p">,</span> <span class="s">'one'</span><span class="p">,</span> <span class="s">'three'</span><span class="p">],</span>
+            <span class="s">'data1'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>
+            <span class="s">'data2'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">)}</span>
+<span class="n">df_obj</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">df_obj</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     <span class="n">data1</span>     <span class="n">data2</span> <span class="n">key1</span>   <span class="n">key2</span>
+<span class="mi">0</span> <span class="o">-</span><span class="mf">0.079203</span> <span class="o">-</span><span class="mf">0.844599</span>    <span class="n">a</span>    <span class="n">one</span>
+<span class="mi">1</span>  <span class="mf">0.379854</span>  <span class="mf">0.849821</span>    <span class="n">b</span>    <span class="n">one</span>
+<span class="mi">2</span> <span class="o">-</span><span class="mf">0.961888</span> <span class="o">-</span><span class="mf">1.502866</span>    <span class="n">a</span>    <span class="n">two</span>
+<span class="mi">3</span> <span class="o">-</span><span class="mf">0.063710</span> <span class="o">-</span><span class="mf">1.136585</span>    <span class="n">b</span>  <span class="n">three</span>
+<span class="mi">4</span>  <span class="mf">0.537074</span>  <span class="mf">0.326732</span>    <span class="n">a</span>    <span class="n">two</span>
+<span class="mi">5</span>  <span class="mf">0.854460</span> <span class="o">-</span><span class="mf">0.474144</span>    <span class="n">b</span>    <span class="n">two</span>
+<span class="mi">6</span>  <span class="mf">1.098841</span> <span class="o">-</span><span class="mf">0.521574</span>    <span class="n">a</span>    <span class="n">one</span>
+<span class="mi">7</span>  <span class="mf">0.364664</span>  <span class="mf">0.014630</span>    <span class="n">a</span>  <span class="n">three</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># dataframe根据key1进行分组
+</span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">df_obj</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'key1'</span><span class="p">))</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">groupby</span><span class="p">.</span><span class="n">DataFrameGroupBy</span><span class="s">'&gt;
+</span></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># data1列根据key1进行分组
+</span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">df_obj</span><span class="p">[</span><span class="s">'data1'</span><span class="p">].</span><span class="n">groupby</span><span class="p">(</span><span class="n">df_obj</span><span class="p">[</span><span class="s">'key1'</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">groupby</span><span class="p">.</span><span class="n">SeriesGroupBy</span><span class="s">'&gt;
+</span></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 分组运算
+</span><span class="n">grouped1</span> <span class="o">=</span> <span class="n">df_obj</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'key1'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">grouped1</span><span class="p">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">grouped2</span> <span class="o">=</span> <span class="n">df_obj</span><span class="p">[</span><span class="s">'data1'</span><span class="p">].</span><span class="n">groupby</span><span class="p">(</span><span class="n">df_obj</span><span class="p">[</span><span class="s">'key1'</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">grouped2</span><span class="p">.</span><span class="n">mean</span><span class="p">()</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         <span class="n">data1</span>     <span class="n">data2</span>
+<span class="n">key1</span>
+<span class="n">a</span>     <span class="mf">0.191898</span> <span class="o">-</span><span class="mf">0.505536</span>
+<span class="n">b</span>     <span class="mf">0.390201</span> <span class="o">-</span><span class="mf">0.253636</span>
+<span class="n">key1</span>
+<span class="n">a</span>    <span class="mf">0.191898</span>
+<span class="n">b</span>    <span class="mf">0.390201</span>
+<span class="n">Name</span><span class="p">:</span> <span class="n">data1</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># size
+</span><span class="k">print</span> <span class="n">grouped1</span><span class="p">.</span><span class="n">size</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">grouped2</span><span class="p">.</span><span class="n">size</span><span class="p">()</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">key1</span>
+<span class="n">a</span>    <span class="mi">5</span>
+<span class="n">b</span>    <span class="mi">3</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+<span class="n">key1</span>
+<span class="n">a</span>    <span class="mi">5</span>
+<span class="n">b</span>    <span class="mi">3</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+<h4 id="按列名分组">按列名分组</h4>
+
+<p>• obj.groupby(‘label’)
+• 按列名多层分组
+• obj.groupby([‘label1’, ‘label2’])-&gt;多层dataframe
+• 按自定义的key分组
+• obj.groupby(self_def_key)
+• 自定义的key可为列表或多层列表
+• unstack可以将多层索引的结果转换成单层的dataframe</p>
+
+<p>例子:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 按列名分组
+#df_obj.groupby('key1')
+</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">1</span>    <span class="mi">5</span>
+<span class="mi">2</span>    <span class="mi">3</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 按自定义key分组，列表
+</span><span class="n">self_def_key</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">df_obj</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">self_def_key</span><span class="p">).</span><span class="n">size</span><span class="p">()</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">1</span>    <span class="mi">5</span>
+<span class="mi">2</span>    <span class="mi">3</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 按自定义key分组，多层列表
+</span><span class="n">df_obj</span><span class="p">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">df_obj</span><span class="p">[</span><span class="s">'key1'</span><span class="p">],</span> <span class="n">df_obj</span><span class="p">[</span><span class="s">'key2'</span><span class="p">]]).</span><span class="n">size</span><span class="p">()</span>
+</code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">key1</span>  <span class="n">key2</span>
+<span class="n">a</span>     <span class="n">one</span>      <span class="mi">2</span>
+      <span class="n">three</span>    <span class="mi">1</span>
+      <span class="n">two</span>      <span class="mi">2</span>
+<span class="n">b</span>     <span class="n">one</span>      <span class="mi">1</span>
+      <span class="n">three</span>    <span class="mi">1</span>
+      <span class="n">two</span>      <span class="mi">1</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 按多个列多层分组
+</span><span class="n">grouped2</span> <span class="o">=</span> <span class="n">df_obj</span><span class="p">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">'key1'</span><span class="p">,</span> <span class="s">'key2'</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">grouped2</span><span class="p">.</span><span class="n">size</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">key1</span>  <span class="n">key2</span>
+<span class="n">a</span>     <span class="n">one</span>      <span class="mi">2</span>
+      <span class="n">three</span>    <span class="mi">1</span>
+      <span class="n">two</span>      <span class="mi">2</span>
+<span class="n">b</span>     <span class="n">one</span>      <span class="mi">1</span>
+      <span class="n">three</span>    <span class="mi">1</span>
+      <span class="n">two</span>      <span class="mi">1</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 多层分组按key的顺序进行
+</span><span class="n">grouped3</span> <span class="o">=</span> <span class="n">df_obj</span><span class="p">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">'key2'</span><span class="p">,</span> <span class="s">'key1'</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">grouped3</span><span class="p">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="k">print</span>
+<span class="k">print</span> <span class="n">grouped3</span><span class="p">.</span><span class="n">mean</span><span class="p">().</span><span class="n">unstack</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>```python
+               data1     data2
+key2  key1
+one   a     0.509819 -0.683087
+      b     0.379854  0.849821
+three a     0.364664  0.014630
+      b    -0.063710 -1.136585
+two   a    -0.212407 -0.588067
+      b     0.854460 -0.474144</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      data1               data2 key1          a         b         a         b key2 one    0.509819  0.379854 -0.683087  0.849821 three  0.364664 -0.063710  0.014630 -1.136585 two   -0.212407  0.854460 -0.588067 -0.474144
+</code></pre></div></div>
+
+<p>• 拆分:进行分组的根据
+• 应用:每个分组运行的计算规则
+• 合并:把每个分组的计算结果合并起来</p>
+
+<h2 id="参考链接">参考链接</h2>

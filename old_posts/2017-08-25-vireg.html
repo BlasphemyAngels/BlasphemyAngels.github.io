@@ -1,0 +1,228 @@
+<h2 id="正文">正文</h2>
+
+<p>   前面已经介绍过正则表达式，由于我是一个vim的重度使用者，所以vim中的正则表达式也是我经常使用的。当然，其实概念原理都是一样的，所以本文只是展示一下通过从网上搜集的vim正则的符号使用而已。</p>
+
+<!--more-->
+
+<h3 id="量词">量词</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>vim</th>
+      <th style="text-align: left">意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>*</td>
+      <td style="text-align: left">0个或多个</td>
+    </tr>
+    <tr>
+      <td>\+</td>
+      <td style="text-align: left">1个或多个</td>
+    </tr>
+    <tr>
+      <td>\?</td>
+      <td style="text-align: left">0个或1个，\?不能在 ? 命令（逆向查找）中使用</td>
+    </tr>
+    <tr>
+      <td>\{n,m}</td>
+      <td style="text-align: left">n个到m个</td>
+    </tr>
+    <tr>
+      <td>\{n,}</td>
+      <td style="text-align: left">最少n个</td>
+    </tr>
+    <tr>
+      <td>\{,m}</td>
+      <td style="text-align: left">最多m个</td>
+    </tr>
+    <tr>
+      <td>\{n}</td>
+      <td style="text-align: left">恰好n个</td>
+    </tr>
+    <tr>
+      <td>\{-n,m}</td>
+      <td style="text-align: left">n个到m个(非贪婪)</td>
+    </tr>
+    <tr>
+      <td>\{-}</td>
+      <td style="text-align: left">0个或多个(非贪婪)</td>
+    </tr>
+    <tr>
+      <td>\{-1,}</td>
+      <td style="text-align: left">1个或多个(非贪婪)</td>
+    </tr>
+    <tr>
+      <td>\{-,1}</td>
+      <td style="text-align: left">0个或1个(非贪婪)</td>
+    </tr>
+    <tr>
+      <td>\_.</td>
+      <td style="text-align: left">匹配包含换行在内的所有字符</td>
+    </tr>
+    <tr>
+      <td>\=</td>
+      <td style="text-align: left">匹配一个可有可无的项</td>
+    </tr>
+    <tr>
+      <td>\_s</td>
+      <td style="text-align: left">匹配空格或断行</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="环视和固化分组">环视和固化分组</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>vim</th>
+      <th style="text-align: center">正则表达式</th>
+      <th>意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>\@=</td>
+      <td style="text-align: center">(?=</td>
+      <td>顺序环视</td>
+    </tr>
+    <tr>
+      <td>\@!</td>
+      <td style="text-align: center">(?!</td>
+      <td>顺序否定环视</td>
+    </tr>
+    <tr>
+      <td>\@&lt;=</td>
+      <td style="text-align: center">(?&lt;=</td>
+      <td>逆序环视</td>
+    </tr>
+    <tr>
+      <td>\@&lt;!</td>
+      <td style="text-align: center">(?&lt;!</td>
+      <td>逆序否定环视</td>
+    </tr>
+    <tr>
+      <td>\@&gt;</td>
+      <td style="text-align: center">(?&gt;</td>
+      <td>固化分组</td>
+    </tr>
+    <tr>
+      <td>\%(atom)</td>
+      <td style="text-align: center">(?:</td>
+      <td>非捕获组</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>   这里要注意vim中的环视表达式的书写位置和普通正则不同，如<code class="language-plaintext highlighter-rouge">(?&lt;=abc)dec</code>在vim中应该写为<code class="language-plaintext highlighter-rouge">\(abc\)\@&lt;=dec</code>.h。</p>
+
+<h3 id="元字符">元字符</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>元字符</th>
+      <th style="text-align: left">说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>.</td>
+      <td style="text-align: left">匹配任意一个字符</td>
+    </tr>
+    <tr>
+      <td>[abc]</td>
+      <td style="text-align: left">匹配方括号中的任意一个字符。可以使用-表示字符范围，如[a-z0-9]匹配小写字母和阿拉伯数字。</td>
+    </tr>
+    <tr>
+      <td>[^abc]</td>
+      <td style="text-align: left">在方括号内开头使用^符号，表示匹配除方括号中字符之外的任意字符。</td>
+    </tr>
+    <tr>
+      <td>\d</td>
+      <td style="text-align: left">匹配阿拉伯数字，等同于[0-9]。</td>
+    </tr>
+    <tr>
+      <td>\D</td>
+      <td style="text-align: left">匹配阿拉伯数字之外的任意字符，等同于[^0-9]。</td>
+    </tr>
+    <tr>
+      <td>\x</td>
+      <td style="text-align: left">匹配十六进制数字，等同于[0-9A-Fa-f]。</td>
+    </tr>
+    <tr>
+      <td>\X</td>
+      <td style="text-align: left">匹配十六进制数字，等同于[^0-9A-Fa-f]。</td>
+    </tr>
+    <tr>
+      <td>\w</td>
+      <td style="text-align: left">匹配单词字母，等同于[0-9A-Za-z_]。</td>
+    </tr>
+    <tr>
+      <td>\W</td>
+      <td style="text-align: left">匹配单词字母之外的任意字符，等同于[^0-9A-Za-z_]。</td>
+    </tr>
+    <tr>
+      <td>\t</td>
+      <td style="text-align: left">匹配<TAB>字符。</TAB></td>
+    </tr>
+    <tr>
+      <td>\s</td>
+      <td style="text-align: left">匹配空白字符，等同于[ \t]。</td>
+    </tr>
+    <tr>
+      <td>\S</td>
+      <td style="text-align: left">匹配非空白字符，等同于[^ \t]。</td>
+    </tr>
+    <tr>
+      <td>\a</td>
+      <td style="text-align: left">所有的字母字符. 等同于[a-zA-Z]</td>
+    </tr>
+    <tr>
+      <td>\l</td>
+      <td style="text-align: left">小写字母 [a-z]</td>
+    </tr>
+    <tr>
+      <td>\L</td>
+      <td style="text-align: left">非小写字母 [^a-z]</td>
+    </tr>
+    <tr>
+      <td>\u</td>
+      <td style="text-align: left">大写字母 [A-Z]</td>
+    </tr>
+    <tr>
+      <td>\U</td>
+      <td style="text-align: left">非大写字母 [^A-Z]</td>
+    </tr>
+    <tr>
+      <td>$</td>
+      <td style="text-align: left">匹配行尾</td>
+    </tr>
+    <tr>
+      <td>^</td>
+      <td style="text-align: left">匹配行首</td>
+    </tr>
+    <tr>
+      <td>&lt;</td>
+      <td style="text-align: left">匹配单词词首</td>
+    </tr>
+    <tr>
+      <td>\&gt;</td>
+      <td style="text-align: left">匹配单词词尾</td>
+    </tr>
+    <tr>
+      <td>\&amp;</td>
+      <td style="text-align: left">并列</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>   vim还有一个不常见的有用的元字符，<code class="language-plaintext highlighter-rouge">\zs</code>和<code class="language-plaintext highlighter-rouge">\ze</code>，它们的意思是限定匹配的范围。先想一下，当我们要进行查找时，需要先写一个正则表达式，这个正则表达式称为模式。而通过这个模式在原文本匹配到的内容成为匹配，有的时候需要对匹配的部分内容进行截取，这个时候就需要用到<code class="language-plaintext highlighter-rouge">\zs</code>（匹配开始）和<code class="language-plaintext highlighter-rouge">\ze</code>（匹配结束）了。如我们要在文本<code class="language-plaintext highlighter-rouge">the word "world"</code>中匹配在双引号中的内容，我们很自然的写出模式<code class="language-plaintext highlighter-rouge">"[^"]+"</code>，这样就会得到匹配内容<code class="language-plaintext highlighter-rouge">"world"</code>，但是这不符合我们要求啊，我们不想要双引号本身，怎么办？使用<code class="language-plaintext highlighter-rouge">\zs</code>和<code class="language-plaintext highlighter-rouge">\ze</code>，写出模式<code class="language-plaintext highlighter-rouge">"\zs[^"]+\ze"</code>，这样就得到了匹配结果<code class="language-plaintext highlighter-rouge">world</code>。<code class="language-plaintext highlighter-rouge">\zs</code>和<code class="language-plaintext highlighter-rouge">\ze</code>是零宽度的，它们只是指定匹配的开始和结束，并不匹配任何字符。我们也可以使用环视来达到<code class="language-plaintext highlighter-rouge">\zs</code>和<code class="language-plaintext highlighter-rouge">\ze</code>的效果，如上面的模式可以改为<code class="language-plaintext highlighter-rouge">"\@&lt;=[^"]+"\@=]"</code>达到同样的效果。</p>
+
+<p>   <code class="language-plaintext highlighter-rouge">&lt;</code>和<code class="language-plaintext highlighter-rouge">&gt;</code>能够匹配单词的边界，其可以使用元字符<code class="language-plaintext highlighter-rouge">\zs</code>和<code class="language-plaintext highlighter-rouge">\ze</code>得到，<code class="language-plaintext highlighter-rouge">\W\ze\w</code>相当于<code class="language-plaintext highlighter-rouge">\&lt;</code>，<code class="language-plaintext highlighter-rouge">\w\ze\W</code>相当于<code class="language-plaintext highlighter-rouge">\&gt;</code></p>
+
+<p>   另外<code class="language-plaintext highlighter-rouge">\|</code>表示”或”操作符
+转载请注明:<a href="https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://BlasphemyAngels.github.io/2017/08/25/2017-08-25-vireg/">点此看原文</a></p>

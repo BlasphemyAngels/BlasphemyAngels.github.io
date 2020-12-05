@@ -1,0 +1,178 @@
+<blockquote>整理一下遇到的linux命令的题目，并对答案做个总结</blockquote>
+
+<!--more-->
+
+<h3 id="统计单词数目并排序">统计单词数目并排序</h3>
+
+<p>   统计一个文件中每个单词各自出现的次数并排序</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>sed -r ‘s# +#\n#g’ words.txt</td>
+          <td>sed  -r ‘/^$/d’</td>
+          <td>sort</td>
+          <td>uniq -c</td>
+          <td>sort -r</td>
+          <td>awk ‘{print $2,$1}’</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>cat words.txt</td>
+          <td>tr -s ‘ ‘ ‘\n’</td>
+          <td>sort</td>
+          <td>uniq -c</td>
+          <td>sort -r</td>
+          <td>awk ‘{ print $2, $1 }’</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>tr -s ‘ ‘ ‘\n’ &lt; words.txt</td>
+          <td>sort</td>
+          <td>uniq -c</td>
+          <td>sort -nr</td>
+          <td>awk ‘{print $2, $1}’</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>cat words.txt</td>
+          <td>awk ‘{for(i=1;i&lt;=NF;++i){count[$i]++}} END{for(i in count) {print i,count[i]}}’</td>
+          <td>sort -k2nr</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>awk ‘{for(i=1;i&lt;=NF;i++) a[$i]++} END {for(k in a) print k,a[k]}’ words.txt</td>
+          <td>sort -k2 -nr</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="打印文件第十行">打印文件第十行</h3>
+
+<p>   打印一个文件的第十行内容</p>
+
+<p>   做法有很多：</p>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>head -n 10 file.txt</td>
+          <td>tail -n +10</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>sed -n ‘10p’ file.txt</li>
+  <li>awk ‘NR == 10’ file.txt</li>
+  <li>awk ‘{if(NR==10) print $0}’ file.txt</li>
+</ul>
+
+<h3 id="找出不合法电话号码">找出不合法电话号码</h3>
+
+<p>   给你一个文件，文件中每行是一个电话号码，有合法的有不合法的，找出合法的电话，合法的电话号码形式是：(xxx) xxx-xxxx或xxx-xxx-xxxx，每一行不含前导或后导空格。</p>
+
+<p>   如文件内容如下:</p>
+
+<p>987-123-4567
+123 456 7890
+(123) 456-7890</p>
+
+<p>   你需要输出：</p>
+
+<p>987-123-4567
+(123) 456-7890</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>grep -P ‘^(\d{3}-</td>
+          <td>(\d{3}) )\d{3}-\d{4}$’ file.txt</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>sed -n -r ‘/^([0-9]{3}-</td>
+          <td>([0-9]{3}) )[0-9]{3}-[0-9]{4}$/p’ file.txt</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>awk ‘/^([0-9]{3}-</td>
+          <td>([0-9]{3}) )[0-9]{3}-[0-9]{4}$/’ file.txt</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="转置文件内容">转置文件内容</h3>
+
+<p>   如下所示，文件内容：
+name age
+alice 21
+ryan 30
+Output the following:
+   需要得到：
+name alice ryan
+age 21 30</p>
+
+<ul>
+  <li>awk ‘NF!=0 {for(c=1;c&lt;=NF;c++) mtx[NR,c]=$c; rows++; cols=NF;} END{for(c=1;c&lt;=cols;c++) { line=mtx[1,c]; for(r=2;r&lt;=rows;r++) { line=line” “mtx[r,c]}; print line; }}’ file.txt</li>
+</ul>
+
+<h3 id="分析日志找访问量最大文件">分析日志找访问量最大文件</h3>
+
+<p>分析图片服务日志，把日志（每个图片访问次数×图片大小的总和）排行，取top10，也就是计算每个url的总访问量大小。</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>awk ‘{print $7”\t” $10}’ filename</td>
+          <td>sort</td>
+          <td>uniq -c</td>
+          <td>awk ‘{print $1*$3,$1,$2}’</td>
+          <td>sort -rn</td>
+          <td>head</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>awk ‘{S[$7]++;T[$7]+=$10}END{for(k in S) print k,S[k],T[k]r’ filename</li>
+</ul>

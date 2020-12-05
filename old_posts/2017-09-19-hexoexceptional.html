@@ -1,0 +1,44 @@
+<h2 id="正文">正文</h2>
+
+<p>   现在是互联网的世界，越来越多的互联网文章出现，人们的忙碌使得他们往往借助互联网寻求解决问题的方法。碎片化文字和博客的出现使得人们解决问题的方式更加简单。由此，往往对于一些优秀的博客，我们常常希望给他一定的鼓励以希望他继续创作，基于此，打赏功能应运而生。</p>
+
+<!--more-->
+
+<p>   本人使用的是<code class="language-plaintext highlighter-rouge">hexo+next</code>构建博客，因此下面就讲解一下在<code class="language-plaintext highlighter-rouge">hexo next</code>下进行打赏功能的配置。</p>
+
+<h3 id="生成二维码">生成二维码</h3>
+
+<p>   使用微信和支付宝生成相应的收款码分别保存为<code class="language-plaintext highlighter-rouge">wechat.png</code>和<code class="language-plaintext highlighter-rouge">alipay.png</code></p>
+
+<p>   将生成的二维码照片放入到<code class="language-plaintext highlighter-rouge">themes</code>下的<code class="language-plaintext highlighter-rouge">hexo-next</code>主题目录下的<code class="language-plaintext highlighter-rouge">source/images/</code>文件夹下</p>
+
+<h3 id="配置">配置</h3>
+
+<p>   进入<code class="language-plaintext highlighter-rouge">next</code>主题目录，编辑主题的<code class="language-plaintext highlighter-rouge">_config.yml</code>，加入如下代码（如果已经存在，则修改成跟如下代码一致）:</p>
+
+<pre><code class="language-styl">reward_comment: 您的支持将鼓励我继续创作！
+wechatpay: /images/wechat.png$
+alipay: /images/alipay.png$
+</code></pre>
+
+<h3 id="取消闪烁效果">取消闪烁效果</h3>
+
+<p>   如下图，当将鼠标放到二维码图片上时，图片下面的字会闪烁，在我看来，这不是一个好的效果，于是决定取消它（如果你喜欢的话可以不取消）。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/exceptional.gif?raw=true" alt="gif" /></p>
+
+<p>   如何取消呢？只需将主题目录下的<code class="language-plaintext highlighter-rouge">source/css/_common/components/post/post-reward.styl</code>文件中的下面代码注释掉即可。</p>
+
+<pre><code class="language-styl">#wechat:hover p{$
+    animation: roll 0.1s infinite linear;$
+    -webkit-animation: roll 0.1s infinite linear;$
+    -moz-animation: roll 0.1s infinite linear;$
+}$
+#alipay:hover p{$
+    animation: roll 0.1s infinite linear;$
+    -webkit-animation: roll 0.1s infinite linear;$
+    -moz-animation: roll 0.1s infinite linear;$
+}$
+</code></pre>
+
+<p>转载请注明:<a href="https://blasphemyangels.github.io">Artemis的博客</a>–&gt; <a href="https://blasphemyangels.github.io/2017/09/19/2017-09-19-hexoexceptional">点此看原文</a></p>

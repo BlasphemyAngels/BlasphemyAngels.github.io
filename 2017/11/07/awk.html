@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <script type="text/javascript">
+            (function() {
+              var hm = document.createElement("script");
+              hm.src = "//hm.baidu.com/hm.js?dcee78e565eeaedc76defba5d096b344";
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(hm, s);
+            })();
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-38205696-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=100%, initial-scale=1" />
+
+        <link rel="shortcut icon" href="/img/owl.ico" />
+        <link rel="stylesheet" type="text/css" href="/css/default.min.css" />
+    </head>
+
+    <body>
+
+        <div id="music-panel">
+    <a id="music-control" onclick="toggleMusicPanel()"></a>
+    <div id="music-content">
+        <!-- use lazy loading -->
+        <!--iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="http://music.163.com/outchain/player?type=0&id=49176408&auto=0&height=430"></iframe-->
+    </div>
+</div>
+
+
+        
+        
+        <div id="mobile-nav">
+          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
+        </div>
+        <div class="contentDiv">
+
+
+<title>文本处理三剑客之剑仙awk
+    
+        : Linux三剑客
+    
+ - 酒醉久伴</title>
+
+
+
+
+<div class="rotLeft rotTop pageBack"></div>
+<div class="rotRight rotTop pageBack"></div>
+<div class="container page cn page-post">
+    
+
+    <div class="simpleNav">
+        <a href="http://zhangwenli.com" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InPost', window.location.pathname]);">首页</a>
+        <a href="" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
+    </div>
+
+    
+    
+    <div class="timeago cn" title="2017-10-12T00:00:00+08:00">2017.10.12 00:00:00</div>
+
+    
+    <div class="pageTitle">文本处理三剑客之剑仙awk</div>
+
+    <div class="tagPanel">
+    <a href="/all?tag=linux" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">linux</div></a>
+    </div>
+
+    
+        <blockquote class="seriesNote">
+
+    <h4>系列博文：Linux三剑客</h4>
+
+
+    <ul>
+    
+    
+        
+            
+                <li class="series-self">
+            
+
+            
+                文本处理三剑客之剑仙awk
+            
+
+            
+            </li>
+        
+    
+        
+    
+    </ul>
+</blockquote>
+
+    
+
+    <div id="page-view"></div>
+
+    <div class="post-content ">
+    <blockquote>
+  <p><em>文本处理谁为峰，一见awk皆成空</em></p>
+</blockquote>
+
+<blockquote>
+<p><code>awk</code>作为<code>linux</code>系统中文本处理三剑客中的老大，它几乎实现文本处理的一切问题。
+ <code>awk</code>与其说是一个命令，不如说它是一门语言。</p>
+<p>本文将带你走进awk的世界。</p>
+</blockquote>
+
+<p><a href="http://stackoverflow.com/users/1306809/matt-coughlin" target="_blank">Matt Coughlin</a> gives a very clear <a href="http://stackoverflow.com/questions/15985875/effect-of-declared-and-undeclared-variables#answer-16007360" target="_blank">answer</a>.</p>
+
+<!--more-->
+
+<h4 id="基本知识">基本知识</h4>
+
+<p><code class="language-plaintext highlighter-rouge">awk</code>的主要功能是过滤内容（取列）。</p>
+
+<p>命令一般格式：</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="o">[</span>参数] <span class="s1">'[match] {script}'</span> filename</code></pre></figure>
+
+<blockquote>
+<p>awk常用的参数有两个：<code>-v</code>和<code>-F</code>。
+啊？还有没有别的，不要问，肯定有，但是我不会。</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">-F</code>比较简单，就是定义awk处理时文件一行内容中列的分隔符，如果不设置默认是空格。</p>
+
+<p>如文件中一行内容为<code class="language-plaintext highlighter-rouge">a-b-c</code>，然后指定<code class="language-plaintext highlighter-rouge">awk -F '-' ...</code>，则awk处理时就会以<code class="language-plaintext highlighter-rouge">a</code>为第一列,<code class="language-plaintext highlighter-rouge">b</code>为第二列……,回想一下<code class="language-plaintext highlighter-rouge">linux</code>中的命令<code class="language-plaintext highlighter-rouge">cut</code>，它也是用来取文件中某一列内容的，他的<code class="language-plaintext highlighter-rouge">-d</code>参数指定列分隔符，然后用<code class="language-plaintext highlighter-rouge">-f</code>指定取那一列，如:</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">$ </span><span class="nb">cat test
+</span>a-b-c
+d-e-f
+g-h-k
+<span class="nv">$ </span><span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'-'</span> <span class="nt">-f</span> 2
+b
+e
+h</code></pre></figure>
+
+<blockquote>
+<p>awk处理时可以根据<code>patten</code>匹配特定的行进行`script`内的处理，不匹配的行则不处理。</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">match</code>一般格式是<code class="language-plaintext highlighter-rouge">/regex/</code>，两条斜线建的正则表达式可以提供丰富的匹配的方式对行进行匹配处理。
+如<code class="language-plaintext highlighter-rouge">awk -F '-' '/^rex*/ {script}' filename</code>就表示只处理以<code class="language-plaintext highlighter-rouge">rex</code>开头的行。</p>
+
+<blockquote>
+<p>
+    awk还提供了两个比较特殊的匹配模式，`BEGIN`和`END`。
+</p>
+</blockquote>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">BEGIN {script}</code>表示在文件读取所有行之前执行<code class="language-plaintext highlighter-rouge">script</code>内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">END {script}</code>表示在文件读取所有行之后执行<code class="language-plaintext highlighter-rouge">script</code>内容。</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">script</code>内书写awk对匹配到的行要执行的命令语句，语法类<code class="language-plaintext highlighter-rouge">C</code>语言，如:</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="s1">'{print $n}'</span> <span class="nb">test</span></code></pre></figure>
+
+<p>意思就是打印文件<code class="language-plaintext highlighter-rouge">test</code>中每一行的第<code class="language-plaintext highlighter-rouge">n</code>列。而列的定义是默认空格分割，可以使用<code class="language-plaintext highlighter-rouge">-F</code>选项指定，<code class="language-plaintext highlighter-rouge">$</code>后面可以跟<code class="language-plaintext highlighter-rouge">1,2,3,...,NF-1,NF</code>，其中<code class="language-plaintext highlighter-rouge">NF</code>表示最后一列的号码。</p>
+
+<p>除了<code class="language-plaintext highlighter-rouge">NF</code>，<code class="language-plaintext highlighter-rouge">awk</code>中还有哪些特殊符号呢？</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">NR</code> 行号</li>
+  <li><code class="language-plaintext highlighter-rouge">NF</code> 最后一列列号</li>
+  <li><code class="language-plaintext highlighter-rouge">ARGC</code> 命令行参数个数</li>
+  <li><code class="language-plaintext highlighter-rouge">ARGV</code> 命令行参数数组</li>
+  <li><code class="language-plaintext highlighter-rouge">ENVIRON</code> 支持队列中系统环境变量的使用</li>
+  <li><code class="language-plaintext highlighter-rouge">FILENAME</code> awk浏览的文件名</li>
+  <li><code class="language-plaintext highlighter-rouge">FNR</code> 浏览文件的记录数</li>
+  <li><code class="language-plaintext highlighter-rouge">FS</code> 设置输入列分隔符，等价于命令行 -F选项</li>
+  <li><code class="language-plaintext highlighter-rouge">OFS</code> 输出列分隔符</li>
+  <li><code class="language-plaintext highlighter-rouge">RS</code> 输入行分隔符</li>
+  <li><code class="language-plaintext highlighter-rouge">ORS</code> 输出行分隔符</li>
+</ul>
+
+<h4 id="awk数组">awk数组</h4>
+
+<p><code class="language-plaintext highlighter-rouge">awk</code>的数组和<code class="language-plaintext highlighter-rouge">C</code>语言的数组其实没什么不同，只是在<code class="language-plaintext highlighter-rouge">awk</code>中的数组不需要<code class="language-plaintext highlighter-rouge">声明</code>。</p>
+
+<p>如现在有一个文件，里面的内容如下：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat test
+</span>a-d
+b-e
+a-f
+c-g
+f-z
+</code></pre></div></div>
+<p>每一行的两个字母构成了一个字母对，现在需要根据第一个字母进行去重，对于第一个字母相同的字母对只保留最后出现的那一个字母对。应该怎么做？</p>
+
+<p>使用<code class="language-plaintext highlighter-rouge">awk</code>数组即可。</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">awk</span> <span class="nt">-F</span> <span class="s1">'-'</span> <span class="s1">'{a[$1]=$2}END{for(k in a) print k,a[k]}'</span> <span class="nb">test
+</span>a f
+b e
+c g
+f z
+</code></pre></div></div>
+<p>这里有一个问题，有些同学会将命令写为<code class="language-plaintext highlighter-rouge">awk -F '-' 'BEGIN{a[$1]=$2}END{for(k in a) print k,a[k]}' test</code>，但是这样的话会发现将什么也不输出。这是为什么呢？</p>
+
+<p>这就跟<code class="language-plaintext highlighter-rouge">awk</code>提供的两个特殊的表达式<code class="language-plaintext highlighter-rouge">BEGIN</code>和<code class="language-plaintext highlighter-rouge">END</code>相关了。</p>
+
+<p><code class="language-plaintext highlighter-rouge">awk</code>提供<code class="language-plaintext highlighter-rouge">BEGIN</code>和<code class="language-plaintext highlighter-rouge">END</code>的作用是在程序开始之能够初始化一些状态，在程序结束之后能够做一些扫尾工作。</p>
+
+<p>在<code class="language-plaintext highlighter-rouge">BEGIN</code>之后的<code class="language-plaintext highlighter-rouge">{}</code>内的操作将在<code class="language-plaintext highlighter-rouge">awk</code>开始扫描输入之前执行，而<code class="language-plaintext highlighter-rouge">END</code>之后的<code class="language-plaintext highlighter-rouge">{}</code>内的操作将在扫描完全部的输入之后执行。因此，通常使用BEGIN来显示变量和预置（初始化）变量，使用END来输出最终结果。</p>
+
+<p>所以很明显，这位同学写的语句中为数组赋值的语句只在<code class="language-plaintext highlighter-rouge">awk</code>扫描文本之前执行一遍，而在扫描文本的过程中并没有向数组中填写内容，所以没有任何输出结果。</p>
+
+<p>那么<code class="language-plaintext highlighter-rouge">awk</code>支不支持二维数组呢？其实也支持，<code class="language-plaintext highlighter-rouge">awk</code>的数组可以理解为一个<code class="language-plaintext highlighter-rouge">字典</code>，它的索引只接受字符串，但是我们可以使用数字索引，<code class="language-plaintext highlighter-rouge">awk</code>内部会把数字内部索引转换为字符串。</p>
+
+<p>使用<code class="language-plaintext highlighter-rouge">a[1,2]</code>时代表使用了二维数组，但是<code class="language-plaintext highlighter-rouge">awk</code>内部会将其转换为<code class="language-plaintext highlighter-rouge">a["1\0342"]</code>。其中<code class="language-plaintext highlighter-rouge">,</code>可以用<code class="language-plaintext highlighter-rouge">\034</code>代替，也可以使用<code class="language-plaintext highlighter-rouge">SUBSEP</code>代替，它的意思是<code class="language-plaintext highlighter-rouge">Subscript Sepqrator</code>数组下标分隔符。</p>
+
+<p>所以下面的几条命令是等价的:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN {Arr[2,79]=78 print Arr["2\03479"]}'</span>
+<span class="nb">awk</span> <span class="s1">'BEGIN {Arr[2,79]=78 print Arr[2,79]}'</span>
+<span class="nb">awk</span> <span class="s1">'BEGIN {Arr[2,79]=78 print Arr["2\03479"]}'</span>
+<span class="nb">awk</span> <span class="s1">'BEGIN {Arr[2,79]=78 idx=2 SUPBSEP 79 print Arr[idx]}'</span>
+</code></pre></div></div>
+
+<h4 id="条件和循环">条件和循环</h4>
+
+<p><code class="language-plaintext highlighter-rouge">awk</code>中的<code class="language-plaintext highlighter-rouge">{}</code>可以书写流程控制语句，如条件语句:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">(</span>expression<span class="o">)</span> <span class="o">{</span>
+    statement<span class="p">;</span>
+    statement<span class="p">;</span>
+    ... ...
+<span class="o">}</span>
+
+<span class="k">if</span> <span class="o">(</span>expression<span class="o">)</span> <span class="o">{</span>
+    statement<span class="p">;</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    statement2<span class="p">;</span>
+<span class="o">}</span>
+
+<span class="k">if</span> <span class="o">(</span>expression<span class="o">)</span> <span class="o">{</span>
+    statement1<span class="p">;</span>
+<span class="o">}</span> <span class="k">else if</span> <span class="o">(</span>expression1<span class="o">)</span> <span class="o">{</span>
+    statement2<span class="p">;</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    statement3<span class="p">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>条件语句中常使用的逻辑运算符也跟<code class="language-plaintext highlighter-rouge">C</code>语言一样，如<code class="language-plaintext highlighter-rouge">&amp;&amp;</code>表示且等。</p>
+
+<p>循环:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span><span class="o">(</span>expression<span class="o">){</span>
+    statement
+<span class="o">}</span>
+<span class="k">for</span><span class="o">(</span>k <span class="k">in </span>arrary<span class="o">){</span>
+    statement
+<span class="o">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">awk</code>中的循环和<code class="language-plaintext highlighter-rouge">C</code>语言基本相同，都可以使用<code class="language-plaintext highlighter-rouge">break</code>、<code class="language-plaintext highlighter-rouge">continue</code>等有语句。</p>
+
+<h4 id="实验">实验</h4>
+
+<p>下面来介绍一个小例子，说明<code class="language-plaintext highlighter-rouge">awk</code>的强大应用，取出下列文本中电话号码并进行去重。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat test
+</span>a-111111-hgehe
+b-222222-popop
+c-111111-cdsfs
+d-123456-rtryr
+a-245124-bdfef
+c-123456-aaads
+</code></pre></div></div>
+
+<p>可以使用<code class="language-plaintext highlighter-rouge">cut</code>命令:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cut</span> <span class="nt">-d</span> - <span class="nt">-f</span> 2 <span class="nb">test</span> | <span class="nb">sort</span> | <span class="nb">uniq</span> <span class="nt">-c</span>
+      1
+      1 a hehe a
+      1 b hehe b
+      1 c hehe c
+      2 c hehe d
+      2 f hehe f
+</code></pre></div></div>
+<p>也可以使用<code class="language-plaintext highlighter-rouge">awk</code>：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'{print $2}'</span> <span class="nb">test</span> | <span class="nb">sort</span> | <span class="nb">uniq</span> <span class="nt">-c</span>
+</code></pre></div></div>
+
+<table>
+  <tbody>
+    <tr>
+      <td>zcat brec_likee_mixer_d.log.[1-9].gz</td>
+      <td>grep ‘rrk_bd_exp1’</td>
+      <td>awk -F ‘recall ts:’ ‘{print$2}’</td>
+      <td>cut -d ‘ ‘ -f 1</td>
+      <td>awk ‘{sum+=$1}END{print(sum/NR)}’</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>function __readINI() {
+    INIFILE=$1; SECTION=$2; ITEM=$3
+    #res=<code class="language-plaintext highlighter-rouge">awk -F '=' '{if($0~/^\['$SECTION'\]\s*$/){a=1}else if(a==1&amp;&amp;$1=="'$ITEM'"){print $2;exit}else if(a==1&amp;&amp;($0~/^\[/||$0~/^$/))exit}' $INIFILE</code>
+    res=<code class="language-plaintext highlighter-rouge">awk -F '=' '{if($0~/^\['$SECTION'\]\s*$/){a=1}else if(a==1&amp;&amp;$1=="'$ITEM'"){for(i=2;i&lt;NF;i++){printf("%s=",$i)};print $NF;exit}else if(a==1&amp;&amp;$0~/^\[/)exit}' $INIFILE</code>
+    if [[ -z <code class="language-plaintext highlighter-rouge">echo $res</code> ]];then
+        SECTION=globalParamDefault
+        res=<code class="language-plaintext highlighter-rouge">awk -F '=' '{if($0~/^\['$SECTION'\]\s*$/){a=1}else if(a==1&amp;&amp;$1=="'$ITEM'"){for(i=2;i&lt;NF;i++){printf("%s=",$i)};print $NF;exit}else if(a==1&amp;&amp;$0~/^\[/)exit}' $INIFILE</code>
+    fi
+    echo $res
+}</p>
+
+<h3 id="参考链接">参考链接</h3>
+<ul>
+  <li><a href="http://blog.csdn.net/panpan639944806/article/details/19932543">awk的BEGIN和END</a></li>
+</ul>
+
+
+    </div>
+
+    <div class="clear"></div>
+
+    <a class="tip-btn" href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
+        <img src="/img/tip.png" style="width: 80px" />
+    </a>
+    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
+
+    
+        <blockquote class="seriesNote">
+
+    <h4>系列博文：Linux三剑客</h4>
+
+
+    <ul>
+    
+    
+        
+            
+                <li class="series-self">
+            
+
+            
+                文本处理三剑客之剑仙awk
+            
+
+            
+            </li>
+        
+    
+        
+    
+    </ul>
+</blockquote>
+
+    
+
+    
+    
+    
+    <hr />
+
+    <!-- <p class="no-indent">微信公众号</p> -->
+
+    <div class="social-share">
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=文本处理三剑客之剑仙awk&url=/2017/11/07/awk.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=文本处理三剑客之剑仙awk&u=/2017/11/07/awk.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=/2017/11/07/awk.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=文本处理三剑客之剑仙awk&url=/2017/11/07/awk.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：文本处理三剑客之剑仙awk&url=/2017/11/07/awk.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=/2017/11/07/awk.html&name=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+    </div>
+
+    <blockquote class="relatedPosts">
+        
+        
+            
+            
+                
+            
+                
+                
+                    
+                
+                
+            
+                
+                
+                    
+                
+                
+            
+        
+            
+            
+                
+            
+        
+        
+
+        <h4>最近发表</h4>
+        <ul>
+        
+            <li class="relatedPost">
+                <a href="/2019/12/20/reading-report.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    2019 年读书小结
+                
+                </a>
+            </li>
+        
+            <li class="relatedPost">
+                <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    文本处理三剑客之剑仙awk
+                
+                </a>
+            </li>
+        
+        </ul>
+        <a class="button" href="/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
+    </blockquote>
+
+
+
+    <div class="about-author">
+    <div class="license">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/img/cc.png" />
+        </a>
+        <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://zhangwenli.com" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>, based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/ovilia/blog" rel="dct:source">Github</a>. You can see the source code of this blog site at <a href="https://github.com/Ovilia/blog/tree/gh-pages" target="_blank">github.com/Ovilia/blog</a>.</div>
+    </div>
+    <div class="follow-me">
+        <div class="follow-me-txt">Follow <strong>Lonny</strong> at</div>
+        <a class="social-share-element social-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', window.location.pathname]);"></a>
+<a class="social-share-element social-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', window.location.pathname]);"></a>
+<a class="social-share-element social-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', window.location.pathname]);"></a>
+<a class="social-share-element social-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', window.location.pathname]);"></a>
+<a class="social-share-element social-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', window.location.pathname]);"></a>
+<a class="social-share-element social-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', window.location.pathname]);"></a>
+<a class="social-share-element social-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', window.location.pathname]);"></a>
+<a class="social-share-element social-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', window.location.pathname]);"></a>
+
+    </div>
+    <div style="clear: both"></div>
+</div>
+
+
+    <h1>评论</h1>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    setTimeout(function() {
+        var disqus_shortname = 'lonny';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    }, 10000);
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div class="rotLeft rotBottom pageBack"></div>
+<div class="rotRight rotBottom pageBack"></div>
+
+            <div id="footer-nav">
+                | <a href="#">Top</a> |
+                <a href="">Blog</a> |
+                <a href="http://zhangwenli.com/#ovilia-home">About Me</a> |
+                <a href="mailto:me@zhangwenli.com" target="_blank">Email</a> |
+                <a href="/feed.xml">RSS</a> |
+                <a href="/meta">More</a> |
+            </div>
+
+            <div id="footer-follow">
+                <a class="footer-follow-element footer-follow-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', 'Footer']);"></a>
+            </div>
+        </div>
+
+        <div id="footerDiv">
+            <div id="footerImg"></div>
+            <div id="footerCnt">
+                <div id="footer">
+                </div>
+            </div>
+        </div>
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript" src="/js/lazyLoad.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+    </body>
+</html>
+

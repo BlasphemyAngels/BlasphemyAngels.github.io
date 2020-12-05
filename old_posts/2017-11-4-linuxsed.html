@@ -1,0 +1,120 @@
+<p>##</p>
+
+<h3 id="sed">sed</h3>
+
+<p>   sed(stream editor)流编辑器</p>
+
+<ul>
+  <li>sed -n 取消自动打印（sed会自动将全部未过滤内容输出）</li>
+  <li>sed -i 将更改作用到源文件，不加<code class="language-plaintext highlighter-rouge">-i</code>则只会把<code class="language-plaintext highlighter-rouge">sed</code>的输出修改而不会改变源文件</li>
+</ul>
+
+<p>   sed替换用法：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">sed 's#string1#string2#g' filename</code>
+   其中<code class="language-plaintext highlighter-rouge">s</code>代表<code class="language-plaintext highlighter-rouge">sub</code>，意思是替换，<code class="language-plaintext highlighter-rouge">#</code>是分隔符，<code class="language-plaintext highlighter-rouge">string1</code>要替换的文本，<code class="language-plaintext highlighter-rouge">string1</code>要替换成的文件，<code class="language-plaintext highlighter-rouge">g</code>是<code class="language-plaintext highlighter-rouge">global</code>全局的意思，可以不带<code class="language-plaintext highlighter-rouge">g</code>，不带<code class="language-plaintext highlighter-rouge">g</code>的意思是值替换第一个（想想<code class="language-plaintext highlighter-rouge">vim</code>中的替换）。
+   <code class="language-plaintext highlighter-rouge">#</code>可以换成别的字符，但是要换的话，3个<code class="language-plaintext highlighter-rouge">#</code>都得换，换成的字符不能是<code class="language-plaintext highlighter-rouge">s</code>、<code class="language-plaintext highlighter-rouge">g</code>（当<code class="language-plaintext highlighter-rouge">s</code>或<code class="language-plaintext highlighter-rouge">g</code>出现在命令体中时）或<code class="language-plaintext highlighter-rouge">string1</code>和<code class="language-plaintext highlighter-rouge">string2</code>中的任何字符，如果非得使用上述字符，则加反斜线<code class="language-plaintext highlighter-rouge">\\</code>。
+sed 流编辑器 增删改查 过滤 取行
+<!--more--></li>
+</ul>
+
+<p>sed [options] [sed-command] [input]</p>
+
+<p><code class="language-plaintext highlighter-rouge">sed命令</code>前面可以加地址范围<code class="language-plaintext highlighter-rouge">n1[,n2]</code></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">10[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">10,20[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">10,+20[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">1～2[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">10，$[sed-command]</code></li>
+</ul>
+
+<p>地址还支持正则匹配</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">/libai/[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/libai/,/luna/[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/libai/,$[sed-command]</code>
+如果匹配有多个，回想<code class="language-plaintext highlighter-rouge">sed</code>的流程来分析</li>
+</ul>
+
+<p>地址还支持数字和正则匹配混合</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">10,/libai/[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/libai/,10[sed-command]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/libai/,+10[sed-command]</code></li>
+</ul>
+
+<h3 id="增删改查">增删改查</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">a</code> 追加 <code class="language-plaintext highlighter-rouge">sed '2a hehehe' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">i</code> 插入 <code class="language-plaintext highlighter-rouge">sed '2i hehehe' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">a</code>和<code class="language-plaintext highlighter-rouge">i</code>的区别可以想想<code class="language-plaintext highlighter-rouge">vim</code>的<code class="language-plaintext highlighter-rouge">a</code>和<code class="language-plaintext highlighter-rouge">i</code></li>
+  <li><code class="language-plaintext highlighter-rouge">a</code>和<code class="language-plaintext highlighter-rouge">i</code>可以单行增加也可以多行增加</li>
+  <li><code class="language-plaintext highlighter-rouge">sed 2a hehehe\nhohoho filename</code></li>
+  <li>多行时可以在文本中显示加入<code class="language-plaintext highlighter-rouge">\n</code>也可以在写命令要加入文本时在终端显式敲回车</li>
+  <li><code class="language-plaintext highlighter-rouge">d</code> 删除 <code class="language-plaintext highlighter-rouge">sed 'd' filename</code>全部删除</li>
+  <li><code class="language-plaintext highlighter-rouge">sed '2d' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">sed '2,5d' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">c</code> 行间替换,用法跟前面的<code class="language-plaintext highlighter-rouge">a</code>和<code class="language-plaintext highlighter-rouge">i</code>、<code class="language-plaintext highlighter-rouge">d</code>相似</li>
+  <li><code class="language-plaintext highlighter-rouge">s</code> 替换指定字符串，<code class="language-plaintext highlighter-rouge">g</code>命令替换标志—全局替换标志</li>
+  <li><code class="language-plaintext highlighter-rouge">sed 's#str1#str2#g' filename</code>将str1替换为str2</li>
+  <li><code class="language-plaintext highlighter-rouge">-i</code>参数 不加此参数，那么sed所做的任何操作都是在模式空间中做的，也就是在文件在内存中的映像做的，原文件内容是不变的，加了这个参数，就将在模式空间做的更改更新到文件上。</li>
+  <li>变量替换 <code class="language-plaintext highlighter-rouge">sed s#$x#$y#g zimux.txt</code> 将zimux.txt中变量x中的值替换为变量为y的值。这种情况下，sed-command不能使用单引号，可以使用双引号和什么都不加。非要用单引号，可以<code class="language-plaintext highlighter-rouge">sed 's#'$x'#'$y'#' filename</code>也可以使用<code class="language-plaintext highlighter-rouge">eval sed 's#$x#y#g' filename</code>。</li>
+  <li>分组替换 跟正则表达式的分组替换和vim中的分组匹配替换是一样的。<code class="language-plaintext highlighter-rouge">echo 'abc123' | sed 's#[a-z]+([0-9]+)#\1#g'</code></li>
+  <li><code class="language-plaintext highlighter-rouge">-r</code>选项启动扩展正则表达式</li>
+  <li>特殊符号&amp; 代表被匹配的内容,相当于<code class="language-plaintext highlighter-rouge">\0</code>第0组
+企业案例：批量重命名文件
+<code class="language-plaintext highlighter-rouge">ls *.jpg | sed -r 's#(.*)_finished.*#mv &amp; \1.jpg#g'</code></li>
+  <li><code class="language-plaintext highlighter-rouge">rename</code>命令</li>
+  <li><code class="language-plaintext highlighter-rouge">p</code>打印输出的内容，常与<code class="language-plaintext highlighter-rouge">-n</code>选项配合使用，<code class="language-plaintext highlighter-rouge">-n</code>选项取消默认输出。其实默认情况下会对匹配到的内容输出了，<code class="language-plaintext highlighter-rouge">p</code>又输出了一次。所以加上<code class="language-plaintext highlighter-rouge">-n</code>取消默认输出。</li>
+  <li>set 修改文件及另存文件及替换命令</li>
+  <li>修改文件 <code class="language-plaintext highlighter-rouge">-i</code></li>
+  <li>备份 <code class="language-plaintext highlighter-rouge">sed -i[SUFFIX] 'set-commant' filename</code></li>
+  <li>另存文件 <code class="language-plaintext highlighter-rouge">sed 'w outputfile' filename</code> 将模式空间的内容另存到<code class="language-plaintext highlighter-rouge">outputfile</code>文件中</li>
+  <li><code class="language-plaintext highlighter-rouge">sed '[地址范围][模式范围] s#[替换的字符串]#[替换后的字符串]#[替换标志]' [输入文件]</code></li>
+  <li>替换标志  全局标志g  数字标志1，,2，,3，…  打印p 写w 忽略大小写i  执行命令标志e</li>
+  <li>地址范围是指定哪一行放入模式空间操作。</li>
+  <li>全局标志g 不带g代表已经被前面选中的东西中匹配的第1列 带g表示匹配的所有列</li>
+  <li><code class="language-plaintext highlighter-rouge">Ms# # #Ng</code></li>
+  <li>Ms 对第M行进行操作 不带g表示对匹配的第一列进行操作 带g 表示匹配的所有列</li>
+  <li>Ng 从第N处/列开始匹配</li>
+  <li>Ms Ng 从第M行的第N出匹配进行处理</li>
+  <li>数字表示X 只对第X处/列替换</li>
+  <li>打印<code class="language-plaintext highlighter-rouge">p</code></li>
+  <li><code class="language-plaintext highlighter-rouge">sed 's#ab#dd#;w outputfile' filename</code> 写命令 <code class="language-plaintext highlighter-rouge">w</code></li>
+  <li><code class="language-plaintext highlighter-rouge">sed 's#ab#dd#w outputfile' filename</code> 写标志 <code class="language-plaintext highlighter-rouge">w</code></li>
+  <li>两种是不同的</li>
+  <li>忽略大小写标志 <code class="language-plaintext highlighter-rouge">i</code></li>
+  <li>执行标志e 将模式空间的任何内容当做shell bash 命令执行</li>
+  <li>案例 系统开机启动优化</li>
+  <li><code class="language-plaintext highlighter-rouge">sed -r 's#(.*),(.*),(.*)#\L\3,\E\1,\U\2#g' filename</code></li>
+  <li>特殊符号= 获取行号</li>
+  <li>一条sed 命令执行多行sed命令 删除第三行到末尾的数字 并将10替换为01</li>
+  <li><code class="language-plaintext highlighter-rouge">sed -e '3,$d' -e 's#10#01#g' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">sed '3,$d;s#10#01#g' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">sed -f person.sed filename</code> <code class="language-plaintext highlighter-rouge">person.sed</code>是一个sed脚本</li>
+  <li>案例 一个文件100行，把第5，35，,70行单独拿出来</li>
+  <li><code class="language-plaintext highlighter-rouge">sed -n '3p;35p;70p' filename</code></li>
+  <li>特殊符号{}的用法</li>
+  <li><code class="language-plaintext highlighter-rouge">sed -n '2,4{p;=}' filename</code></li>
+  <li>l命令 打印中包含不可见字符</li>
+  <li>转换字符 <code class="language-plaintext highlighter-rouge">tf 'abc' 'ABC' &lt; filename</code></li>
+  <li>sed ‘y#abc#ABC#’ filename</li>
+  <li>退出sed命令q 执行到某个地方不再执行</li>
+  <li>从文件中读取数据 命令r</li>
+  <li>sed ‘r num.txt’ filename</li>
+  <li>保持空间和模式空间</li>
+  <li>模式空间：</li>
+  <li>n 清空当前模式空间，并读入下一行</li>
+  <li>N 不清空当前模式空间，并读入下一行，并用\n连接模式空间的两行</li>
+  <li>案例 用户名密码文件变为 stu=aaa</li>
+  <li><code class="language-plaintext highlighter-rouge">sed 'N;s#\n#=#' filename</code></li>
+  <li>sed操作多个文件</li>
+  <li>模拟其他命令</li>
+  <li>cat sed -n ‘p’  sed ‘N’ sed ‘n’ sed ‘s# # #’</li>
+  <li>grep sed -n ‘//p’ sed -n ‘// !p’</li>
+  <li>head sed -n ‘1,3p’ sed ‘2q’</li>
+  <li>wc sed -n ‘$=’</li>
+</ul>

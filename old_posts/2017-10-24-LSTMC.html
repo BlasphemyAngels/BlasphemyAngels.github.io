@@ -1,0 +1,178 @@
+<blockquote>这是一篇CVPR2017年的论文，使用带有复制机制的LSTM网络进行图像描述，它能够对新物体进行描述。</blockquote>
+<!--more-->
+
+<h2 id="正文">正文</h2>
+
+<p><a href="https://arxiv.org/abs/1708.05271">论文地址</a></p>
+
+<h3 id="摘要">摘要</h3>
+
+<p>   图像描述需要很大的训练图像-文本对，然而，在实践中获得足够的训练对的花费是很大的，由此使得最近提出的图像描述模型的建模能力被限制在训练集的语料库之内，也就是很难去描述语料库之外的物体。</p>
+
+<p>   在本篇论文中，作者提出了一种带有复制机制的LSTM网络（简称为LSTM-C），它的网络结构是包含复制机制的卷积神经网络加上能够进行图像描述的循环神经网络，它能够描述在训练语料库外的新的物体。</p>
+
+<p>   模型先使用物体探测数据集训练对新物体的分类器。然后通过一个带有复制机制的解码器RNN进行描述的生成，它会从新物体中选择合适的词放在描述的合适位置。</p>
+
+<h3 id="引言">引言</h3>
+
+<p>   图像描述是一项跟计算机视觉和自然语言处理相关的研究方向。现有的方法都是基于CNN-RNN机制的。如下图所示：</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LRCN.png?raw=true" alt="LRCN" /></p>
+
+<p>   但是这种方法没有对于训练集语料库之外的物体进行探测。但是获得更丰富的训练数据集花费又是很大的。</p>
+
+<p>   文章通过使用额外的视觉探测数据集训练物体探测器来消除上面提到的限制。文章提出一种带有复制机制的LSTM网络。复制机制来自于人类语言交流中，通过将输入的一个片段不做任何修改直接放入到输出中，在人类的语言过程中这一机制的体现是<code class="language-plaintext highlighter-rouge">死记硬背</code>，人类在组织语言时是通过从记忆中的一些话中拿到一些片段直接放入到要说的话中。作者将复制机制扩展为从另外的语料库中选择单词并将其放在图像的描述中的合适的位置。</p>
+
+<p>   文章的主要贡献就是将使用复制机制从外部物体探测数据选取物体和生成模型生成句子有效结合。</p>
+
+<h3 id="相关工作">相关工作</h3>
+
+<h4 id="image-caption">Image Caption</h4>
+<p>   图像描述模型可以被分成三种类型：</p>
+
+<ul>
+  <li>基于模板</li>
+  <li>基于搜索</li>
+  <li>基于语言模型</li>
+</ul>
+
+<h4 id="novel-object-caption">Novel Object Caption</h4>
+
+<p>   新事物描述是一个最近被广泛关注的新问题，通过使用已有的图像-文本对和没有配对的图像文本数据在RNN-base模型的基础上对训练集语料库以外的事物进行描述。</p>
+
+<h3 id="带复制机制的图像描述">带复制机制的图像描述</h3>
+
+<p>   文章提出的模型通过将复制机制加入到CNN-RNN图像描述模型的网络中的解码阶段，使得在产生下一个单词的时候不仅需要RNN的解码还需要复制机制的作用。</p>
+
+<p>   模型的总体架构如下：
+<span id="CNN_LSTM"><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_C.png?raw=true" alt="LSTM-C" /></span></p>
+
+<h4 id="符号定义">符号定义</h4>
+
+<p>   假设图像\(I\in R^{D_v}\)的描述为\(S={w_1,w_2,…,w_{N_s}},w_t\in R^{D_w}\)，描述包含\(N_s\)个单词，这样句子就能够被描述成\(D_w\times N_s\)的矩阵\(W\equiv [w_1,w_2,…,w_{N_s}]\)。</p>
+
+<p>   图像文本对数据的文本字典用\(W_g\)表示。文章使用另外的图像识别数据集训练物体探测器，非成对的物体识别数据集的字典用\(W_c\)，图像I中含有词\(w_i\in W_c\)表示的物体的概率用\(\delta(w_i)\)表示。下图是一般情况下两种字典的关系：</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_C_DIC.png?raw=true" alt="LSTM_C_dic" /></p>
+
+<p>   至于物体探测器用什么方式进行探测，文章对于单标签的图像数据集（如<code class="language-plaintext highlighter-rouge">ImageNet</code>数据集）使用<code class="language-plaintext highlighter-rouge">CNN</code>训练分类器，对于多标签的图像数据集（如<code class="language-plaintext highlighter-rouge">MSCOCO</code>）使用<code class="language-plaintext highlighter-rouge">多实例学习</code>。</p>
+
+<h4 id="图像描述中的序列模型">图像描述中的序列模型</h4>
+
+<table>
+  <tbody>
+    <tr>
+      <td>   受机器翻译中的<code class="language-plaintext highlighter-rouge">encoder-decoder</code>框架的启发，最近的图像描述框架都是基于<code class="language-plaintext highlighter-rouge">encoder-decoder</code>的。这种模型首先将图像编码成为固定变量的向量，然后将这个向量解码成目标句子。模型的训练目标是最小化能力函数\(E(I,W)=-log\ Pr(W</td>
+      <td>I)\)，也就是最大化在给定图像I的条件下生成描述W的概率。</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <tr>
+      <td>   在生成每一个词的时候，通过RNNs会得到前面已经生成的词的模型，所以概率\(Pr(W</td>
+      <td>I)\)可以被表示成为：</td>
+    </tr>
+  </tbody>
+</table>
+
+\[log\ Pr(W|I)=\sum\_{t=1}^{N\_s}log\ Pr(w\_t|I,w\_0,w\_1,...,w\_{t-1})\]
+
+<p>   模型的框架图跟上面的<a href="#CNN_LSTM">图</a>是一样的。</p>
+
+<h4 id="复制机制">复制机制</h4>
+
+<p>   复制机制已经被证明在使用外部字典的序列学习（如文本摘要）中很有效(<a href="https://arxiv.org/abs/1708.05271">论文</a>)。复制机制来自于人类语言交流中，通过将输入的一个片段不做任何修改直接放入到输出中，在人类的语言过程中这一机制的体现是<code class="language-plaintext highlighter-rouge">死记硬背</code>，人类在组织语言时是通过从记忆中的一些话中拿到一些片段直接放入到要说的话中。作者将复制机制扩展为从另外的语料库中选择单词并将其放在图像的描述中的合适的位置。</p>
+
+<p>   在第t步的解码时，生成的单词\(w{t+1}\)直接从图像探测数据集中复制过来的概率为：</p>
+
+<p>\(Pr\_t^c(w\_{t+1})=\varphi(w\_{t+1}^T M\_c)h^t\delta(w\_{t+1})\)
+其中\(M_c\in R^{D_w\times D_h}\)代表文本的转换映射矩阵，\(\varphi\)代表元素级的非线性激活函数，\(h_t\)代表<code class="language-plaintext highlighter-rouge">LSTM</code>的上一步解码的输出。\(\delta(w_{t+1})\)代表词\(w_{t+1}\)在当前图像中的概率。</p>
+
+<h4 id="带有复制机制的lstm">带有复制机制的LSTM</h4>
+
+<p>   将复制机制加入到LSTM中取描述新的物体，在LSTM解码过程中预测下一个单词时同时利用解码生成和复制机制得到下一词的概率。复制机制得到的词可能没在LSTM用来训练的成对数据集中出现，这样使用复制机制就能描述成对数据集之外的新物体。</p>
+
+<p>   这样就可以定义最后的概率了，对于第t步的解码过程，得到单词\(w_{t+1}\)的概率为：</p>
+
+<p>\(Pr\_t(w\_{t+1})=
+\begin{cases}
+\frac{1}{K}e^{Pr\_t^g(w\_{t+1})}\quad\quad\quad\quad\quad\quad\quad,w\_{t+1}\in W\_g\bigcap \overline{W\_c}\\\\
+\frac{\lambda}{K}e^{Pr\_t^g(w\_{t+1})}+\frac{1-\lambda}{K}e^{Pr\_t^c(w\_{t+1})},w\_{t+1}\in W\_g\bigcap W\_c\\\\
+\frac{1}{K}e^{Pr\_t^c(w\_{t+1})}\quad\quad\quad\quad\quad\quad\quad,w\_{t+1}\in \overline{W\_g}\bigcap W\_c\\\\
+0\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad ,otherwise
+\end{cases}\)
+   其中\(\lambda\)代表复制机制和LSTM生成对下一次生成起作用的调节比重，K代表softmax的归一化项，\(Pr_t^g(w_{t+1})\)代表LSTM生成词\(w_{t+1}\)的概率。</p>
+
+<p>   这个概率的计算就是<code class="language-plaintext highlighter-rouge">copy layer</code>的作用。</p>
+
+<p>   则损失函数表示为：</p>
+
+\[E(I|S)=-\sum\_{t=0}^{N\_s-1}log\ Pr\_t(w\_{t+1})\]
+
+<p>   N表示训练集中的图像文本对数目，则要解决的问题可以总结为以下最优化问题：</p>
+
+\[\min\_{\theta}\frac{1}{N}\sum\_{i=1}^{N}E(I^{(i)}|S^{(i)})+|\theta|^2\]
+
+<h3 id="实验">实验</h3>
+
+<h3 id="数据集">数据集</h3>
+
+<ul>
+  <li>Held-out MSCOCO
+   去除不含<code class="language-plaintext highlighter-rouge">bottle</code>，<code class="language-plaintext highlighter-rouge">bus,</code>，<code class="language-plaintext highlighter-rouge">couch,</code>，<code class="language-plaintext highlighter-rouge">microwave,</code>，<code class="language-plaintext highlighter-rouge">pizza,</code>，<code class="language-plaintext highlighter-rouge">racket</code>， <code class="language-plaintext highlighter-rouge">suitcase,</code>和<code class="language-plaintext highlighter-rouge">zebra</code>八种物体的数据剩下的数据集。每张图片有五句描述，</li>
+  <li>ImageNet
+   挑选出物体不在MSCOCO数据集中出现的图像进行训练，ImageNet数据集用来训练物体探测器。</li>
+</ul>
+
+<h3 id="实验设置">实验设置</h3>
+
+<h4 id="特征和参数设置">特征和参数设置</h4>
+
+<p>   图像特征使用16层VGG网络的第七层全连接网络特征。单词表示为<code class="language-plaintext highlighter-rouge">one-hot</code>和<code class="language-plaintext highlighter-rouge">glove</code>。多实例学习采用从VGG网络扩展来的全连接网络(FCN)。</p>
+
+<h4 id="评估标准">评估标准</h4>
+
+<h5 id="meteor">METEOR</h5>
+
+<p>   参加网上博文：<a href="http://blog.csdn.net/jkwwwwwwwwww/article/details/52846728">机器翻译中的评价标准</a></p>
+
+<p>   有的时候<code class="language-plaintext highlighter-rouge">METEOR</code>分数很高，但是新物体描述能力很弱，于是为了有效的测试模型对新物体的描述能力使用<code class="language-plaintext highlighter-rouge">F1-分数</code>。</p>
+
+<h5 id="f1分数">F1分数</h5>
+
+<p>   下面是从<a href="https://baike.baidu.com/item/F1%E5%88%86%E6%95%B0/13864979?fr=aladdin">百度百科</a>参考的一张图：</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_c_F1.png?raw=true" alt="LSTN_c_F1" /></p>
+
+<p>   为了更好的评估模型对新物体的描述能力，使用了下面两种评估标准：</p>
+
+<h5 id="novel">Novel</h5>
+
+<p>   在生成的句子中的新物体占总的新物体数量的比例。</p>
+
+<h5 id="accuracy">Accuracy</h5>
+
+<p>   描述新物体正确的比例。即对含有新物体图片描述正确的数量与含有此新物体的总的图片数量的比值。</p>
+
+<h4 id="实验分析">实验分析</h4>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_C_exp.png?raw=true" alt="LSTM_C_exp" />
+   分析可以得出，文章提出的模型超过其他模型，除了<code class="language-plaintext highlighter-rouge">couch</code>和<code class="language-plaintext highlighter-rouge">microwave</code>，因为这些东西在物体探测器中不容易判别，所以效果不好。
+<img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_C_exp2.png?raw=true" alt="LSTM_C_exp2" /> 
+   上图是在ImageNet数据集的实验结果。
+   生成的描述对比图：
+<img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_C_exp3.png?raw=true" alt="LSTM_C_exp3" /></p>
+<h4 id="lambda的分析">\(\lambda\)的分析</h4>
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM_C_lambda.png?raw=true" alt="LSTM_C_lambda" />
+   在0~0.6很平稳，在0.2时达到最大，大于0.6时下降很快，说明文章提出的复制机制起到了作用。</p>
+<hr />
+
+<h3 id="资料">资料</h3>
+
+<ul>
+  <li><a href="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM-C.pptx?raw=true">组会PPT</a></li>
+  <li><a href="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/LSTM-C.pdf?raw=true">组会pdf</a></li>
+</ul>
+

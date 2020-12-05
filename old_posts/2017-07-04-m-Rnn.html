@@ -1,0 +1,66 @@
+<p><a href="https://arxiv.org/pdf/1412.6632v5.pdf">论文地址</a></p>
+
+<p>文章提出一种多模态图像文本匹配的方法，使用CNN-RNN架构，如下图。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn.png?raw=true" alt="m-rnn" /></p>
+
+<!--more-->
+
+<p>其中前两层是词嵌入层，讲每一个词变为一个稠密向量。接下来是recurrent层，用来捕捉句子的语义和语法信息。这里注意训练好词向量之后不是将它们拼接起来而是输入到recurrent层，用来捕捉句子的语义和语法信息。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn-rt.png?raw=true" alt="m-rnn-rt" /></p>
+
+<p>我们先将上一个状态r(t-1)映射到词向量空间内w(t),然后再加上w(t)。</p>
+
+<p>下一层是多模态层，将文本向量，图像向量和recurrent层输出向量映射成为到一个统一空间。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn-m.png?raw=true" alt="m-rnn-m" /></p>
+
+<p>再相加得到多模态的输出。</p>
+
+<p>其中g函数使用如下：</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn-m.png?raw=true" alt="m-rnn-g" /></p>
+
+<p><a href="http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf">公式原文</a></p>
+
+<p>将值映射到一个相比双曲正切更加非线性的范围，而且收敛速度更快。</p>
+
+<p>最后一层是softmax层，输出概率。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn-loss.png?raw=true" alt="loss" /></p>
+
+<p>其中L代表句子长度，wi代表词，I代表图像。</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn-loss2.png?raw=true" alt="loss2" /></p>
+
+<p>N代表训练集单词数，Ns代表训练集中句子的个数。</p>
+
+<p>最小化cost相当于最大化由图像产生句子的最大概率。</p>
+
+<h3 id="数据集">数据集</h3>
+
+<ul>
+  <li>IAPR TC-12 20000张图片，每张图片评价1.7个描述，每张图片至少一个描述。</li>
+  <li>Flickr8K 8000张图片，每张图片5个描述，6000-train 1000-test 1000-vaildate</li>
+  <li>Flickr30K 31783张图片，每张图片5个描述。</li>
+  <li>MS COCO 82783张图片，每张图片5个描述。</li>
+</ul>
+
+<h3 id="部分实验结果">部分实验结果</h3>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/m-rnn-exper.png?raw=true" alt="exper" /></p>
+
+<h3 id="总结">总结</h3>
+
+<p>m-rnn是一个先生成后检索模型，其应该是第一个使用 CNN + RNN 这种 encoder-decoder 模型来做图文相关任务.</p>
+
+<ul>
+  <li>使用 VggNet 来抽取图片特征</li>
+  <li>使用两个 Embedding 层来对每个单词进行稠密特征编码</li>
+  <li>多模态部分的输入有图片特征、单词编码和上下文信息</li>
+  <li>
+    <p>目标函数是给定图片 I，使得生成的图片描述尽可能像图片的真实描述 S 。</p>
+  </li>
+  <li>image的特征并没有输入到RNN</li>
+</ul>

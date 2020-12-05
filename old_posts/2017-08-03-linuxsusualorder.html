@@ -1,0 +1,306 @@
+<h2 id="正文">正文</h2>
+<p>   在使用<code class="language-plaintext highlighter-rouge">linux</code>过程中会学习到很多有用的新命令。本文就总结一些我目前遇到的，以后会持续添加。 
+<!--more--></p>
+
+<h3 id="xsel">xsel</h3>
+
+<p>   xsel是一个在linux下管理复制粘贴功能的命令，具体可以使用<code class="language-plaintext highlighter-rouge">man xsel</code>查看。</p>
+
+<p>   我使用这个命令的初衷是我在<code class="language-plaintext highlighter-rouge">linux</code>下工作时。经常需要复制文件名或者文件的内容，当然可以使用鼠标，但是作为<code class="language-plaintext highlighter-rouge">vim</code>重度使用者，使用鼠标是不是太麻烦了？QAQ，于是就鼓捣了一些，找到了这个命令。</p>
+
+<h4 id="用法">用法</h4>
+
+<p>   在这里介绍一些常用的用法。</p>
+
+<p>   <code class="language-plaintext highlighter-rouge">xsel</code>是用来管理复制粘贴的选择器的，所谓选择器就是复制的数据放在哪（我的理解)，这里我用到的选择器是系统复制粘贴版<code class="language-plaintext highlighter-rouge">clipboard</code>。</p>
+
+<p>常用属性：</p>
+
+<ul>
+  <li>输入选项
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">-a, --append</code>
+将标准输入中的内容添加到选择器中</li>
+      <li><code class="language-plaintext highlighter-rouge">-f, --follow</code>
+当标准输入增加时，将增加的部分添加到选择器（我也不懂待查，一般也用不着）</li>
+      <li><code class="language-plaintext highlighter-rouge">-i, --input</code>
+将标准输入放入选择器</li>
+    </ul>
+  </li>
+  <li>输出选项
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">-o, --output</code>
+将选择器中的内容放入到标准输出中</li>
+    </ul>
+  </li>
+  <li>活动选项
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">-c, --clear</code>
+清空选择器中的内容</li>
+    </ul>
+  </li>
+  <li>选择器选项
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">-b, --clipboard</code>
+指定选择器为clipboard</li>
+    </ul>
+  </li>
+</ul>
+
+<p>   还有其他一些选项，但是不常用，这里不介绍，如果需要可以查看<code class="language-plaintext highlighter-rouge">man xsel</code></p>
+
+<p>常见使用：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">cat filename | xsel -b -i</code></li>
+</ul>
+
+<h3 id="tr">tr</h3>
+<p>   <code class="language-plaintext highlighter-rouge">tr</code>命令用来对标准输入中的字符进行转换和删除，然后将转换后的内容输出到标准输出。</p>
+<h4 id="命令格式">命令格式</h4>
+
+<p>   <code class="language-plaintext highlighter-rouge">tr [选项] 字符集1 [字符集2]</code> 将标准输入中的字符串1的字符转换为字符串2中的字符。</p>
+
+<h4 id="选项">选项</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-c, -C, --complement</code>
+  使用字符集1时使用的是它的补集，使用这个命令后，这个命令的字符集1已经实际上变成我们制定的字符集的补集。</li>
+  <li><code class="language-plaintext highlighter-rouge">-d, --delete</code>
+  删除字符集1中的字符，这里注意<code class="language-plaintext highlighter-rouge">-d</code>和<code class="language-plaintext highlighter-rouge">-c</code>选项搭配时的效果（删除咱们指导的字符集的补集中的字符）。</li>
+  <li><code class="language-plaintext highlighter-rouge">-s, --squeeze-repeats</code>
+  对于最后一个指定的字符集r如果指定了两个字符集那么就是字符集2，如果指定了一个字符集，那么就是字符集1）中的字符，如果它在标准输入中连续出现多次，那么将多次变为一次显示。如标准输入是<code class="language-plaintext highlighter-rouge">adfffffddccd</code>，指定的最后一个字符集是<code class="language-plaintext highlighter-rouge">fd</code>那么标准输入会将连续的f和连续的d变为一次，即标准输入变为<code class="language-plaintext highlighter-rouge">adfdccd</code></li>
+  <li><code class="language-plaintext highlighter-rouge">-t, --truncate-set1</code>
+  <code class="language-plaintext highlighter-rouge">tr</code>命令最终的结果是将字符串1中的字符转换为字符串2中的字符，注意如果字符串1的长度和字符串2的长度一样，那么就可以从左到右一一对应转换，但是如果长度不一样该怎么办呢，默认情况下，如果字符集2的长度大于字符集1的长度，超出的部分被忽略，如果字符集1的长度大于字符集2的长度，通过将字符集2的最后一个字符重复多次将字符集2的长度扩展至跟字符集1一样。但是我们不想用这种扩展方式怎么办，这时<code class="language-plaintext highlighter-rouge">-t</code>就是将长度长的字符集1<code class="language-plaintext highlighter-rouge">截断</code>跟长度短的字符集2一样的长度。</li>
+  <li><code class="language-plaintext highlighter-rouge">--help</code> 显示帮助文档。</li>
+  <li><code class="language-plaintext highlighter-rouge">--version</code> 显示版本</li>
+</ul>
+
+<h4 id="字符集">字符集</h4>
+
+<ul>
+  <li>\NNN   八进制按键编码</li>
+  <li>\a Ctrl-G  铃声\007</li>
+  <li>\b Ctrl-H  退格符\010</li>
+  <li>\f Ctrl-L  走行换页\014</li>
+  <li>\n Ctrl-J  新行\012</li>
+  <li>\r Ctrl-M  回车\015</li>
+  <li>\t Ctrl-I  tab键\011</li>
+  <li>\v Ctrl-X  \030</li>
+  <li>[:alnum:] 所有字母和数字</li>
+  <li>[:alpha:] 所有字母</li>
+  <li>[:blank:] all horizontal whitespace</li>
+  <li>[:cntrl:] 所有控制字符</li>
+  <li>[:digit:] 所有数字</li>
+  <li>[:graph:] 图形符号</li>
+  <li>[:lower:] 所有小写字母</li>
+  <li>[:print:] 所有可打印字符</li>
+  <li>[:punct:] 所有标点符号</li>
+  <li>[:space:] 所有空白符号</li>
+  <li>[:upper:] 所有大写字母</li>
+  <li>[:xdigit:] 十六进制字符</li>
+  <li>[=CHAR=] 所有等于CHAR的字符</li>
+  <li>CHAR1-CHAR2 字符1到字符2之间的所有字符。</li>
+  <li>[CHAR*] 根据需要将CHAR连续复制多次，达到一定长度</li>
+  <li>[CHAR*REPEAT] 连续REPEAT次字符</li>
+</ul>
+
+<p>   上面即展示了一些字符在<code class="language-plaintext highlighter-rouge">tr</code>命令中的书写形式，也表示了<code class="language-plaintext highlighter-rouge">tr</code>命令中的字符集1和字符集2可以使用的所有字符类别。</p>
+
+<h4 id="注意">注意</h4>
+
+<p>   如果没有<code class="language-plaintext highlighter-rouge">-d</code>选项而且字符集1和字符集2都给定了，那么进行转换操作（将字符集1中的字符转换为字符集2中的字符，参见<code class="language-plaintext highlighter-rouge">-t</code>选项)，而且<code class="language-plaintext highlighter-rouge">-t</code>选项只会在转换操作时使用。字符集2会在必要的时候通过重复它的最后一个字符扩展到跟字符集1的长度一样（除非指定<code class="language-plaintext highlighter-rouge">-t</code>命令，这样就会截断字符集1与字符集2的长度一样）。如果字符集2的长度大于字符集1的长度，超过的部分忽略。<code class="language-plaintext highlighter-rouge">-s</code>选项使用的是指定的最后一个字符集，<code class="language-plaintext highlighter-rouge">-s</code>选项的执行顺序在转换或删除操作之后。只有<code class="language-plaintext highlighter-rouge">[:lower:]</code>和<code class="language-plaintext highlighter-rouge">[:upper:]</code>被保证在扩展时是递增的。</p>
+
+<h4 id="使用实例">使用实例</h4>
+
+<h5 id="将i-love-programming中的所有字符o转换为字符t字符e转换为字符z">将<code class="language-plaintext highlighter-rouge">I love programming</code>中的所有字符<code class="language-plaintext highlighter-rouge">o</code>转换为字符<code class="language-plaintext highlighter-rouge">t</code>，字符<code class="language-plaintext highlighter-rouge">e</code>转换为字符<code class="language-plaintext highlighter-rouge">z</code></h5>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"I love programming"</span> | <span class="nb">tr</span> <span class="s2">"oe"</span> <span class="s2">"tz"</span>
+I ltvz prtgramming
+</code></pre></div></div>
+<h5 id="将i-love-programming中的所有字符o和字符e删除">将<code class="language-plaintext highlighter-rouge">I love programming</code>中的所有字符<code class="language-plaintext highlighter-rouge">o</code>和字符<code class="language-plaintext highlighter-rouge">e</code>删除</h5>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"I love programming"</span> | <span class="nb">tr</span> <span class="nt">-d</span> <span class="s2">"oe"</span>  
+I lv prgramming
+</code></pre></div></div>
+<h5 id="将i-hessssssdbbbaadffff中的连续出现字符s和字符f变为一个">将<code class="language-plaintext highlighter-rouge">I hessssssdbbbaadffff</code>中的连续出现字符<code class="language-plaintext highlighter-rouge">s</code>和字符<code class="language-plaintext highlighter-rouge">f</code>变为一个</h5>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"I hessssssdbbbaadffff"</span> | <span class="nb">tr</span> <span class="nt">-s</span> <span class="s2">"sf"</span>
+I hesdbbbaadf
+</code></pre></div></div>
+<h5 id="将i-hessssssdbbbaadffff中除了字符i和字符e和字符f之外的字符删除">将<code class="language-plaintext highlighter-rouge">I hessssssdbbbaadffff</code>中除了字符<code class="language-plaintext highlighter-rouge">I</code>和字符<code class="language-plaintext highlighter-rouge">e</code>和字符<code class="language-plaintext highlighter-rouge">f</code>之外的字符删除</h5>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"I hessssssdbbbaadffff"</span> | <span class="nb">tr</span> <span class="nt">-c</span> <span class="nt">-d</span> <span class="s2">"Ief"</span>
+Ieffff
+</code></pre></div></div>
+<h3 id="seq">seq</h3>
+
+<p>   打印一个序列，sequence
+   常用方法：</p>
+<ul>
+  <li>seq -s 指定分隔符,<code class="language-plaintext highlighter-rouge">-s</code>后面加分隔符</li>
+  <li>seq -w 加入前导0使得输出等宽</li>
+  <li>seq .. FIRST</li>
+  <li>seq .. FIRST LAST</li>
+  <li>seq .. FIRST INCREMENT LAST</li>
+</ul>
+
+<h3 id="grep">grep</h3>
+
+<p>   查找过滤。</p>
+<ul>
+  <li>-v 排除</li>
+  <li>-B 显示匹配的行，并显示该行之前的num行</li>
+  <li>-A 显示匹配的行，并显示该行之后的num行</li>
+  <li>-C 显示匹配的行，并显示该行前后的num行</li>
+</ul>
+
+<h3 id="tail">tail</h3>
+
+<p>   取文件的最后几行</p>
+<ul>
+  <li>tail -n 取文件最后n行</li>
+  <li>tail -f 监控文件的变化</li>
+</ul>
+
+<h3 id="查看图像大小">查看图像大小</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">convert a.jpg -print "Size: %wx%h\n" /dev/null</code></li>
+</ul>
+
+<h2 id="常见面试">常见面试</h2>
+
+<h3 id="取文件20行到30行内容">取文件20行到30行内容</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">sed -n '20,30p' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">awk '{if(NR&gt;31 &amp;&amp; NR&lt;19) printf $1"\n"}' filename</code></li>
+  <li><code class="language-plaintext highlighter-rouge">head -30 filename | tail -11</code></li>
+</ul>
+
+<h3 id="将一个目录下的所有以sh为后缀的文件中的字符串aaa替换为bbb">将一个目录下的所有以.sh为后缀的文件中的字符串<code class="language-plaintext highlighter-rouge">aaa</code>替换为<code class="language-plaintext highlighter-rouge">bbb</code></h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">find dirname -type f -name "*.sh" | xargs sed -i 's#aaa#bbb#g'</code></li>
+  <li><code class="language-plaintext highlighter-rouge">sed -i 's#aaa#bbb#g' find dirname -type f -name "*.sh"</code></li>
+  <li><code class="language-plaintext highlighter-rouge">find dirname -type f -name "*.sh" -exec sed -i 's#bbb#aaa#g' {} \;</code></li>
+</ul>
+
+<h3 id="dns配置文件resolvconf">dns配置文件<code class="language-plaintext highlighter-rouge">resolv.conf</code></h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">man resolv</code></li>
+</ul>
+
+<h3 id="host在企业的作用"><code class="language-plaintext highlighter-rouge">host</code>在企业的作用</h3>
+
+<ul>
+  <li>man host</li>
+  <li>内部DNS 主机名和ip地址进行对应</li>
+  <li>
+    <p>编辑/etc/hosts</p>
+  </li>
+  <li>开发、产品、测试等人员用于通过域名测试产品</li>
+  <li>服务器之间的调用可以用域名（内部的DNS)，方便迁移</li>
+</ul>
+
+<h3 id="主机名">主机名</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">host 命令</code></li>
+  <li>/etc/hostname当前生效</li>
+  <li>/etc/sysconfig/network永久生效</li>
+</ul>
+
+<h3 id="fstab">fstab</h3>
+
+<ul>
+  <li>df -h查看分区情况</li>
+  <li>设置文件系统挂载信息文件，使得系统启动自动挂载文件系统</li>
+  <li>/etc/fstab</li>
+  <li>dd if=/dev/zero of=/dev/sdc bs=4096 count=100</li>
+  <li>mount -t ext4 -o loop,noatime,noexec /dev/sdc /mnt</li>
+  <li>mkfs.</li>
+  <li>fsck 检查不好的处于卸载状态的磁盘</li>
+  <li>设备么 uuid 标签是等同的，都可以用来挂载</li>
+  <li>fstab很重要，一旦错误将启动不了</li>
+  <li>(1)</li>
+  <li>(2) 救援模式 rescue</li>
+  <li>mount -o rw,remount /</li>
+</ul>
+
+<p>###</p>
+<ul>
+  <li>cat /etc/arch-release</li>
+  <li>uname -r 版本</li>
+  <li>uname -m 32位还是64位</li>
+  <li>hostname</li>
+  <li>uname -n查看主机名和hostname一样</li>
+  <li>uname -a所有</li>
+  <li>useradd /etc/passwd</li>
+  <li>/etc/shadow</li>
+  <li>/etc/group</li>
+  <li>passwd</li>
+  <li>$PS1</li>
+  <li>whoami</li>
+  <li>su - 用户名 <code class="language-plaintext highlighter-rouge">-</code>的作用是将当前的环境变量也切换到相应位置</li>
+</ul>
+
+<h3 id="selinux">selinux</h3>
+
+<ul>
+  <li>/etc/selinux/config  /etc/systemconfig/selinux</li>
+  <li>sed -i “s#SELINUX=DISABLED#SELINUX=ENFO#” /etc/selinux/config</li>
+  <li>setenforce 0 临时生效</li>
+  <li>getenforce</li>
+</ul>
+
+<h3 id="运行级别">运行级别</h3>
+
+<ul>
+  <li>/etc/inittab</li>
+  <li>runlevel</li>
+  <li>init切换级别
+    <h3 id="开机启动">开机启动</h3>
+  </li>
+  <li>shhd</li>
+  <li>rsyslog</li>
+  <li>network</li>
+  <li>crond</li>
+  <li>sysstat</li>
+  <li>（1）用chkconfig(2)放入/etc/rc.local服务器档案文件，放入rc.local中注释备案。</li>
+  <li>当挂载NFS网络文件系统时，网卡还没启动，fstab已经启动，这时fstab无法挂载网络文件系统，这时只能使用比网卡启动晚的rc.local才能完成任务。</li>
+</ul>
+
+<h3 id="打印行号的方法">打印行号的方法</h3>
+
+<ul>
+  <li>cat -n</li>
+  <li>vi/vim :set number</li>
+  <li>grep -n ‘.’ filename</li>
+  <li>grep -n ‘$’ filename</li>
+  <li>grep -n ‘^’ filename</li>
+  <li>nl filename</li>
+  <li>awk ‘{print NR,$0}’ filename</li>
+  <li>sed ‘=’ filename</li>
+  <li>less -N filename</li>
+</ul>
+
+<h3 id="setfacl-getfacl">setfacl getfacl</h3>
+
+<h3 id="定时任务crond">定时任务crond</h3>
+
+<p>   分两种，一种是系统自动完成的，如日志，一种是用户安装的</p>
+
+<p>crontab -l crontab -e</p>
+
+<ul>
+  <li>crond 适合周期性任务。</li>
+  <li>at 适合执行一次，突发性任务。</li>
+  <li>anacron 适合非7*24小时开机的任务。</li>
+</ul>
+
+<p>crond守护进程，一直运行，crontab是管理它的命令，crontab -l 列表，crontab -e 编辑。</p>
+
+<h2 id="参考资料">参考资料</h2>
+
+<ul>
+  <li>各种命令的<code class="language-plaintext highlighter-rouge">man page</code></li>
+</ul>

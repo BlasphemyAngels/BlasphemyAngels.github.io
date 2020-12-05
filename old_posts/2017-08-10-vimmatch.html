@@ -1,0 +1,19 @@
+<h2 id="正文">正文</h2>
+
+<p>   对于vim模式匹配是一个不可或缺的部分，熟练的掌握它，能够使你的效率，事半功倍。
+<!--more--></p>
+
+<h3 id="模式匹配和原义匹配">模式匹配和原义匹配</h3>
+
+<p>   如过默认情况下，<code class="language-plaintext highlighter-rouge">(){}[]</code>在vim正则表达式中使用的时候就只能代表其原意义，但是有的时候需要使用他们的特殊意义，如<code class="language-plaintext highlighter-rouge">()</code>的分组功能。这个时候就要使用<code class="language-plaintext highlighter-rouge">\\</code>转义了，<code class="language-plaintext highlighter-rouge">\(\)</code>、<code class="language-plaintext highlighter-rouge">\{}</code>、<code class="language-plaintext highlighter-rouge">\[\]</code>等。但是这样书写麻烦而且不易读，怎么办呢？vim设置了<code class="language-plaintext highlighter-rouge">magic</code>，其作用就是指导哪些字符需要转义，哪些不需要。
+   <code class="language-plaintext highlighter-rouge">magic(\m)</code>：除了<code class="language-plaintext highlighter-rouge">$ . * ^</code>之外其他元字符都要转义。<code class="language-plaintext highlighter-rouge">nomagic(\M)</code>：除了<code class="language-plaintext highlighter-rouge">$ ^</code>之外其他元字符都要转义。也可以在正则表达式中通过<code class="language-plaintext highlighter-rouge">\m \M</code>开关临时切换。<code class="language-plaintext highlighter-rouge">\m</code>后面的正则表达式会按照<code class="language-plaintext highlighter-rouge">magic</code>处理，<code class="language-plaintext highlighter-rouge">\M</code>后面的正则表达式按照<code class="language-plaintext highlighter-rouge">nomagic</code>处理， 而忽略实际的<code class="language-plaintext highlighter-rouge">magic</code>设置。</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:set ignorecase</code> 设置忽略查找时大小写</li>
+  <li><code class="language-plaintext highlighter-rouge">\c</code> 在每次查找时加入它会使本次查找忽略大小写</li>
+  <li><code class="language-plaintext highlighter-rouge">\C</code> 在每次查找时加入它会使本次查找不忽略大小写
+   <code class="language-plaintext highlighter-rouge">\c</code>和<code class="language-plaintext highlighter-rouge">\C</code>在一条匹配中不管放在匹配的哪个位置都会对整条匹配起作用</li>
+  <li><code class="language-plaintext highlighter-rouge">\V</code> <code class="language-plaintext highlighter-rouge">very nomagic</code> 任何字符都需要转义</li>
+  <li><code class="language-plaintext highlighter-rouge">\v</code> <code class="language-plaintext highlighter-rouge">very magic</code> 任何字符都不需要转义</li>
+</ul>
+
+<p>转载请注明:<a href="https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://BlasphemyAngels.github.io/2017/09/23/2017-08-10-vimmatch/">点此看原文</a></p>

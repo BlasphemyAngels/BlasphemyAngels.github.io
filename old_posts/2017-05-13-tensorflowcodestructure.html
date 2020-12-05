@@ -1,0 +1,273 @@
+<p>本文翻译自：<a href="http://danijar.com/structuring-your-tensorflow-models/">Structuring Your TensorFlow Models</a> 非本人原创。</p>
+
+<h2 id="目录">目录</h2>
+
+<ul>
+  <li><a href="#definecomputegraph">定义计算图</a></li>
+  <li><a href="#jumpuseproperty">使用属性</a></li>
+  <li><a href="#jumploadlazy">延迟加载装饰器</a></li>
+  <li><a href="#jumpusescope">使用域组织图</a></li>
+</ul>
+
+<!--more-->
+<h2 id="正文">正文</h2>
+
+<p>在用tensorflow构建神经网络程序时，随着网络结构的复杂，很容易会构建得到一份很庞大的代码。那么如何去管理这些代码，从而使代码有良好的可阅读性和可重用性？对于性子急的同学，可以戳下面的链接去直接查看代码：<a href="https://gist.github.com/danijar/8663d3bbfd586bffecf6a0094cd116f2">working example gist</a></p>
+
+<h3 id="定义计算图"><span id="definecomputegraph">定义计算图</span></h3>
+
+<p>一般在构建tensorflow代码时，从定义一个类开始构建每个模型是一个明智的选择。那么，这个类的接口是什么？通常，你的模型是跟输入数据(input data)、目标占位符(target placeholders)和为训练、验证、预测模型提供的操作联系在一起的。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">data_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">target_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target</span><span class="p">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">truncated_normal</span><span class="p">([</span><span class="n">data_size</span><span class="p">,</span> <span class="n">target_size</span><span class="p">]))</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">target_size</span><span class="p">]))</span>
+        <span class="n">incoming</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">incoming</span><span class="p">)</span>
+        <span class="n">cross_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">tf</span><span class="p">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_optimize</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="n">RMSPropOptimizer</span><span class="p">(</span><span class="mf">0.03</span><span class="p">).</span><span class="n">minimize</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">)</span>
+        <span class="n">mistakes</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">not_equal</span><span class="p">(</span>
+            <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_error</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mistakes</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">))</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_optimize</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_error</span>
+</code></pre></div></div>
+
+<p>这是一段tensorflow的基本代码，但是这段代码存在很多问题，最显著问题是，该段代码将整个图定义在一个函数内（即初始化函数）。这样做的可阅读性和可重用性都不好。</p>
+
+<h3 id="使用属性"><span id="jumpuseproperty">使用属性</span></h3>
+
+<p>仅仅将代码划分为每个函数并不能起作用。因为每次函数被调用，计算图就将会使用函数中的代码进行扩展。因此我们必须保证，只有在第一次调用函数时，函数中的操作才会被添加到计算图中。这就是延迟加载。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_optimize</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_error</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span><span class="p">:</span>
+            <span class="n">data_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">target_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">target</span><span class="p">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">truncated_normal</span><span class="p">([</span><span class="n">data_size</span><span class="p">,</span> <span class="n">target_size</span><span class="p">]))</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">target_size</span><span class="p">]))</span>
+            <span class="n">incoming</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">incoming</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_prediction</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">_optimize</span><span class="p">:</span>
+            <span class="n">cross_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">tf</span><span class="p">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">target</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">prediction</span><span class="p">))</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="n">RMSPropOptimizer</span><span class="p">(</span><span class="mf">0.03</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_optimize</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_optimize</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">_error</span><span class="p">:</span>
+            <span class="n">mistakes</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">not_equal</span><span class="p">(</span>
+                <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">target</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">prediction</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_error</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mistakes</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_error</span>
+</code></pre></div></div>
+
+<p>这段代码就比第一段代码好多了，各个功能被分配到了各个函数，这样方便你单独的考虑某个功能。然而，这段代码为了实现延迟加载的特性，有一些臃肿。下面让我们再优化一下它。</p>
+
+<h3 id="延迟加载装饰器"><span id="jumploadlazy">延迟加载装饰器</span></h3>
+
+<p>Python是一门非常灵活的语言。所以让我展示一下如何从上面最后一段代码段中去除多余的代码。我们将使用装饰器，装饰器的行为就像@property一样，但是装饰器起作用使其函数只计算一次。它将计算结果存储于一个命名（预先准备一个前缀）在被装饰的函数后的成员变量中，然后在每次随后的调用中返回这个值。如果你不熟悉装饰器，你可能希望这个链接[]</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="k">def</span> <span class="nf">lazy_property</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+    <span class="n">attribute</span> <span class="o">=</span> <span class="s">'_cache_'</span> <span class="o">+</span> <span class="n">function</span><span class="p">.</span><span class="n">__name__</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="o">@</span><span class="n">functools</span><span class="p">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">decorator</span>
+</code></pre></div></div>
+
+<p>使用这个装饰器，我们的样例代码就像下面一样简单了：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">prediction</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">optimize</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">error</span>
+
+    <span class="o">@</span><span class="n">lazy_property</span>
+    <span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">target_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">target</span><span class="p">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">truncated_normal</span><span class="p">([</span><span class="n">data_size</span><span class="p">,</span> <span class="n">target_size</span><span class="p">]))</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">target_size</span><span class="p">]))</span>
+        <span class="n">incoming</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">incoming</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="n">lazy_property</span>
+    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cross_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">tf</span><span class="p">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">target</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">prediction</span><span class="p">))</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="n">RMSPropOptimizer</span><span class="p">(</span><span class="mf">0.03</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">optimizer</span><span class="p">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="n">lazy_property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mistakes</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">not_equal</span><span class="p">(</span>
+            <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">target</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">prediction</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mistakes</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>注意我们在初始化函数中提到的属性。在这种方式下，整张图能够确保在运行 tf.initialize_variables()函数时被定义。</p>
+
+<h3 id="使用域组织图"><span id="jumpusescope">使用域组织图</span></h3>
+
+<p>我们现在有一种清楚的方式在代码中定义模型，但是产生的计算图仍然很拥挤。如果<a href="https://www.tensorflow.org/versions/r0.11/how_tos/graph_viz/">你可视化计算图</a>，它将包含很多的内连小节点。解决方式是用tf.name_scope(‘name’)或者 tf.variable_scope(‘name’)将每个函数的内容修饰。图上的节点将被分组。我们只需将上面的装饰器稍加修改即可。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="k">def</span> <span class="nf">define_scope</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+    <span class="n">attribute</span> <span class="o">=</span> <span class="s">'_cache_'</span> <span class="o">+</span> <span class="n">function</span><span class="p">.</span><span class="n">__name__</span>
+
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="o">@</span><span class="n">functools</span><span class="p">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">tf</span><span class="p">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">function</span><span class="p">.</span><span class="n">__name</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">decorator</span>
+</code></pre></div></div>
+<p>因为这个装饰器所拥有的对tensorflow的特殊功能和它的延迟缓存，我给它定义了一个新的名字(define_scope)。除此之外，这个装饰器看起来和上一个是一样的。</p>
+
+<p>我们甚至能够使@define_scope有在tf.variable_scope之前运行的参数传递，例如定义一个属于这个scope默认的initializer。详情可以看最后的代码。</p>
+
+<p>我们现在可以以结构化的、简洁的方式定义有组织的计算图了。这让我很受用。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.examples.tutorials.mnist</span> <span class="kn">import</span> <span class="n">input_data</span>
+
+
+<span class="k">def</span> <span class="nf">doublewrap</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+    <span class="s">"""
+    A decorator decorator, allowing to use the decorator to be used without
+    parentheses if not arguments are provided. All arguments must be optional.
+    """</span>
+    <span class="o">@</span><span class="n">functools</span><span class="p">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">wrapee</span><span class="p">:</span> <span class="n">function</span><span class="p">(</span><span class="n">wrapee</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+
+
+<span class="o">@</span><span class="n">doublewrap</span>
+<span class="k">def</span> <span class="nf">define_scope</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="s">"""
+    A decorator for functions that define TensorFlow operations. The wrapped
+    function will only be executed once. Subsequent calls to it will directly
+    return the result so that operations are added to the graph only once.
+    The operations added by the function live within a tf.variable_scope(). If
+    this decorator is used with arguments, they will be forwarded to the
+    variable scope. The scope name defaults to the name of the wrapped
+    function.
+    """</span>
+    <span class="n">attribute</span> <span class="o">=</span> <span class="s">'_cache_'</span> <span class="o">+</span> <span class="n">function</span><span class="p">.</span><span class="n">__name__</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">scope</span> <span class="ow">or</span> <span class="n">function</span><span class="p">.</span><span class="n">__name__</span>
+    <span class="o">@</span><span class="nb">property</span>
+    <span class="o">@</span><span class="n">functools</span><span class="p">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">tf</span><span class="p">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">decorator</span>
+
+
+<span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">prediction</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">optimize</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">error</span>
+
+    <span class="o">@</span><span class="n">define_scope</span><span class="p">(</span><span class="n">initializer</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">contrib</span><span class="p">.</span><span class="n">slim</span><span class="p">.</span><span class="n">xavier_initializer</span><span class="p">())</span>
+    <span class="k">def</span> <span class="nf">prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">image</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">contrib</span><span class="p">.</span><span class="n">slim</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">contrib</span><span class="p">.</span><span class="n">slim</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">contrib</span><span class="p">.</span><span class="n">slim</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">softmax</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="o">@</span><span class="n">define_scope</span>
+    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logprob</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">prediction</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)</span>
+        <span class="n">cross_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">tf</span><span class="p">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">label</span> <span class="o">*</span> <span class="n">logprob</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="n">RMSPropOptimizer</span><span class="p">(</span><span class="mf">0.03</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">optimizer</span><span class="p">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="n">define_scope</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mistakes</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">not_equal</span><span class="p">(</span>
+            <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">prediction</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mistakes</span><span class="p">,</span> <span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">mnist</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">.</span><span class="n">read_data_sets</span><span class="p">(</span><span class="s">'./mnist/'</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">784</span><span class="p">])</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+    <span class="n">sess</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="n">sess</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">initialize_all_variables</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+      <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">mnist</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">images</span><span class="p">,</span> <span class="n">mnist</span><span class="p">.</span><span class="n">test</span><span class="p">.</span><span class="n">labels</span>
+      <span class="n">error</span> <span class="o">=</span> <span class="n">sess</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">error</span><span class="p">,</span> <span class="p">{</span><span class="n">image</span><span class="p">:</span> <span class="n">images</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">labels</span><span class="p">})</span>
+      <span class="k">print</span><span class="p">(</span><span class="s">'Test error {:6.2f}%'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">error</span><span class="p">))</span>
+      <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+        <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">mnist</span><span class="p">.</span><span class="n">train</span><span class="p">.</span><span class="n">next_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">sess</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">optimize</span><span class="p">,</span> <span class="p">{</span><span class="n">image</span><span class="p">:</span> <span class="n">images</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">labels</span><span class="p">})</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="参考链接">参考链接</h2>
+
+<ul>
+  <li><a href="http://danijar.com/structuring-your-tensorflow-models/">Structuring Your TensorFlow Models</a></li>
+</ul>
+
+<p>转载请注明:Artemis的博客–&gt; <a href="https://blasphemyangels.github.io/2017/03/Linuxcompress/">点此看原文</a></p>

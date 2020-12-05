@@ -1,0 +1,34 @@
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+<h2 id="正文">正文</h2>
+
+<p>   markdown作为一种简洁方便的写作方式，广受博主们的喜爱，但是有的时候需要向markdown中加入公式，该怎么办呢？
+<!--more-->
+   我一般使用两种方式，一种是使用在线公式编辑器编辑公式保存为图片，然后将图片上传到github等平台，然后在markdown中关联即可。</p>
+
+<p>   另一种是使用<code class="language-plaintext highlighter-rouge">MathJax</code>引擎。</p>
+
+<p>   使用方式很简单：</p>
+
+<ul>
+  <li>将下面代码加入到markdown文件中，作用是在当前文件引入<code class="language-plaintext highlighter-rouge">MathJax</code>引擎。</li>
+</ul>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">text/javascript</span><span class="dl">"</span> <span class="nx">src</span><span class="o">=</span><span class="dl">"</span><span class="s2">http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default</span><span class="dl">"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span></code></pre></div></div>
+<p>   然后再使用<code class="language-plaintext highlighter-rouge">latex</code>方式编辑公式即可，用<code class="language-plaintext highlighter-rouge">$$公式$$</code>表示行间公式，本来latex中使用<code class="language-plaintext highlighter-rouge">\(公式\)</code>表示行内公式，但因为Markdown中\是转义字符，所以在Markdown中输入行内公式使用<code class="language-plaintext highlighter-rouge">\\(公式\\)</code></p>
+
+<h2 id="问题">问题</h2>
+
+<h3 id="使用大括号">使用大括号</h3>
+
+<div class="language-latex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">$$</span><span class="nb">
+</span><span class="nv">\begin</span><span class="p">{</span><span class="nb">cases</span><span class="p">}</span><span class="nb">
+</span><span class="nv">\mu</span><span class="o">=</span><span class="nv">\frac</span><span class="p">{</span><span class="m">1</span><span class="p">}{</span><span class="nb">n</span><span class="p">}</span><span class="nv">\sum</span><span class="p">_{</span><span class="nb">i</span><span class="p">}</span><span class="nb">x</span><span class="nv">\_</span><span class="nb">i</span><span class="nv">\\\\</span><span class="nb">
+</span><span class="nv">\sigma</span><span class="p">^</span><span class="m">2</span><span class="o">=</span><span class="nv">\frac</span><span class="p">{</span><span class="m">1</span><span class="p">}{</span><span class="nb">n</span><span class="p">}</span><span class="nv">\sum</span><span class="p">_{</span><span class="nb">i</span><span class="p">}</span><span class="o">(</span><span class="nb">x</span><span class="nv">\_</span><span class="nb">i</span><span class="o">-</span><span class="nv">\mu</span><span class="o">)</span><span class="p">^</span><span class="m">2</span><span class="nb">
+</span><span class="nv">\end</span><span class="p">{</span><span class="nb">cases</span><span class="p">}$$</span>
+</code></pre></div></div>
+<p>\(\begin{cases}
+\mu=\frac{1}{n}\sum_{i}x\_i\\\\
+\sigma^2=\frac{1}{n}\sum_{i}(x\_i-\mu)^2
+\end{cases}\)</p>

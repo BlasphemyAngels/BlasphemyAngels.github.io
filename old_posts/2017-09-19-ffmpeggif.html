@@ -1,0 +1,91 @@
+<h2 id="正文">正文</h2>
+
+<p>   动图是现今互联网上一种表示信息的重要形式，它可以用来表示工作流程、产品功能等。我在写markdown时常遇到一些描述操作流程的问题，这时使用单个图片是不足够的，而使用视频又面临加载慢的问题，很自然的就想到了用动图来解决这个问题。</p>
+
+<!--more-->
+
+<p>   废话少说，下面就讨论如何在linux制作动图。</p>
+
+<h3 id="录制视频">录制视频</h3>
+
+<p>   动图是一个缩小版的的视频，所以要先录制视频，然后再转换为动图。</p>
+
+<p>   我找到的比较简单使用的linux录制视频软件是<code class="language-plaintext highlighter-rouge">SimpleScreenRecorder</code>，具体安装如下：</p>
+
+<ul>
+  <li>Arch Linux
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>pacman <span class="nt">-S</span> SimpleScreenRecorder
+</code></pre></div>    </div>
+  </li>
+  <li>Ubuntu
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>add-apt-repository ppa:maarten-baert/simplescreenrecorder
+<span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>simplescreenrecorder
+</code></pre></div>    </div>
+    <p>   使用:</p>
+  </li>
+</ul>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/simplescreenrecord.gif?raw=true" alt="simplescreenrecorder" /></p>
+
+<h3 id="转换为gif">转换为gif</h3>
+
+<p>   录制完视频后就要将视频转换为gif格式了，有很多转换工具，这里使用的是<code class="language-plaintext highlighter-rouge">ffmpeg</code>。</p>
+
+<p>   安装：</p>
+
+<ul>
+  <li>Arch Linux
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>pacman <span class="nt">-S</span> ffmpeg
+</code></pre></div>    </div>
+  </li>
+  <li>Ubuntu
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>ffmpeg
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>   使用下面命令将录制好的视频转换为gif动图:</p>
+
+<p><code class="language-plaintext highlighter-rouge">ffmpeg -ss 00:00:20 -i input.flv -to 10 -r 10 -vf scale=200:-1 output.gif</code></p>
+
+<p>   参数：</p>
+
+<ul>
+  <li>-ss 指定从视频的哪个地方开始转换</li>
+  <li>-i 后面跟要操作的那个视频文件</li>
+  <li>-to 指定到视频的哪个位置为止不再转换</li>
+  <li>-r 帧速率，可以增大这个值输出更画质更优的GIF文件</li>
+  <li>-vf 图形筛选器，GIF的缩放大小</li>
+</ul>
+
+<h3 id="合并多张动图">合并多张动图</h3>
+
+<p>   有的时候需要将多张动图合并为一张，该怎么做呢？很简单，使用<code class="language-plaintext highlighter-rouge">convert</code>命令。</p>
+
+<p>   参数：</p>
+
+<ul>
+  <li>-delay value         每张图片直接的播放时间间隔</li>
+  <li>-loop iterations     循环次数，0代表无限循环</li>
+</ul>
+
+<p>   将要合并的多张动图放到一个文件夹中，然后执行：</p>
+
+<p><code class="language-plaintext highlighter-rouge">convert -delay 100 -loop 0 *.gif output.gif</code></p>
+
+<h3 id="从图像序列生成动图">从图像序列生成动图</h3>
+
+<p>   有的时候我们有的是多张图片的序列，怎么将这些序列转化为动图呢？跟上面的命令相似，将图片序列放入到一个文件夹中，然后执行：</p>
+
+<p><code class="language-plaintext highlighter-rouge">convert -delay 100 -loop 0 *,gpg output.gif</code></p>
+
+<h3 id="查看图像的大小">查看图像的大小</h3>
+
+<p>   <code class="language-plaintext highlighter-rouge">convert</code>还有一个应用就是查看图像的大小：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">convert a.jpg -print "Size: %wx%h\n" /dev/null</code></li>
+</ul>
+
+<p>转载请注明:<a href="https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://blasphemyangels.github.io/2017/09/19/2017-09-19-ffmpeggif/">点此看原文</a></p>

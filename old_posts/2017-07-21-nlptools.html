@@ -1,0 +1,100 @@
+<h2 id="正文">正文</h2>
+
+<p>The blog show the simple use of the Nlp tools:</p>
+
+<!-- more -->
+
+<h3 id="snownlp">SnowNlp</h3>
+
+<h4 id="env">env</h4>
+
+<p><code class="language-plaintext highlighter-rouge">python</code></p>
+
+<h4 id="install">install</h4>
+
+<ul>
+  <li>install：<code class="language-plaintext highlighter-rouge">pip install snownlp</code></li>
+</ul>
+
+<h4 id="use">use</h4>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    <span class="n">content</span> <span class="o">=</span> <span class="s">'...'</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">SnowNLP</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"snownlp split word"</span><span class="p">)</span>
+    <span class="n">swords</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">words</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">swords</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"snownlp cixing"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">.</span><span class="n">tags</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"snownlp tf-idf"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">tf</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">idf</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"tokenization"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">sentences</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"sentiment"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">sentiments</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"keywords"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">keywords</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"summary"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">summary</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="stanfordnlp">StanfordNLP</h3>
+
+<h4 id="env-1">env</h4>
+
+<p><code class="language-plaintext highlighter-rouge">java</code></p>
+
+<h4 id="install-1">install</h4>
+
+<ul>
+  <li>download the <a href="http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip">StanfordCoreNLP</a>(the core api of the stanfordnlp).unzip it and import all the jars to build path.</li>
+  <li>dowwload the <a href="http://nlp.stanford.edu/software/stanford-chinese-corenlp-2017-06-09-models.jar">StanfordNLP-chinese</a>(the language jar needed for the project).import it to the build path.</li>
+</ul>
+
+<h4 id="use-1">use</h4>
+
+<p>code:</p>
+
+<p>```java
+        String text = “…”;</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	String props = "StanfordCoreNLP-chinese.properties";
+	StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+	Annotation annotation = new Annotation(text);
+	pipeline.annotate(annotation);
+
+	List&lt;CoreMap&gt; sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+	for (CoreMap sentence : sentences){
+		for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)){
+			String word = token.get(CoreAnnotations.TextAnnotation.class); //分词
+			String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class); //分词位置
+			String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class); //实体
+
+			System.out.println(word + "\t" + pos + "\t" + ne);
+		}
+
+		Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
+		System.out.println("语法树：");
+        System.out.println(tree.toString());
+
+        SemanticGraph dependencies = sentence.get(SemanticGraphCoreAnnotations.EnhancedDependenciesAnnotation.class);
+        System.out.println("依存句法：");
+        System.out.println(dependencies.toString());
+    }
+        ``` #### warning
+</code></pre></div></div>
+
+<p>you need adjust the jvm memory before you run it.</p>
+
+<h2 id="参考链接">参考链接</h2>
+
+<ul>
+  <li><a href="https://stanfordnlp.github.io/CoreNLP/index.html">StanfordNLP</a></li>
+</ul>

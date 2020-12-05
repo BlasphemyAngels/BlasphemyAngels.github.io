@@ -1,0 +1,176 @@
+<h2 id="正文">正文</h2>
+
+<p>   pyinotify模块用来对Linux中的文件系统进行监视，能够实时捕捉到文件系统的变化—增删改查等。pyinotify不仅能对文件监视还能对目录监视，而且当监视对象处于可移动介质时，那么umount此介质上的文件系统后，被监视目标对用的watch对象将被自动删除，并且会产生一个umount事件。</p>
+
+<!--more-->
+
+<h3 id="查看内核是否支持inotify机制">查看内核是否支持inotify机制</h3>
+<p><code class="language-plaintext highlighter-rouge">grep INOTIFY_USER /boot/config-$(uname -r)</code>
+   输出：<code class="language-plaintext highlighter-rouge">CONFIG_INOTIFY_USER=y</code> 表示支持inotify机制</p>
+
+<h3 id="span-idjumpwatchinotify事件span">&lt;span id=#jumpwatch&gt;Inotify事件&lt;/span&gt;</h3>
+
+<ul>
+  <li>IN_ACCESS，即文件被访问</li>
+  <li>IN_MODIFY，文件被 write</li>
+  <li>IN_ATTRIB，文件属性被修改，如 chmod、chown、touch 等</li>
+  <li>IN_CLOSE_WRITE，可写文件被 close</li>
+  <li>IN_CLOSE_NOWRITE，不可写文件被 close</li>
+  <li>IN_OPEN，文件被 open</li>
+  <li>IN_MOVED_FROM，文件被移走,如 mv</li>
+  <li>IN_MOVED_TO，文件被移来，如 mv、cp</li>
+  <li>IN_CREATE，创建新文件</li>
+  <li>IN_DELETE，文件被删除，如 rm</li>
+  <li>IN_DELETE_SELF，自删除，即一个可执行文件在执行时删除自己</li>
+  <li>IN_MOVE_SELF，自移动，即一个可执行文件在执行时移动自己</li>
+  <li>IN_UNMOUNT，宿主文件系统被 umount</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>IN_CLOSE，文件被关闭，等同于(IN_CLOSE_WRITE</td>
+          <td>IN_CLOSE_NOWRITE)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>IN_MOVE，文件被移动，等同于(IN_MOVED_FROM</td>
+          <td>IN_MOVED_TO)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="api">API</h3>
+
+<p><a href="http://seb.dbzteam.org/pyinotify/">API</a></p>
+
+<h3 id="watchmanager类">WatchManager类</h3>
+
+<p>   pyinotify中使用watch对象进行对文件系统的监视，watch对象中有对监视对象的操作。那么管理这些watch对象的对象就是WatchManager对象。它封装了对 watch的管理操作，我们只需要添加包含特定操作的watch对象到WatchManager即可，剩余的对watch的操作WatchManager会自行完成。</p>
+
+<p>常用方法：</p>
+<ul>
+  <li>add_watch(self, path, mask, proc_fun=None, rec=False, auto_add=False, do_glob=False, quiet=True, exclude_filter=None)
+    <ul>
+      <li>path 要监视的文件系统的路径</li>
+      <li>mask 要监听的文件系统的<a href="#jumpwatch">事件</a></li>
+      <li>rec 如果为True, 则递归的将此watch添加到文件系统下的每个子目录上，默认为 False。</li>
+      <li>auto_add 如果为True，则在监视的文件系统中创建新文件或目录时，会自动将watch 添加到新文件或目录上。</li>
+      <li>return: dict of {str: int} 返回值是一个字典，字典的key代表路径，value代表路径对应的文件系统的watch对象的wd值（可以理解为用来标识watch的值）。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>代码：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wm</span> <span class="o">=</span> <span class="n">WatchManager</span><span class="p">()</span>
+<span class="n">wm</span><span class="p">.</span><span class="n">add_watch</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">auto_add</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">rec</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="processevent类">ProcessEvent类</h3>
+
+<p>   ProcessEvent对象用来处理文件系统的事件。一般使用时会集成它，然后重写它内部的相应事件方法。</p>
+
+<p>事件方法：</p>
+
+<ul>
+  <li>方法名用<code class="language-plaintext highlighter-rouge">process_</code>加上上面提到的事件即可。如<code class="language-plaintext highlighter-rouge">process_IN_CLOSE</code>、 <code class="language-plaintext highlighter-rouge">process_IN_CREATE</code>等。</li>
+</ul>
+
+<p>代码：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">EventHandler</span><span class="p">(</span><span class="n">ProcessEvent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_IN_CREATE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Create file:%s"</span> <span class="o">%</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">path</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">process_IN_DELETE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Delete file:%s"</span> <span class="o">%</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">path</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">process_IN_MODIFY</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Modify file:%s"</span> <span class="o">%</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">path</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="n">name</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="notifier类">Notifier类</h3>
+
+<p>   Notifier类接受事件并处理它。它会维持一个事件队列，每次从事件队列中取出事件处理，新事件也加入队列。那么事件从哪来？看了上面可以知道，WatchManager用来管理所有的watch及watch观察到的事件。怎么处理事件？由上一节可以知道用户定义的ProcessEvent子类用来处理事件。所以先要为Notifier指定WatchManager和ProcessEvent对象。</p>
+
+<p><code class="language-plaintext highlighter-rouge">notifier = Notifier(wm, EventHandler())</code></p>
+
+<p>接下来就需要处理事件了，这里使用的是同步方式（异步方式可以自行查阅 <a href="http://seb.dbzteam.org/pyinotify/">API</a>)。</p>
+
+<p>这里依赖两个函数：</p>
+
+<ul>
+  <li>process_events(self) 函数从事件队列中取事件，然后交给相应的事件处理对象 (ProcessEvent类或其子类的对象)处理。</li>
+  <li>check_events(self, timeout=None) 检查文件系统是否产生新事件, 直到超时timeout毫秒就阻塞它。如果有，返回True。</li>
+  <li>read_events(self) 读取事件并为其创建相应数据结构，然后加入事件队列。</li>
+  <li>stop(self) 关闭notifier，销毁所有的watch对象，事件等。</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">while</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">notifier</span><span class="p">.</span><span class="n">process_events</span><span class="p">()</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">notifier</span><span class="p">.</span><span class="n">check_events</span><span class="p">()):</span>
+                <span class="n">notifier</span><span class="p">.</span><span class="n">read_events</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">keyboardInterrupt</span><span class="p">:</span>
+            <span class="n">notifier</span><span class="p">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">break</span>
+</code></pre></div></div>
+
+<p>完整代码：
+```python</p>
+
+<p>import os
+from pyinotify import WatchManager, Notifier, ProcessEvent, IN_CREATE, IN_DELETE, IN_MODIFY</p>
+
+<p>class EventHandler(ProcessEvent):
+    def process_IN_CREATE(self, event):
+        print(“Create file:%s” % os.path.join(event.path, event.name))</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def process_IN_DELETE(self, event):
+    print("Delete file:%s" % os.path.join(event.path, event.name))
+
+def process_IN_MODIFY(self, event):
+    print("Modify file:%s" % os.path.join(event.path, event.name))
+</code></pre></div></div>
+
+<p>def FSMonitor(path=”.”):
+    wm = WatchManager()
+    mask = IN_DELETE | IN_CREATE | IN_MODIFY
+    notifier = Notifier(wm, EventHandler())
+    wm.add_watch(path, mask, auto_add=True, rec=True)
+    print(“now starting monitor %s” % path)
+    while(True):
+        try:
+            notifier.process_events()
+            if(notifier.check_events()):
+                notifier.read_events()
+        except keyboardInterrupt:
+            notifier.stop()
+            break</p>
+
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+    FSMonitor(“/home/hadis/Documents/doc/doc/pro/python”)
+    ```</p>
+
+<p>实验结果：</p>
+
+<p>在目录下创建一个test文件夹后：</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/pyin.png?raw=true" alt="实验结果
+" />
+   好了,pyinotify的简单应用就介绍到这里了，它的更深入的应用就靠各位根据<a href="http://seb.dbzteam.org/pyinotify/">API</a>慢慢探索了。</p>
+
+<h2 id="参考链接">参考链接</h2>
+
+<ul>
+  <li><a href="http://seb.dbzteam.org/pyinotify/">API</a></li>
+  <li><a href="http://www.cnblogs.com/darkpig/p/5925507.html">python pyinotify模块详解</a></li>
+  <li><a href="http://weipengfei.blog.51cto.com/1511707/1195019">Linux文件实时同步–inotify + rsync + pyinotify</a></li>
+</ul>
+
+<p>转载请注明:<a href="[https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; [点此看原文</p>

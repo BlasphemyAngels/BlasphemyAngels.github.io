@@ -1,0 +1,123 @@
+<blockquote>正则表达式是一个非常强大的工具，掌握了它会极大的提高你的工作效率。下面就总结一下正则表达式的一些基本用法，和它的进阶用法，如[环视](#jumpcir)、[平衡组](#blance)等</blockquote>
+<!--more-->
+
+<h2 id="正文">正文</h2>
+
+<h3 id="常用匹配">常用匹配</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">.</code> 用来匹配不包含<code class="language-plaintext highlighter-rouge">换行</code>的任意字符</li>
+  <li><code class="language-plaintext highlighter-rouge">\s</code> 匹配空白符（空格、<code class="language-plaintext highlighter-rouge">tab</code>、换行）
+   <code class="language-plaintext highlighter-rouge">\S</code>为<code class="language-plaintext highlighter-rouge">\s</code>的反义</li>
+  <li><code class="language-plaintext highlighter-rouge">*</code> 匹配0个或多个字符</li>
+  <li><code class="language-plaintext highlighter-rouge">+</code> 匹配一个或多个</li>
+  <li><code class="language-plaintext highlighter-rouge">\\</code> 转义字符</li>
+  <li><code class="language-plaintext highlighter-rouge">[]</code> 单字符取一个，比如<code class="language-plaintext highlighter-rouge">[a-z]</code>会匹配所有的小写字母中的一个
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">[]</code>中的<code class="language-plaintext highlighter-rouge">^</code>代表<code class="language-plaintext highlighter-rouge">非</code>的意思，如<code class="language-plaintext highlighter-rouge">[^a-z]</code>匹配一个非小写字母的字符</li>
+      <li>如上所示<code class="language-plaintext highlighter-rouge">-</code>表示范围，如<code class="language-plaintext highlighter-rouge">[0-9]</code>匹配从0到9的所有数字中的一个</li>
+      <li>如果要包含-字符，可以给它加上转义<code class="language-plaintext highlighter-rouge">[\-]</code></li>
+      <li><code class="language-plaintext highlighter-rouge">[]</code>里面的特殊符有五个：<code class="language-plaintext highlighter-rouge">[]-\^</code>，其他字符都是普通字符，包括<code class="language-plaintext highlighter-rouge">*.?</code>等。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">^</code> 字符串开始
+   用<code class="language-plaintext highlighter-rouge">^</code>可以匹配所有的行（包括空行）</li>
+  <li><code class="language-plaintext highlighter-rouge">$</code> 字符串的结束</li>
+  <li><code class="language-plaintext highlighter-rouge">{start, end}</code> 前一个匹配的循环次数。其中start和end都是十进制整数
+   如<code class="language-plaintext highlighter-rouge">\(ab\)\{3}</code>匹配<code class="language-plaintext highlighter-rouge">ababab</code>，其中<code class="language-plaintext highlighter-rouge">()</code>和需要转义，前后括号都需要转，而<code class="language-plaintext highlighter-rouge">{}</code>只需要转前括号即可，正则表达式引擎能够自动识别。</li>
+  <li><code class="language-plaintext highlighter-rouge">?</code>
+    <ul>
+      <li>匹配0个或1个字符</li>
+      <li>表示使用非贪婪模式
+    那么什么是贪婪模式和非贪婪模式呢？贪婪模式就是在符合当前匹配的前提下，匹配尽量多的字符，而非贪婪模式则是匹配尽量少的字符。默认情况下是贪婪模式。
+    例如对于字符串<code class="language-plaintext highlighter-rouge">&lt;a&gt;hello&lt;/a&gt;&lt;a&gt;world&lt;/a&gt;</code>使用模式<code class="language-plaintext highlighter-rouge">&lt;a&gt;.*&lt;/a&gt;</code>进行匹配的话，匹配结果就是<code class="language-plaintext highlighter-rouge">&lt;a&gt;hello&lt;/a&gt;&lt;a&gt;world&lt;/a&gt;</code>，这就是贪婪模式，虽然到第一个<code class="language-plaintext highlighter-rouge">&lt;/a&gt;</code>的时候就已经能够完成匹配了，但是因为<code class="language-plaintext highlighter-rouge">.*</code>模式能够匹配任意长度的字符串，而且后面还能找到<code class="language-plaintext highlighter-rouge">&lt;/a&gt;</code>，所有贪婪模式下会继续匹配指导找不到<code class="language-plaintext highlighter-rouge">&lt;/a&gt;</code>。而使用非贪婪模式<code class="language-plaintext highlighter-rouge">&lt;a&gt;.*?&lt;/a&gt;</code>匹配的结果就是<code class="language-plaintext highlighter-rouge">&lt;a&gt;hello&lt;/a&gt;</code>和<code class="language-plaintext highlighter-rouge">&lt;a&gt;world&lt;/a&gt;</code>。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">|</code> 或 如模式<code class="language-plaintext highlighter-rouge">ab|bc|de</code>匹配<code class="language-plaintext highlighter-rouge">ab</code>或者<code class="language-plaintext highlighter-rouge">bc</code>或者<code class="language-plaintext highlighter-rouge">de</code></li>
+  <li><code class="language-plaintext highlighter-rouge">（)</code> 分组
+   有时候啊，需要取出匹配中的一部分数据，这个时候就需要用到分组了。匹配中的<code class="language-plaintext highlighter-rouge">()</code>用来标示分组，分组从左到右用左括号进行对分组计数（非捕获和环视的左括号不能数），从1开始计数，如模式<code class="language-plaintext highlighter-rouge">(ab)dd(ef)</code>中<code class="language-plaintext highlighter-rouge">ab</code>就是分组1，而<code class="language-plaintext highlighter-rouge">ef</code>就是分组2。
+   使用分组时，有两种方式：<code class="language-plaintext highlighter-rouge">\group</code>和<code class="language-plaintext highlighter-rouge">$group</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">\group</code> 模式本身使用子模式使用，如<code class="language-plaintext highlighter-rouge">(ab)\1\1</code></li>
+      <li><code class="language-plaintext highlighter-rouge">$group</code> 替换时调用模式中分组内容时使用
+      如将<code class="language-plaintext highlighter-rouge">adbc</code>中的<code class="language-plaintext highlighter-rouge">bc</code>匹配为<code class="language-plaintext highlighter-rouge">de</code>时，先使用<code class="language-plaintext highlighter-rouge">(ad)bc</code>模式进行匹配，然后用模式<code class="language-plaintext highlighter-rouge">$1de</code>进行替换。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">(?:)</code> 非捕获组
+   有的时候<code class="language-plaintext highlighter-rouge">()</code>只是用来对字符进行分界使用，而不是用来作为子模式，这个时候就会用到非捕获组，如模式<code class="language-plaintext highlighter-rouge">(ab|cd|de)def(zz)</code>，使用这个模式的时候想要得到后面的一个分组<code class="language-plaintext highlighter-rouge">zz</code>，而前面的<code class="language-plaintext highlighter-rouge">()</code>只是用来对字符进行分界。但是这时<code class="language-plaintext highlighter-rouge">zz</code>的这个分组数为2，如果对前面的<code class="language-plaintext highlighter-rouge">()</code>进行非捕获<code class="language-plaintext highlighter-rouge">(?:ab|cd|de)def(zz)</code>，那么<code class="language-plaintext highlighter-rouge">zz</code>的分组数变为1。</li>
+</ul>
+
+<h3 id="高级概念">高级概念</h3>
+
+<ul>
+  <li>贪婪模式和非贪婪模式
+   上面已经说明</li>
+  <li><span id="jumpcir">环视</span>
+   环视也成为零宽断言或断言。其作用是加入一些条件，使得在找到满足的匹配后需要满足这些条件才能满足最后的匹配。主要有下面用法：
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">(?&lt;=exp)</code> 匹配前面是exp的</li>
+      <li><code class="language-plaintext highlighter-rouge">(?&lt;!exp)</code> 匹配前面不是exp的</li>
+      <li><code class="language-plaintext highlighter-rouge">(?=exp)</code> 匹配后面是exp的</li>
+      <li><code class="language-plaintext highlighter-rouge">(?!exp)</code> 匹配后面不是exp的
+如：</li>
+      <li><code class="language-plaintext highlighter-rouge">(?&lt;=\d)abc</code> 匹配前面是数字的，<code class="language-plaintext highlighter-rouge">1abc</code>匹配，<code class="language-plaintext highlighter-rouge">dabc</code>不匹配</li>
+      <li><code class="language-plaintext highlighter-rouge">(?&lt;!\d)abc</code> 匹配前面不是是数字的，<code class="language-plaintext highlighter-rouge">dabc</code>匹配，<code class="language-plaintext highlighter-rouge">1abc</code>不匹配</li>
+      <li><code class="language-plaintext highlighter-rouge">abc(?=\d)</code> 匹配后面是数字的，<code class="language-plaintext highlighter-rouge">abc1</code>匹配，<code class="language-plaintext highlighter-rouge">abcd</code>不匹配</li>
+      <li><code class="language-plaintext highlighter-rouge">abc(?!\d)</code> 匹配后面不是数字的，<code class="language-plaintext highlighter-rouge">abcd</code>匹配，<code class="language-plaintext highlighter-rouge">abc1</code>不匹配
+   有一点要注意，当<code class="language-plaintext highlighter-rouge">(?!exp)</code>模式放在后面时代表<code class="language-plaintext highlighter-rouge">匹配后面不是exp的</code>，而它也可以放在匹配模式的前面，这是它代表：<code class="language-plaintext highlighter-rouge">对后面数据的一种过滤</code>，如模式<code class="language-plaintext highlighter-rouge">(?!\d).*</code>意思是在所有匹配<code class="language-plaintext highlighter-rouge">.*</code>的串里，排除<code class="language-plaintext highlighter-rouge">\d</code>匹配的串。这个作用很实用，常用来过滤数据。
+   如要匹配<code class="language-plaintext highlighter-rouge">非纯数字和非纯字母的数据</code>，匹配所有数据的模式是<code class="language-plaintext highlighter-rouge">.*</code>，匹配纯数字的模式是<code class="language-plaintext highlighter-rouge">^[\d]+$</code>，匹配纯字母的模式是<code class="language-plaintext highlighter-rouge">^[a-zA-Z]+$</code>，使用<code class="language-plaintext highlighter-rouge">?!exp</code>模式排除得到最终模式<code class="language-plaintext highlighter-rouge">(?!^[\d]+$)(?!^[a-zA-Z]+$).*</code>。这里注意排除数据时，不只能够使用<code class="language-plaintext highlighter-rouge">(?!exp)</code>，其他的环视表达式放在非正常位置时都可以用来排除数据，如<code class="language-plaintext highlighter-rouge">[A-Z](?&lt;!B)</code>表示<code class="language-plaintext highlighter-rouge">[A-Z]范围排除B</code>。
+   还有就是环视又成为零宽断言，这里的零宽代表什么意思呢，意思就是<code class="language-plaintext highlighter-rouge">(..)</code>内部匹配到的数据不会放到匹配结果中，如前面的模式<code class="language-plaintext highlighter-rouge">(?=\d)abc</code>匹配后面是<code class="language-plaintext highlighter-rouge">1</code>的<code class="language-plaintext highlighter-rouge">abc</code>，如与<code class="language-plaintext highlighter-rouge">abc1</code>是匹配的，但是匹配结果是<code class="language-plaintext highlighter-rouge">abc</code>，不包括<code class="language-plaintext highlighter-rouge">1</code>。零宽还有另一个意思，对于原字符串，用环视匹配过的部分可以再次利用进行匹配（如果不是环视的话，匹配过的部分是不能再次匹配的），如对于<code class="language-plaintext highlighter-rouge">(?!exp)</code>排除数据方法的使用，前面例子中，整个匹配过程中，正则表达式一共走了3次字符串匹配，第一次匹配不全部是字母，第二次匹配不全部是数字，第三次匹配全部是字母数字组合，这三次匹配使用的都是一个源字符串。</li>
+    </ul>
+  </li>
+  <li><span id="blance">平衡组</span>
+   当要匹配的内容有嵌套时，就需要使用平衡组了，它的语法我的理解就是模拟了一个栈完成括号匹配：
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">(?'group')</code> 将当前组捕获的内容命名为<code class="language-plaintext highlighter-rouge">group</code>，并压入栈中。</li>
+      <li><code class="language-plaintext highlighter-rouge">(?'-group')</code> 从栈中弹出最后压入的名为<code class="language-plaintext highlighter-rouge">group</code>的内容，如果栈为空，则匹配失败</li>
+      <li><code class="language-plaintext highlighter-rouge">(?(group)yes|no)</code> 如果栈中存在名为<code class="language-plaintext highlighter-rouge">group</code>的内容，则执行<code class="language-plaintext highlighter-rouge">yes</code>部分，否则执行<code class="language-plaintext highlighter-rouge">no</code>部分</li>
+      <li><code class="language-plaintext highlighter-rouge">(?!)</code> 零宽负向先行断言，总是匹配失败
+   下面是一个平衡组使用的例子：
+        <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;</span>                         <span class="na">#最外层的左括号</span>
+<span class="err">[^&lt;</span><span class="nt">&gt;</span>]*                #最外层的左括号后面的不是括号的内容
+(
+    (
+        (?'Open'<span class="nt">&lt;</span><span class="err">)</span>    <span class="na">#碰到了左括号</span><span class="err">，</span><span class="na">在黑板上写一个</span><span class="err">"</span><span class="na">Open</span><span class="err">"</span>
+        <span class="err">[^&lt;</span><span class="nt">&gt;</span>]*       #匹配左括号后面的不是括号的内容
+    )+
+    (
+        (?'-Open'&gt;)   #碰到了右括号，擦掉一个"Open"
+        [^<span class="nt">&lt;&gt;</span>]*        #匹配右括号后面不是括号的内容
+    )+
+)*
+(?(Open)(?!))         #在遇到最外层的右括号时，判断黑板上还有没有没擦掉的"Open"；如果还有，则匹配失败
+&gt;                         #最外层的右括号
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>模式修饰符
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">i</code> 忽略大小写
+  <code class="language-plaintext highlighter-rouge">((?i)[A-Z]+)c</code>模式匹配<code class="language-plaintext highlighter-rouge">abcABC</code>得到的结果是<code class="language-plaintext highlighter-rouge">abc</code>和<code class="language-plaintext highlighter-rouge">ABC</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="总结">总结</h2>
+
+<p>   正则表达式的在书写时可以分为三步:</p>
+<ul>
+  <li>分析要解析的数据</li>
+  <li>用通配符匹配去掉一些不需要的数据</li>
+  <li>使用分组等得到想要的数据</li>
+</ul>
+
+<h2 id="学习链接">学习链接</h2>
+
+<ul>
+  <li><a href="https://alf.nu/RegexGolf">正则表达习题</a></li>
+  <li><a href="https://regexr.com/">正则表达式测试</a></li>
+  <li><a href="http://blog.csdn.net/zm2714/article/details/7946437">平衡组</a></li>
+</ul>
+
+<p>转载请注明:<a href="https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://BlasphemyAngels.github.io/2017/09/23/2017-08-23-regexp2/">点此看原文</a></p>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <script type="text/javascript">
+            (function() {
+              var hm = document.createElement("script");
+              hm.src = "//hm.baidu.com/hm.js?dcee78e565eeaedc76defba5d096b344";
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(hm, s);
+            })();
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-38205696-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=100%, initial-scale=1" />
+
+        <link rel="shortcut icon" href="/img/owl.ico" />
+        <link rel="stylesheet" type="text/css" href="/css/default.min.css" />
+    </head>
+
+    <body>
+
+        <div id="music-panel">
+    <a id="music-control" onclick="toggleMusicPanel()"></a>
+    <div id="music-content">
+        <!-- use lazy loading -->
+        <!--iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="http://music.163.com/outchain/player?type=0&id=49176408&auto=0&height=430"></iframe-->
+    </div>
+</div>
+
+
+        
+        
+        <div id="mobile-nav">
+          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
+        </div>
+        <div class="contentDiv">
+
+
+<title>Linux之权限管理
+    
+ - 酒醉久伴</title>
+
+
+
+
+<div class="rotLeft rotTop pageBack"></div>
+<div class="rotRight rotTop pageBack"></div>
+<div class="container page cn page-post">
+    
+
+    <div class="simpleNav">
+        <a href="http://zhangwenli.com" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InPost', window.location.pathname]);">首页</a>
+        <a href="" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
+    </div>
+
+    
+    
+    <div class="timeago cn" title="+08:00"></div>
+
+    
+    <div class="pageTitle">Linux之权限管理</div>
+
+    <div class="tagPanel">
+    <a href="/all?tag=linux" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">linux</div></a><a href="/all?tag=权限" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">权限</div></a>
+    </div>
+
+    
+
+    <div id="page-view"></div>
+
+    <div class="post-content ">
+    <!--<img src="http://chart.googleapis.com/chart?cht=tx&chl= P(A)=\sum_{i=1}^{n}P(AB_i)" style="border:none;">-->
+
+<h2 id="正文">正文</h2>
+
+<h3 id="ll命令">ll命令</h3>
+
+<p>ll命令是linux中列出文件（夹）详细信息的命令，相当于ls -l</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/authority.png?raw=true" alt="auth1" /></p>
+
+<p>如图所示，观察文件a前面的详细信息，可以分为几段：</p>
+
+<h4 id="第一段">第一段</h4>
+
+<p>一共十位，第一位表示文件的类型，<code class="language-plaintext highlighter-rouge">-</code>代表普通文件，<code class="language-plaintext highlighter-rouge">d</code>代表目录文件，<code class="language-plaintext highlighter-rouge">b</code>代表块设备文件，<code class="language-plaintext highlighter-rouge">c</code>代表字符设备文件，<code class="language-plaintext highlighter-rouge">s</code>代表socket文件，<code class="language-plaintext highlighter-rouge">p</code>代表管道文件，<code class="language-plaintext highlighter-rouge">l</code>代表软连接文件。</p>
+
+<p>其余的九位每三位分成一组，共分成三组，然后每组分别代表用户(user)，用户所属组 (group)，不属于用户组的其他用户(others)。然后每组中三位分别表示读权限，写权限和执行权限。</p>
+
+<p>权限和命令间的关系：</p>
+<ul>
+  <li>r 对于文件代表是否能用cat等命令进行查看。对于目录，代表能否用ls等命令查看目录内的内容。</li>
+  <li>w 对于文件代表能否改变文件内的内容。对于目录代表能否改变目录内的内容（添加、删除文件等）。</li>
+  <li>x 对于文件代表文件(是否能运行)，对于文件夹代表是否能cd登录进去。</li>
+</ul>
+
+<!--more-->
+
+<h4 id="第二段">第二段</h4>
+
+<p>是指文件的个数，如果是文件那么此段值就是１，如果是文件夹则显示其中含有文件的个数。</p>
+
+<h4 id="第三段">第三段</h4>
+
+<p>是指文件所属的所有者</p>
+
+<h4 id="第四段">第四段</h4>
+
+<p>是指文件所有者所属的组</p>
+
+<h4 id="第五段">第五段</h4>
+
+<p>文件的大小，默认以byte为单位。空目录一般显示1024byte。</p>
+
+<h4 id="第六段">第六段</h4>
+
+<p>表示文件最后被修改的时间</p>
+
+<h4 id="第七段">第七段</h4>
+
+<p>文件名</p>
+
+<h3 id="权限">权限</h3>
+
+<p>Linux的权限主要就是上面ll中列出的第一段的后九位，即用户，用户组，其他用户对文件的读，写和执行权限。下面就介绍Linux中对权限的操作命令。</p>
+
+<h3 id="umask命令">umask命令</h3>
+
+<p>接着前面说，上面说的９位表示权限的位，每一位的取值就两种可能，一种是具备这种权限，一种是不具备。这样的话如果用１表示具备，０表示不具备，那么这九位表示权限的位就能转化位九位数字来表示。如rwxr-x—就能用111101000来表示。再将这九位数字每三位分一组，每组数就可以看做一个二进制数。111101000-&gt;(111)(101)(000)。然后再将每组数转换位十进制(111)(101)(000)-&gt;750。这样权限就能用三位十进制数表示了，但是每一位的值不大于７。</p>
+
+<p>接着说<code class="language-plaintext highlighter-rouge">umask权限过滤符</code>。在Linux中每次创建新文件时，都会用umask的值对文件的权限进行过滤，从而得到文件初始权限。比如umask的值是022，按照上面的讨论可以反向的将022 转换为９位的权限值022-&gt;000010010-&gt;—-w–w-，然后新文件时用—-w–w-对 rwxrwxrwx进行过滤(相同的过滤掉)后得到的权限就是文件的初始权限。这里得到的是 rwxr-xr-x，这就是umask的作用。在命令行之间敲umask可以查看umask的值，<code class="language-plaintext highlighter-rouge">umask value</code>命令可以设置umask值。 <code class="language-plaintext highlighter-rouge">umask -S</code>命令会显示带符号的权限信息，而不是数字。比如umask的值为022，那么 <code class="language-plaintext highlighter-rouge">umask -S</code>会显示<code class="language-plaintext highlighter-rouge">u=rwx,g=rx,o=rx</code>。</p>
+
+<h3 id="chmod命令">chmod命令</h3>
+
+<p>chmod命令用于给文件赋权限。用法很简单，如果想给文件增加所有者的写权限，则用 <code class="language-plaintext highlighter-rouge">chmod u+w filename</code>,同样的chmod后面的权限操作符由三部分构成，第一部分是指出要修改权限的对象，如u、g、o，第二部分是指出要做的操作，增加权限用+，减少权限-，第三部分指出要增加或减少的权限rw或x。如要为文件a增加其他用户的写权限，命令为 <code class="language-plaintext highlighter-rouge">chmod o+w a</code>。chmod也可以直接向文件赋予上述的三位数字的权限，如要向文件赋予 <code class="language-plaintext highlighter-rouge">rwxr-xr-x</code>权限，则命令为<code class="language-plaintext highlighter-rouge">chmod 755 filename</code>。</p>
+
+<p>如：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">chmod 4644 = chmod u+s</code></li>
+  <li><code class="language-plaintext highlighter-rouge">chmod 2644 = chmod g+s</code></li>
+  <li><code class="language-plaintext highlighter-rouge">chmod 1644 = chmod o+t</code></li>
+</ul>
+
+<h3 id="chattr命令">chattr命令</h3>
+
+<p>改变文件的属性。可以用<code class="language-plaintext highlighter-rouge">lsattr</code>命令查看文件的属性。与chmod这个命令相比，chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的。</p>
+
+<ul>
+  <li>+ ：在原有参数设定基础上，追加参数。</li>
+  <li>- ：在原有参数设定基础上，移除参数。</li>
+  <li>= ：更新为指定参数设定。</li>
+  <li>A：文件或目录的 atime (access time)不可被修改(modified), 可以有效预防例如手提电脑磁盘I/O错误的发生。</li>
+  <li>S：硬盘I/O同步选项，功能类似sync。</li>
+  <li>a：即append，设定该参数后，只能向文件中添加数据，而不能删除，多用于服务器日志文件安全，只有root才能设定这个属性。</li>
+  <li>c：即compresse，设定文件是否经压缩后再存储。读取时需要经过自动解压操作。</li>
+  <li>d：即no dump，设定文件不能成为dump程序的备份目标。</li>
+  <li>i：设定文件不能被删除、改名、设定链接关系，同时不能写入或新增内容。i参数对于文件 系统的安全设置有很大帮助。</li>
+  <li>j：即journal，设定此参数使得当通过mount参数：data=ordered 或者 data=writeback 挂 载的文件系统，文件在写入时会先被记录(在journal中)。如果filesystem被设定参数为 data=journal，则该参数自动失效。</li>
+  <li>s：保密性地删除文件或目录，即硬盘空间被全部收回。</li>
+  <li>u：与s相反，当设定为u时，数据内容其实还存在磁盘中，可以用于undeletion。</li>
+</ul>
+
+<p>各参数选项中常用到的是a和i。a选项强制只可添加不可删除，多用于日志系统的安全设定。而i是更为严格的安全设定，只有superuser (root) 或具有CAP_LINUX_IMMUTABLE处理能力（标识）的进程能够施加该选项。</p>
+
+<h3 id="suid">SUID</h3>
+
+<p>set user ID</p>
+
+<p><code class="language-plaintext highlighter-rouge">chmod u+s</code> 如果权限中带着S位那么所有用户都能像当前这个用户一样使用这个被赋予权限的命令或文件。</p>
+
+<p>使用SUID时要注意几点：</p>
+
+<ul>
+  <li>SUID只对二进制文件有效</li>
+  <li>调用者对该文件有执行权</li>
+  <li>在执行过程中，调用者会暂时获得该文件的所有者权限</li>
+  <li>该权限只在程序执行的过程中有效</li>
+</ul>
+
+<p>SUID的执行过程(图片转自下面参考链接的博客):</p>
+
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/suid.png?raw=true" alt="suid" /></p>
+
+<h3 id="sgid">SGID</h3>
+
+<p>Set GID 当SGID修饰文件时，它的作用和SUID相似，用户将得到该文件所属组的权限。当
+SGID修饰目录时，而且此时用户对目录有写权限，那么用户在目录中创建的任何东西都继
+承到目录所属的组。</p>
+
+<p><code class="language-plaintext highlighter-rouge">chmod g+s [name]</code></p>
+
+<h3 id="sbit">SBIT</h3>
+
+<p>Sticky Bit</p>
+
+<p>只能用于文件夹，在others权限的执行位上加上一个t位。当某一个目录拥有SBIT权限时，则任何一个能够在这个目录下建立文件的用户，该用户在这个目录下所建立的文件，只有该用户自己和root可以删除，其他用户均不可以。</p>
+
+<p><code class="language-plaintext highlighter-rouge">chmod o+t [name]</code></p>
+
+<p>也可以使用数字为文件系统增加SUID、SGIT、SBIT权限。</p>
+
+<ul>
+  <li>4表示SUID</li>
+  <li>2表示SGID</li>
+  <li>1表示SBIT</li>
+</ul>
+
+<p>比如<code class="language-plaintext highlighter-rouge">chmod 4777 [name]</code>就给文件增加了SUID，如果想同时为文件增加多种权限则将相应值相加即可，比如<code class="language-plaintext highlighter-rouge">chmod 6777 [name]</code>就为文件同时增加了SUID和SGID。</p>
+
+<h2 id="参考链接">参考链接:<br /></h2>
+<p><a href="http://1744193.blog.51cto.com/1734193/490277">linux下ll命令列出的文件类型
+</a><br />
+<a href="http://www.ha97.com/5172.html">（总结）Linux的chattr与lsattr命令详解</a><br />
+<a href="http://blog.csdn.net/xiaocainiaoshangxiao/article/details/17378611">linux中SUID，SGID和SBIT的奇妙用途
+</a></p>
+
+<p><br /></p>
+
+<p>转载请注明:<a href="[https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://blasphemyangels.github.io/2017/03/authority/">点此看原文
+</a></p>
+
+    </div>
+
+    <div class="clear"></div>
+
+    <a class="tip-btn" href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
+        <img src="/img/tip.png" style="width: 80px" />
+    </a>
+    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
+
+    
+
+    
+    
+    
+    <hr />
+
+    <!-- <p class="no-indent">微信公众号</p> -->
+
+    <div class="social-share">
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=Linux之权限管理&url=/old_posts/2017-03-16-authority.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=Linux之权限管理&u=/old_posts/2017-03-16-authority.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=/old_posts/2017-03-16-authority.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=Linux之权限管理&url=/old_posts/2017-03-16-authority.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=/old_posts/2017-03-16-authority.html&title=Linux之权限管理" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=/old_posts/2017-03-16-authority.html&title=Linux之权限管理" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=/old_posts/2017-03-16-authority.html&title=Linux之权限管理" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：Linux之权限管理&url=/old_posts/2017-03-16-authority.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=/old_posts/2017-03-16-authority.html&name=Linux之权限管理" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+    </div>
+
+    <blockquote class="relatedPosts">
+        
+        
+            
+            
+                
+            
+                
+                
+                    
+                
+                    
+                
+                
+            
+                
+                
+                    
+                
+                    
+                
+                
+            
+        
+            
+            
+                
+                
+                    
+                        
+                        <h4>相似博文</h4>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRelated', window.location.pathname]);">
+                            
+                            
+                            
+                                文本处理三剑客之剑仙awk
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                
+            
+        
+        
+            </ul>
+        
+
+        <h4>最近发表</h4>
+        <ul>
+        
+            <li class="relatedPost">
+                <a href="/2019/12/20/reading-report.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    2019 年读书小结
+                
+                </a>
+            </li>
+        
+            <li class="relatedPost">
+                <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    文本处理三剑客之剑仙awk
+                
+                </a>
+            </li>
+        
+        </ul>
+        <a class="button" href="/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
+    </blockquote>
+
+
+
+    <div class="about-author">
+    <div class="license">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/img/cc.png" />
+        </a>
+        <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://zhangwenli.com" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>, based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/ovilia/blog" rel="dct:source">Github</a>. You can see the source code of this blog site at <a href="https://github.com/Ovilia/blog/tree/gh-pages" target="_blank">github.com/Ovilia/blog</a>.</div>
+    </div>
+    <div class="follow-me">
+        <div class="follow-me-txt">Follow <strong>Lonny</strong> at</div>
+        <a class="social-share-element social-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', window.location.pathname]);"></a>
+<a class="social-share-element social-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', window.location.pathname]);"></a>
+<a class="social-share-element social-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', window.location.pathname]);"></a>
+<a class="social-share-element social-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', window.location.pathname]);"></a>
+<a class="social-share-element social-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', window.location.pathname]);"></a>
+<a class="social-share-element social-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', window.location.pathname]);"></a>
+<a class="social-share-element social-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', window.location.pathname]);"></a>
+<a class="social-share-element social-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', window.location.pathname]);"></a>
+
+    </div>
+    <div style="clear: both"></div>
+</div>
+
+
+    <h1>评论</h1>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    setTimeout(function() {
+        var disqus_shortname = 'lonny';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    }, 10000);
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div class="rotLeft rotBottom pageBack"></div>
+<div class="rotRight rotBottom pageBack"></div>
+
+            <div id="footer-nav">
+                | <a href="#">Top</a> |
+                <a href="">Blog</a> |
+                <a href="http://zhangwenli.com/#ovilia-home">About Me</a> |
+                <a href="mailto:me@zhangwenli.com" target="_blank">Email</a> |
+                <a href="/feed.xml">RSS</a> |
+                <a href="/meta">More</a> |
+            </div>
+
+            <div id="footer-follow">
+                <a class="footer-follow-element footer-follow-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', 'Footer']);"></a>
+            </div>
+        </div>
+
+        <div id="footerDiv">
+            <div id="footerImg"></div>
+            <div id="footerCnt">
+                <div id="footer">
+                </div>
+            </div>
+        </div>
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript" src="/js/lazyLoad.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+    </body>
+</html>
+

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <script type="text/javascript">
+            (function() {
+              var hm = document.createElement("script");
+              hm.src = "//hm.baidu.com/hm.js?dcee78e565eeaedc76defba5d096b344";
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(hm, s);
+            })();
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-38205696-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=100%, initial-scale=1" />
+
+        <link rel="shortcut icon" href="/img/owl.ico" />
+        <link rel="stylesheet" type="text/css" href="/css/default.min.css" />
+    </head>
+
+    <body>
+
+        <div id="music-panel">
+    <a id="music-control" onclick="toggleMusicPanel()"></a>
+    <div id="music-content">
+        <!-- use lazy loading -->
+        <!--iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="http://music.163.com/outchain/player?type=0&id=49176408&auto=0&height=430"></iframe-->
+    </div>
+</div>
+
+
+        
+        
+        <div id="mobile-nav">
+          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">Home</a><a href="" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">Blog</a>
+        </div>
+        <div class="contentDiv">
+
+
+<title>正则表达式浅析
+    
+ - 酒醉久伴</title>
+
+
+
+
+<div class="rotLeft rotTop pageBack"></div>
+<div class="rotRight rotTop pageBack"></div>
+<div class="container page page-post">
+    
+
+    <div class="simpleNav">
+        <a href="http://zhangwenli.com" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InPost', window.location.pathname]);">Home</a>
+        <a href="" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">Blog</a>
+    </div>
+
+    
+    
+    <div class="timeago" title="+08:00"></div>
+
+    
+    <div class="pageTitle">正则表达式浅析</div>
+
+    <div class="tagPanel">
+    
+    </div>
+
+    
+
+    <div id="page-view"></div>
+
+    <div class="post-content ">
+    <blockquote>很早之前就听说过正则表达式，在学习vim和bash的时候也用过一些简单正则表达式，但是一直没有系统的学习一下。最近在学习nlp的相关知识，于是就系统的学习了一下。</blockquote>
+<!-- ## 目录 -->
+<!--  -->
+<!-- * [语言和类](#jumplang) -->
+<!-- * [MetaCharacters](#jumpmeta) -->
+<!-- * [范围](#jumpbound) -->
+<!-- * [边界匹配](#jumpmatch) -->
+<!-- * [字符串替换](#jumpstring) -->
+<!-- * [分组](#jumpgroup) -->
+<!-- * [matches find lookingat](#jumpfind) -->
+<!-- * [start end](#jumpstart) -->
+<!-- * [匹配空白行的regular expression](#jumpspace) -->
+<!-- * [flags的简写](#jumpflag) -->
+<!-- * [back refenrences](#jumpback) -->
+<!-- * [POSIX character classes](#jumpposix) -->
+<!-- * [quantifiers修订词限定词](#jumpquant) -->
+<!-- * [non-capturing groups](#jumpnon) -->
+<!-- * [匹配email的regexp](#jumpemail) -->
+<!-- * [样例程序](#jumpdemo) -->
+<!--more-->
+
+<h3 id="语言和类">语言和类</h3>
+<p>基本每种编程语言都会支持正则表达式，这里为了演示方便使用java,java中下面三个类会
+支持正则表达式:</p>
+<ul>
+  <li>java.lang.String</li>
+  <li>java.util.regex.Pattern</li>
+  <li>java.util.regex.Matcher
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      <span class="s">"cao88786656ll"</span><span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s">"\\d"</span><span class="o">,</span> <span class="s">"-"</span><span class="o">)</span>
+      <span class="s">"cao88786656ll"</span> <span class="o">.</span><span class="na">mathes</span><span class="o">(</span><span class="s">"\\d"</span><span class="o">)</span>
+      <span class="s">"cao88786656ll"</span> <span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s">"\\d"</span><span class="o">,</span> <span class="s">"-"</span><span class="o">)</span>
+      <span class="s">"cao88786656ll"</span> <span class="o">.</span><span class="na">replaceFirst</span><span class="o">(</span><span class="n">regex</span><span class="o">,</span> <span class="n">replacement</span> <span class="o">)</span>
+        
+      <span class="nc">Pattern</span> <span class="n">和</span> <span class="nc">Matcher的用法</span>
+      <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span><span class="na">compile</span><span class="o">(</span><span class="s">"[a-z]{2}"</span> <span class="o">);</span>
+      <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span> <span class="s">"fgh"</span><span class="o">);</span>
+      <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">matches</span><span class="o">());</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="metacharacters">MetaCharacters</h3>
+
+<p>正则表达式包含一些基本的符号，下面：</p>
+<ul>
+  <li>. 任意一种字符</li>
+  <li>* 0个或多个</li>
+  <li>+ 一个或多个</li>
+  <li>? 0个或一个</li>
+  <li>{n，m} 出现次数大于n小于m</li>
+  <li>\d  [0-9]</li>
+  <li>\D [^\d]</li>
+  <li>\s  空白字符</li>
+  <li>\S   [^\s]</li>
+  <li>\w  [a-zA-Z_0-9]</li>
+  <li>\W  [^\w]</li>
+</ul>
+
+<p>这里要注意0宽度(zero length)匹配<br />
+<code class="language-plaintext highlighter-rouge">("").mathes("a?")</code><br />
+匹配一个\<br />
+<code class="language-plaintext highlighter-rouge">("\\").mathes("\\\\")</code></p>
+
+<h3 id="范围">范围</h3>
+
+<ul>
+  <li>[ ]一个中括号只匹配一个字符</li>
+  <li>^   除了…</li>
+  <li>| 或</li>
+  <li>&amp;&amp; 且</li>
+  <li>- 范围什么到什么</li>
+</ul>
+
+<h3 id="边界匹配">边界匹配</h3>
+
+<ul>
+  <li>^在[ ]外面表示开头 $表示结束
+<img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/wordbundary.png?raw=true" alt="wordbundary.png" /></li>
+</ul>
+
+<h3 id="字符串替换">字符串替换</h3>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"java Java JAVA JAvA I love jAVa you hate JAVA"</span> <span class="o">;</span>
+    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"JAVA"</span><span class="o">,</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="no">CASE_INSENSITIVE</span><span class="o">);</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s">"java"</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>Pattern. CASE_INSENSITIVE  不区分大小写</p>
+
+<p>奇数变成大写，偶数变成小写</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"java Java JAVA JAvA I love jAVa you hate JAVA"</span> <span class="o">;</span>
+    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"JAVA"</span><span class="o">,</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="no">CASE_INSENSITIVE</span><span class="o">);</span>
+    <span class="nc">StringBuffer</span> <span class="n">buf</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuffer</span><span class="o">();</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="k">while</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+    <span class="o">{</span>
+         <span class="n">i</span><span class="o">++;</span>
+          <span class="k">if</span><span class="o">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
+         <span class="o">{</span>
+               <span class="n">m</span><span class="o">.</span><span class="na">appendReplacement</span><span class="o">(</span> <span class="n">buf</span><span class="o">,</span> <span class="s">"java"</span><span class="o">);</span>
+         <span class="o">}</span>
+          <span class="k">else</span>
+               <span class="n">m</span><span class="o">.</span><span class="na">appendReplacement</span><span class="o">(</span> <span class="n">buf</span><span class="o">,</span> <span class="s">"JAVA"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">m</span><span class="o">.</span><span class="na">appendTail</span><span class="o">(</span> <span class="n">buf</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">buf</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="分组">分组</h3>
+
+<p>把整个正则表达式匹配成功的那个子串是一个组而且是第0组,
+然后在这个第一组之内又可以分组然后从组号1开始,
+用小括号分组 ( ) 从外向内数。</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(\\d{3,5})([a-z]{2})"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"123aa-124234bb-235cc-00"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="k">while</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+    <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">group</span><span class="o">(</span><span class="mi">1</span><span class="o">));</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="matches-find-lookingat">matches find lookingat</h3>
+
+<p>都是Matcher类的函数<br />
+matched 匹配:<br />
+find找一个匹配的子串 find一次之后会把找到的子串去掉下一次找的话从剩余的里面找
+<br />
+<img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/findlook.png?raw=true" alt="findandlook" />
+lookingat表示每次都是从头上找一个匹配的子序列</p>
+
+<h3 id="start-end">start end</h3>
+
+<p>上一次匹配的起始位置和结束位置,但是上一次必须得匹配不匹配的话会把报错</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span><span class="na">compile</span><span class="o">(</span><span class="s">"\\d{3,5}"</span> <span class="o">);</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span> <span class="s">"123-234-5645-00"</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">matches</span><span class="o">());</span>
+    <span class="c1">//m.reset();符</span>
+    <span class="cm">/*System.out.println(m.find());
+    System.out.println(m.start() + "-" + m.end());
+    System.out.println(m.find());
+    System.out.println(m.start() + "-" + m.end());
+    System.out.println(m.find());
+    System.out.println(m.start() + "-" + m.end());
+    System.out.println(m.find());*/</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">start</span><span class="o">()</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="na">end</span><span class="o">());</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">lookingAt</span><span class="o">());</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">start</span><span class="o">()</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="na">end</span><span class="o">());</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">lookingAt</span><span class="o">());</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">start</span><span class="o">()</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="na">end</span><span class="o">());</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">lookingAt</span><span class="o">());</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">lookingAt</span><span class="o">());</span>
+</code></pre></div></div>
+
+<h3 id="匹配空白行的regular-expression">匹配空白行的regular expression</h3>
+
+<p><code class="language-plaintext highlighter-rouge">^[\\s&amp;&amp;[^\\n]]*\\n$</code></p>
+
+<h3 id="flags的简写">flags的简写</h3>
+
+<p>Pattern.CASE_INSENSITIVE 可以简写为(?i)</p>
+
+<h3 id="back-refenrences">back refenrences</h3>
+
+<p>\\a<br />
+a代表以后和第a组匹配的东西一样才能使整个串匹配</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(\\d\\d)\\1"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"1212"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">matches</span><span class="o">());</span>
+    <span class="kc">true</span>
+
+    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(\\d\\d)\\1"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"1213"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="kc">false</span>
+
+    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(\\d(\\d))\\2"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"121"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">matches</span><span class="o">());</span>
+
+    <span class="kc">false</span>
+
+    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(\\d(\\d))\\2"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"122"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">matches</span><span class="o">());</span>
+
+    <span class="kc">true</span>
+</code></pre></div></div>
+
+<h3 id="posix-character-classes">POSIX character classes</h3>
+
+<p><code class="language-plaintext highlighter-rouge">\p{Lower}</code><br />
+<code class="language-plaintext highlighter-rouge">\p{Upper}</code><br />
+具体可以查看文档.</p>
+
+<h3 id="quantifiers修订词限定词">quantifiers修订词限定词</h3>
+
+<ul>
+  <li>Greedy 普通写法</li>
+  <li>Reluctant   Greedy 加上一个?  勉强的</li>
+  <li>Possessive  Greedy 加上一个+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nd">@Test</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(){</span>
+      <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(.{3,10})[0-9]"</span><span class="o">);</span>
+      <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"aaaa5bbbb6"</span><span class="o">;</span>
+      <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+      <span class="k">if</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+          <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">start</span><span class="o">()</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="na">end</span><span class="o">());</span>
+      <span class="k">else</span>
+          <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"not match"</span> <span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">答案</span> <span class="mi">0</span><span class="o">-</span><span class="mi">10</span>
+  <span class="nd">@Test</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(){</span>
+      <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(.{3,10}+)[0-9]"</span><span class="o">);</span>
+      <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"aaaa5bbbb6"</span><span class="o">;</span>
+      <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+      <span class="k">if</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+          <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">start</span><span class="o">()</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="na">end</span><span class="o">());</span>
+      <span class="k">else</span>
+          <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"not match"</span> <span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">答案</span> <span class="n">not</span> <span class="n">match</span>
+<span class="nc">Possessive吞完之后不吐用的较少</span>
+        
+  <span class="nd">@Test</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">(){</span>
+      <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">"(.{3,10}?)[0-9]"</span><span class="o">);</span>
+      <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"aaaa5bbbb6"</span><span class="o">;</span>
+      <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+      <span class="k">if</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+          <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">start</span><span class="o">()</span> <span class="o">+</span> <span class="s">"-"</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="na">end</span><span class="o">());</span>
+      <span class="k">else</span>
+          <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"not match"</span> <span class="o">);</span>
+  <span class="o">}</span>
+  <span class="mi">0</span><span class="o">-</span><span class="mi">5</span>
+</code></pre></div>    </div>
+    <p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/greddy.png?raw=true" alt="greedy" /></p>
+  </li>
+</ul>
+
+<h3 id="non-capturing-groups">non-capturing groups</h3>
+
+<p>(？=a)组内以问号开头那么就不捕获这个组</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span> <span class="nf">compile</span><span class="o">(</span><span class="s">".{3}(?=a)"</span><span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"444a66b"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="k">while</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+        <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">group</span><span class="o">());</span>
+    <span class="mi">444</span>
+    <span class="nc">Pattern</span> <span class="n">p</span> <span class="o">=</span> <span class="nc">Pattern</span><span class="o">.</span><span class="na">compile</span><span class="o">(</span><span class="s">"(?=a).{3}"</span> <span class="o">);</span>
+    <span class="nc">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">"444a66b"</span><span class="o">;</span>
+    <span class="nc">Matcher</span> <span class="n">m</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">matcher</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="k">while</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">find</span><span class="o">())</span>
+        <span class="nc">System</span><span class="o">.</span> <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">group</span><span class="o">());</span>
+    <span class="n">a66</span>
+</code></pre></div></div>
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/nongroup.png?raw=true" alt="nongroup" /></p>
+
+<h3 id="匹配email的regexp">匹配email的regexp</h3>
+
+<p><code class="language-plaintext highlighter-rouge">[\\w[._]]+@[\\w[._]]+\\.[\\w[._]]+</code></p>
+
+<h3 id="样例程序">样例程序</h3>
+
+<p><a href="https://raw.githubusercontent.com/BlasphemyAngels/MarkDownPhotos/master/CodeCounter.java">统计代码空行数</a>
+<a href="https://raw.githubusercontent.com/BlasphemyAngels/MarkDownPhotos/master/EmailSpider.java">找网页中的邮箱
+</a>
+<a href="https://raw.githubusercontent.com/BlasphemyAngels/MarkDownPhotos/master/Test.java">正则表达式
+</a></p>
+<hr />
+
+
+    </div>
+
+    <div class="clear"></div>
+
+    <a class="tip-btn" href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
+        <img src="/img/tip.png" style="width: 80px" />
+    </a>
+    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
+
+    
+
+    
+    
+    
+    <hr />
+
+    <!-- <p class="no-indent">微信公众号</p> -->
+
+    <div class="social-share">
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=正则表达式浅析&url=/old_posts/2017-03-09-regexp.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=正则表达式浅析&u=/old_posts/2017-03-09-regexp.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=/old_posts/2017-03-09-regexp.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=正则表达式浅析&url=/old_posts/2017-03-09-regexp.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=/old_posts/2017-03-09-regexp.html&title=正则表达式浅析" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=/old_posts/2017-03-09-regexp.html&title=正则表达式浅析" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=/old_posts/2017-03-09-regexp.html&title=正则表达式浅析" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：正则表达式浅析&url=/old_posts/2017-03-09-regexp.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=/old_posts/2017-03-09-regexp.html&name=正则表达式浅析" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+    </div>
+
+    <blockquote class="relatedPosts">
+        
+        
+            
+            
+                
+            
+                
+                
+                
+            
+                
+                
+                
+            
+        
+            
+            
+                
+                
+                
+            
+        
+        
+
+        <h4>Recent Posts</h4>
+        <ul>
+        
+            <li class="relatedPost">
+                <a href="/2019/12/20/reading-report.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    2019 年读书小结
+                
+                </a>
+            </li>
+        
+            <li class="relatedPost">
+                <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    文本处理三剑客之剑仙awk
+                
+                </a>
+            </li>
+        
+        </ul>
+        <a class="button" href="/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
+    </blockquote>
+
+
+
+    <div class="about-author">
+    <div class="license">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/img/cc.png" />
+        </a>
+        <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://zhangwenli.com" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>, based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/ovilia/blog" rel="dct:source">Github</a>. You can see the source code of this blog site at <a href="https://github.com/Ovilia/blog/tree/gh-pages" target="_blank">github.com/Ovilia/blog</a>.</div>
+    </div>
+    <div class="follow-me">
+        <div class="follow-me-txt">Follow <strong>Lonny</strong> at</div>
+        <a class="social-share-element social-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', window.location.pathname]);"></a>
+<a class="social-share-element social-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', window.location.pathname]);"></a>
+<a class="social-share-element social-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', window.location.pathname]);"></a>
+<a class="social-share-element social-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', window.location.pathname]);"></a>
+<a class="social-share-element social-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', window.location.pathname]);"></a>
+<a class="social-share-element social-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', window.location.pathname]);"></a>
+<a class="social-share-element social-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', window.location.pathname]);"></a>
+<a class="social-share-element social-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', window.location.pathname]);"></a>
+
+    </div>
+    <div style="clear: both"></div>
+</div>
+
+
+    <h1>评论</h1>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    setTimeout(function() {
+        var disqus_shortname = 'lonny';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    }, 10000);
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div class="rotLeft rotBottom pageBack"></div>
+<div class="rotRight rotBottom pageBack"></div>
+
+            <div id="footer-nav">
+                | <a href="#">Top</a> |
+                <a href="">Blog</a> |
+                <a href="http://zhangwenli.com/#ovilia-home">About Me</a> |
+                <a href="mailto:me@zhangwenli.com" target="_blank">Email</a> |
+                <a href="/feed.xml">RSS</a> |
+                <a href="/meta">More</a> |
+            </div>
+
+            <div id="footer-follow">
+                <a class="footer-follow-element footer-follow-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', 'Footer']);"></a>
+            </div>
+        </div>
+
+        <div id="footerDiv">
+            <div id="footerImg"></div>
+            <div id="footerCnt">
+                <div id="footer">
+                </div>
+            </div>
+        </div>
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript" src="/js/lazyLoad.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+    </body>
+</html>
+

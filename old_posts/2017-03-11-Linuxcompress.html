@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <script type="text/javascript">
+            (function() {
+              var hm = document.createElement("script");
+              hm.src = "//hm.baidu.com/hm.js?dcee78e565eeaedc76defba5d096b344";
+              var s = document.getElementsByTagName("script")[0];
+              s.parentNode.insertBefore(hm, s);
+            })();
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-38205696-1']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=100%, initial-scale=1" />
+
+        <link rel="shortcut icon" href="/img/owl.ico" />
+        <link rel="stylesheet" type="text/css" href="/css/default.min.css" />
+    </head>
+
+    <body>
+
+        <div id="music-panel">
+    <a id="music-control" onclick="toggleMusicPanel()"></a>
+    <div id="music-content">
+        <!-- use lazy loading -->
+        <!--iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="http://music.163.com/outchain/player?type=0&id=49176408&auto=0&height=430"></iframe-->
+    </div>
+</div>
+
+
+        
+        
+        <div id="mobile-nav">
+          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
+        </div>
+        <div class="contentDiv">
+
+
+<title>Linux中的文件和文件系统的压缩与打包
+    
+ - 酒醉久伴</title>
+
+
+
+
+<div class="rotLeft rotTop pageBack"></div>
+<div class="rotRight rotTop pageBack"></div>
+<div class="container page cn page-post">
+    
+
+    <div class="simpleNav">
+        <a href="http://zhangwenli.com" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InPost', window.location.pathname]);">首页</a>
+        <a href="" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
+    </div>
+
+    
+    
+    <div class="timeago cn" title="+08:00"></div>
+
+    
+    <div class="pageTitle">Linux中的文件和文件系统的压缩与打包</div>
+
+    <div class="tagPanel">
+    <a href="/all?tag=linux" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">linux</div></a><a href="/all?tag=压缩" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">压缩</div></a>
+    </div>
+
+    
+
+    <div id="page-view"></div>
+
+    <div class="post-content ">
+    <h2 id="正文">正文</h2>
+
+<p>  　 Linux提供了一些文件的压缩和打包命令，现在就让我们一起来学习他们。其中每个命令有很多参数，这里只是说明一些常用的，其它一些可以通过man page来查看。</p>
+
+<!--more-->
+
+<h3 id="linux常用的压缩命令">Linux常用的压缩命令</h3>
+
+<h4 id="compress-命令">compress 命令</h4>
+
+<p>  　 compress命令使用“Lempress-Ziv”编码压缩数据文件。compress是个历史悠久的压缩程序，文件经它压缩后，其名称后面会多出”.Z”的扩展名。当要解压缩时，可执行uncompress指令。事实上uncompress是指向compress的符号连接，因此不论是压缩或解压缩，都可通过compress指令单独完成。这个命令已经过时了，已经不常用，这里为了完整性，也解释一下。</p>
+
+<ul>
+  <li>-f：不提示用户，强制覆盖掉目标文件；</li>
+  <li>-c：将结果送到标准输出，无文件被改变；</li>
+  <li>-r：递归的操作方式；</li>
+  <li>-b&lt;压缩效率&gt;：压缩效率是一个介于9~16的数值，预设值为”16”，指定愈大的数值，压缩效率就愈高；</li>
+  <li>-d：对文件进行解压缩而非压缩；</li>
+  <li>-v：显示指令执行过程；</li>
+  <li>-V：显示指令版本及程序预设值。</li>
+</ul>
+
+<h4 id="uncompress命令">uncompress命令</h4>
+
+<p>  　 uncompress命令用来解压缩由compress命令压缩后产生的“.Z”压缩包。</p>
+
+<ul>
+  <li>-f：不提示用户，强制覆盖掉目标文件；</li>
+  <li>-c：将结果送到标准输出，无文件被改变；</li>
+  <li>-r：递归的操作方式。</li>
+</ul>
+
+<p>一般用法:<br />
+<code class="language-plaintext highlighter-rouge">compress -v filename</code><br />
+<code class="language-plaintext highlighter-rouge">compress -c -v filename &gt; targetfilename</code></p>
+
+<h4 id="gzip命令">gzip命令</h4>
+
+<p>  　 gzip, zcat是Linux提供的一对操作文件压缩的命令。gzip对文件进行压缩解压，zcat查看gzip压缩的文件。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">gzip filename</code> 压缩</li>
+  <li><code class="language-plaintext highlighter-rouge">zcat</code> 查看gzip压缩完的内容</li>
+  <li><code class="language-plaintext highlighter-rouge">gzip -d filename</code> 解压</li>
+  <li><code class="language-plaintext highlighter-rouge">gzip -c filename &gt; filename</code> 保留源文件</li>
+</ul>
+
+<h4 id="bzip2-bzcat命令">bzip2, bzcat命令</h4>
+
+<p>  　 bzip2和gzip一样的用法。</p>
+
+<h4 id="zip用法">zip用法</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">zip aaa.zip aaa</code>  压缩aaa文件</li>
+  <li><code class="language-plaintext highlighter-rouge">unzip aaa.zip</code>  解压</li>
+</ul>
+
+<h4 id="rar命令">rar命令</h4>
+
+<p>  　 另外有的时候需要rar，unrar命令，如果系统不提供，可以自行下载。</p>
+
+<h5 id="unrar命令">unrar命令</h5>
+<ul>
+  <li>unrar e Extract files without archived paths</li>
+  <li>unrar x Extract files with full path</li>
+</ul>
+
+<h3 id="linux的归档命令-tar">Linux的归档命令 tar</h3>
+
+<p>  　 很多时候，比如你要传输文件时，有许多文件需要传输，由于文件数很多，所以依次传输的话太繁琐，这个时候如果能够把这些文件组合成一个整体一次传输，传输完成后再分解成多个文件就方便了。幸运的是，Linux提供了这个命令，即tar命令。</p>
+
+<h4 id="选项">选项</h4>
+
+<ul>
+  <li>-f 指定要归档文件的名字</li>
+  <li>-c 对文件归档</li>
+  <li>-v 显示归档过程</li>
+  <li>-x 对文件解档</li>
+  <li>-t 查看归档文件内容</li>
+</ul>
+
+<h4 id="常用命令">常用命令</h4>
+
+<ul>
+  <li>tar -cvf aaa.tar aaa 将文件夹aaa下的文件归档，归档后名字为aaa.tar</li>
+  <li>tar -cvf aaa.tar aaa –remove-files 归档文件并删除源文件</li>
+  <li>tar -tvf hosts.tar 在不解档的情况下查看文件内容</li>
+  <li>tar -xvf aaa.tar 解档</li>
+  <li>tar -xvf aaa.tar -C aa/ 解档到aa目录下</li>
+  <li>tar -xvf aaa.tar a1 只解档aaa.tar中的a1文件</li>
+</ul>
+
+<h5 id="tar可以跟gzip或bzip2组合使用">tar可以跟gzip或bzip2组合使用</h5>
+
+<ul>
+  <li>tar -zcvf xxx.tar.gz xxx 归档并压缩</li>
+  <li>tar -zxvf xxx.tar.gz 解压并解档</li>
+  <li>tar -jcvf xx.tar.bz2 xx 归档并压缩</li>
+  <li>tar -jxvf xx.tar.bz2b 解压并解当</li>
+</ul>
+
+<h3 id="linux的备份命令">Linux的备份命令</h3>
+
+<h4 id="备份的种类">备份的种类</h4>
+
+<ul>
+  <li>完全备份
+  　 每次都将原文件系统备份，耗费空间。</li>
+  <li>差异备份
+  　 每次在原文件系统的基础上做新数据的备份，容易还原。</li>
+  <li>增量备份
+  　 每次在前一次备份的基础上做新数据的备份，还原麻烦，但是节省空间。</li>
+</ul>
+
+<h4 id="dump-命令">dump 命令</h4>
+
+<p>  　 dump是linux提供的备份工具程序，可将目录或整个文件系统备份至指定的设备，或备份成一个大文件。这里重点注意，dump针对的文件系统而不是单个文件。</p>
+
+<h5 id="语法">语法</h5>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">dump [-cnu][-0123456789][-b &lt;区块大小&gt;][-B &lt;区块数目&gt;][-d &lt;密度&gt;][-f &lt;设备名称&gt;][-h &lt;层级&gt;][-s &lt;磁带长度&gt;][-T &lt;日期&gt;][目录或文件系统]</code></li>
+  <li><code class="language-plaintext highlighter-rouge"> dump [-wW]</code></li>
+</ul>
+
+<h5 id="选项-1">选项</h5>
+
+<ul>
+  <li>-0123456789 　备份的层级。</li>
+  <li>-b<区块大小> 　指定区块的大小，单位为KB。</区块大小></li>
+  <li>-B<区块数目> 　指定备份卷册的区块数目。</区块数目></li>
+  <li>-c 　修改备份磁带预设的密度与容量。</li>
+  <li>-d<密度> 　设置磁带的密度。单位为BPI。</密度></li>
+  <li>-f<设备名称> 　指定备份设备。</设备名称></li>
+  <li>-h<层级> 　当备份层级等于或大雨指定的层级时，将不备份用户标示为"nodump"的文件。</层级></li>
+  <li>-n 　当备份工作需要管理员介入时，向所有”operator”群组中的使用者发出通知。</li>
+  <li>-s<磁带长度> 　备份磁带的长度，单位为英尺。</磁带长度></li>
+  <li>-T<日期> 　指定开始备份的时间与日期。</日期></li>
+  <li>-u 　备份完毕后，在/etc/dumpdates中记录备份的文件系统，层级，日期与时间等。</li>
+  <li>-w 　与-W类似，但仅显示需要备份的文件。</li>
+  <li>-W 　显示需要备份的文件及其最后一次备份的层级，时间与日期。</li>
+</ul>
+
+<h5 id="常用命令-1">常用命令</h5>
+
+<ul>
+  <li>dump -0u -f filesystem dumpname</li>
+  <li>restore -t xxx.dump #cat  the content of the dump file</li>
+  <li>restore -r(restore) -f 恢复文件</li>
+  <li>restore -i -f aaa.dump 进入交互模式</li>
+</ul>
+
+<h5 id="dump的重要特性">dump的重要特性</h5>
+
+<p>  　 dump -0 会完成完整的系统备份，以后的备份，dump会做对前面的备份等级中小于当前等级的最大的备份的增量备份。也就是说，比如，前面已经做了0,2,3,4,6级备份，当前要做5级备份，由于0,2,3,4,6中小于5级的最大等级是4级，所以当前五级备份做的是对前面四级备份的增量备份。</p>
+
+<p>  　 通过dump这样的特性，可以完成对文件系统的增量备份（按0,1,2…按递增等级顺序备份),也可以完成差异备份(按n,n-1,n-2,…的递减等级顺序备份)。</p>
+
+<h5 id="跳过文件">跳过文件</h5>
+
+<p>  　 如果想要让文件系统中的某个文件不备份，可以使用chattr命令。<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">chattr +d &lt;filename&gt;</code>向文件添加一个属性，使其在dump备份时跳过此文件。</p>
+
+<h4 id="光盘写入工具-mkisofs">光盘写入工具 mkisofs</h4>
+
+<p><code class="language-plaintext highlighter-rouge">mkisofs -o xx.iso file1 file2 ...</code><br />
+<code class="language-plaintext highlighter-rouge">cp /mnt/cdrom xx.iso # copy the CDrom to iso</code><br />
+<code class="language-plaintext highlighter-rouge">mount -o loop</code></p>
+
+<h4 id="dd命令">dd命令</h4>
+
+<p>  　 dd 是 Linux/UNIX 下的一个非常有用的命令，作用是用指定大小的块拷贝一个文件，并在拷贝的同时进行指定的转换。</p>
+
+<h5 id="选项-2">选项</h5>
+
+<ul>
+  <li>if =输入文件（或设备名称）。</li>
+  <li>of =输出文件（或设备名称）。</li>
+  <li>ibs = bytes 一次读取bytes字节，即读入缓冲区的字节数。</li>
+  <li>skip = blocks 跳过读入缓冲区开头的ibs*blocks块。</li>
+  <li>obs = bytes 一次写入bytes字节，即写入缓冲区的字节数。</li>
+  <li>bs = bytes 同时设置读/写缓冲区的字节数（等于设置ibs和obs）。</li>
+  <li>cbs = byte 一次转换bytes字节。</li>
+  <li>count=blocks 只拷贝输入的blocks块。</li>
+  <li>conv = ASCII 把EBCDIC码转换为ASCIl码。</li>
+  <li>conv = ebcdic 把ASCIl码转换为EBCDIC码。</li>
+  <li>conv = ibm 把ASCIl码转换为alternate EBCDIC码。</li>
+  <li>conv = block 把变动位转换成固定字符。</li>
+  <li>conv = ublock 把固定位转换成变动位。</li>
+  <li>conv = ucase 把字母由小写转换为大写。</li>
+  <li>conv = lcase 把字母由大写转换为小写。</li>
+  <li>conv = notrunc 不截短输出文件。</li>
+  <li>conv = swab 交换每一对输入字节。</li>
+  <li>conv = noerror 出错时不停止处理。</li>
+  <li>conv = sync 把每个输入记录的大小都调到ibs的大小（用NUL填充）。</li>
+  <li>dd if=[STDIN] of=[STDOUT]  输入和输出</li>
+  <li>seek=BLOCKS 跳过一段以后才输出</li>
+</ul>
+
+<h5 id="拷贝光盘">拷贝光盘</h5>
+
+<p>  　 注意：光碟是标准的 iso9660格式才行</p>
+
+<p><code class="language-plaintext highlighter-rouge">dd if=/dev/cdrom of=cdrom.iso</code><br />
+<code class="language-plaintext highlighter-rouge">cdrecord -v cdrom.iso</code><br /></p>
+
+<h5 id="特殊块">特殊块</h5>
+
+<ul>
+  <li>dd if=/dev/zero of=hello.txt bs=20M count=1 创建一个20M的空文件</li>
+  <li>/dev/null，外号叫无底洞，你可以向它输出任何数据，它不会达到饱和。</li>
+  <li>/dev/zero,是一个输入设备，你可你用它来初始化文件。</li>
+  <li>/dev/null——它是空设备，也称为位桶（bit bucket）。任何写入它的输出都会被抛弃。如果不想让消息以标准输出显示或写入文件，那么可以将消息重定向到位桶。</li>
+  <li>/dev/zero——该设备无穷尽地提供0，可以使用任何你需要的数目——设备提供的要多的多。他可以用于向设备或文件写入字符串0。</li>
+</ul>
+
+<h4 id="cpio--find-备份">cpio + find 备份</h4>
+
+<ul>
+  <li>find -name file | cpio -o &gt; xx.cpio</li>
+  <li>cpio -i &lt; xx.cpio</li>
+</ul>
+
+<h2 id="参考链接">参考链接:</h2>
+<p><a href="http://www.cnblogs.com/dkblog/archive/2009/09/18/1980715.html">Linux-dd命令详解</a></p>
+
+<p><br /></p>
+
+<p>转载请注明:<a href="[https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://blasphemyangels.github.io/2017/03/Linuxcompress/">点此看原文
+</a></p>
+
+    </div>
+
+    <div class="clear"></div>
+
+    <a class="tip-btn" href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
+        <img src="/img/tip.png" style="width: 80px" />
+    </a>
+    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
+
+    
+
+    
+    
+    
+    <hr />
+
+    <!-- <p class="no-indent">微信公众号</p> -->
+
+    <div class="social-share">
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=Linux中的文件和文件系统的压缩与打包&url=/old_posts/2017-03-11-Linuxcompress.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=Linux中的文件和文件系统的压缩与打包&u=/old_posts/2017-03-11-Linuxcompress.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=/old_posts/2017-03-11-Linuxcompress.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=Linux中的文件和文件系统的压缩与打包&url=/old_posts/2017-03-11-Linuxcompress.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=/old_posts/2017-03-11-Linuxcompress.html&title=Linux中的文件和文件系统的压缩与打包" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=/old_posts/2017-03-11-Linuxcompress.html&title=Linux中的文件和文件系统的压缩与打包" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=/old_posts/2017-03-11-Linuxcompress.html&title=Linux中的文件和文件系统的压缩与打包" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：Linux中的文件和文件系统的压缩与打包&url=/old_posts/2017-03-11-Linuxcompress.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=/old_posts/2017-03-11-Linuxcompress.html&name=Linux中的文件和文件系统的压缩与打包" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+    </div>
+
+    <blockquote class="relatedPosts">
+        
+        
+            
+            
+                
+            
+                
+                
+                    
+                
+                    
+                
+                
+            
+                
+                
+                    
+                
+                    
+                
+                
+            
+        
+            
+            
+                
+                
+                    
+                        
+                        <h4>相似博文</h4>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRelated', window.location.pathname]);">
+                            
+                            
+                            
+                                文本处理三剑客之剑仙awk
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                
+            
+        
+        
+            </ul>
+        
+
+        <h4>最近发表</h4>
+        <ul>
+        
+            <li class="relatedPost">
+                <a href="/2019/12/20/reading-report.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    2019 年读书小结
+                
+                </a>
+            </li>
+        
+            <li class="relatedPost">
+                <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    文本处理三剑客之剑仙awk
+                
+                </a>
+            </li>
+        
+        </ul>
+        <a class="button" href="/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
+    </blockquote>
+
+
+
+    <div class="about-author">
+    <div class="license">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">
+            <img alt="Creative Commons License" style="border-width:0" src="/img/cc.png" />
+        </a>
+        <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://zhangwenli.com" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>, based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/ovilia/blog" rel="dct:source">Github</a>. You can see the source code of this blog site at <a href="https://github.com/Ovilia/blog/tree/gh-pages" target="_blank">github.com/Ovilia/blog</a>.</div>
+    </div>
+    <div class="follow-me">
+        <div class="follow-me-txt">Follow <strong>Lonny</strong> at</div>
+        <a class="social-share-element social-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', window.location.pathname]);"></a>
+<a class="social-share-element social-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', window.location.pathname]);"></a>
+<a class="social-share-element social-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', window.location.pathname]);"></a>
+<a class="social-share-element social-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', window.location.pathname]);"></a>
+<a class="social-share-element social-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', window.location.pathname]);"></a>
+<a class="social-share-element social-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', window.location.pathname]);"></a>
+<a class="social-share-element social-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', window.location.pathname]);"></a>
+<a class="social-share-element social-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', window.location.pathname]);"></a>
+
+    </div>
+    <div style="clear: both"></div>
+</div>
+
+
+    <h1>评论</h1>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    setTimeout(function() {
+        var disqus_shortname = 'lonny';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    }, 10000);
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div class="rotLeft rotBottom pageBack"></div>
+<div class="rotRight rotBottom pageBack"></div>
+
+            <div id="footer-nav">
+                | <a href="#">Top</a> |
+                <a href="">Blog</a> |
+                <a href="http://zhangwenli.com/#ovilia-home">About Me</a> |
+                <a href="mailto:me@zhangwenli.com" target="_blank">Email</a> |
+                <a href="/feed.xml">RSS</a> |
+                <a href="/meta">More</a> |
+            </div>
+
+            <div id="footer-follow">
+                <a class="footer-follow-element footer-follow-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', 'Footer']);"></a>
+            </div>
+        </div>
+
+        <div id="footerDiv">
+            <div id="footerImg"></div>
+            <div id="footerCnt">
+                <div id="footer">
+                </div>
+            </div>
+        </div>
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript" src="/js/lazyLoad.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+    </body>
+</html>
+
