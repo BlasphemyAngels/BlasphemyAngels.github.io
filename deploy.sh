@@ -8,4 +8,4 @@ git add .
 
 git commit -m "deploy ${date_str}"
 
-git push -u origin main
+git push origin main
