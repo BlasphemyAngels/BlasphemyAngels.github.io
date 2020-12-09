@@ -25,7 +25,7 @@
         <meta name="viewport" content="width=100%, initial-scale=1" />
 
         <link rel="shortcut icon" href="/img/owl.ico" />
-        <link rel="stylesheet" type="text/css" href="http://localhost:4000/css/default.min.css" />
+        <link rel="stylesheet" type="text/css" href="/css/default.min.css" />
     </head>
 
     <body>
@@ -42,7 +42,7 @@
         
         
         <div id="mobile-nav">
-          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="http://localhost:4000" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
+          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
         </div>
         <div class="contentDiv">
 
@@ -61,7 +61,7 @@
 
     <div class="simpleNav">
         <a href="http://zhangwenli.com" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InPost', window.location.pathname]);">首页</a>
-        <a href="http://localhost:4000" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
+        <a href="" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
     </div>
 
     
@@ -72,7 +72,7 @@
     <div class="pageTitle">从贝叶斯到图模型</div>
 
     <div class="tagPanel">
-    <a href="http://localhost:4000/all?tag=bayes" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">bayes</div></a><a href="http://localhost:4000/all?tag=概率图模型" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">概率图模型</div></a>
+    <a href="/all?tag=bayes" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">bayes</div></a><a href="/all?tag=概率图模型" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">概率图模型</div></a>
     </div>
 
     
@@ -258,10 +258,10 @@
 
     <div class="clear"></div>
 
-    <a class="tip-btn" href="http://localhost:4000/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
-        <img src="http://localhost:4000/img/tip.png" style="width: 80px" />
+    <a class="tip-btn" href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
+        <img src="/img/tip.png" style="width: 80px" />
     </a>
-    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="http://localhost:4000/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
+    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
 
     
 
@@ -273,15 +273,15 @@
     <!-- <p class="no-indent">微信公众号</p> -->
 
     <div class="social-share">
-        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=从贝叶斯到图模型&url=http://localhost:4000/old_posts/2017-03-13-bayes.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
-        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=从贝叶斯到图模型&u=http://localhost:4000/old_posts/2017-03-13-bayes.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
-        <a class="social-share-element social-google" href="https://plus.google.com/share?url=http://localhost:4000/old_posts/2017-03-13-bayes.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
-        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=从贝叶斯到图模型&url=http://localhost:4000/old_posts/2017-03-13-bayes.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
-        <a class="social-share-element social-digg" href="http://digg.com/submit?url=http://localhost:4000/old_posts/2017-03-13-bayes.html&title=从贝叶斯到图模型" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
-        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=http://localhost:4000/old_posts/2017-03-13-bayes.html&title=从贝叶斯到图模型" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
-        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=http://localhost:4000/old_posts/2017-03-13-bayes.html&title=从贝叶斯到图模型" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
-        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：从贝叶斯到图模型&url=http://localhost:4000/old_posts/2017-03-13-bayes.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
-        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=http://localhost:4000/old_posts/2017-03-13-bayes.html&name=从贝叶斯到图模型" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=从贝叶斯到图模型&url=/old_posts/2017-03-13-bayes.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=从贝叶斯到图模型&u=/old_posts/2017-03-13-bayes.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=/old_posts/2017-03-13-bayes.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=从贝叶斯到图模型&url=/old_posts/2017-03-13-bayes.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=/old_posts/2017-03-13-bayes.html&title=从贝叶斯到图模型" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=/old_posts/2017-03-13-bayes.html&title=从贝叶斯到图模型" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=/old_posts/2017-03-13-bayes.html&title=从贝叶斯到图模型" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：从贝叶斯到图模型&url=/old_posts/2017-03-13-bayes.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=/old_posts/2017-03-13-bayes.html&name=从贝叶斯到图模型" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
     </div>
 
     <blockquote class="relatedPosts">
@@ -304,7 +304,7 @@
         <ul>
         
             <li class="relatedPost">
-                <a href="http://localhost:4000/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
                 
                 
                 
@@ -314,7 +314,7 @@
             </li>
         
         </ul>
-        <a class="button" href="http://localhost:4000/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
+        <a class="button" href="/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
     </blockquote>
 
 
@@ -322,7 +322,7 @@
     <div class="about-author">
     <div class="license">
         <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">
-            <img alt="Creative Commons License" style="border-width:0" src="http://localhost:4000/img/cc.png" />
+            <img alt="Creative Commons License" style="border-width:0" src="/img/cc.png" />
         </a>
         <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://zhangwenli.com" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>, based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/ovilia/blog" rel="dct:source">Github</a>. You can see the source code of this blog site at <a href="https://github.com/Ovilia/blog/tree/gh-pages" target="_blank">github.com/Ovilia/blog</a>.</div>
     </div>
@@ -366,11 +366,11 @@
 
             <div id="footer-nav">
                 | <a href="#">Top</a> |
-                <a href="http://localhost:4000">Blog</a> |
+                <a href="">Blog</a> |
                 <a href="http://zhangwenli.com/#ovilia-home">About Me</a> |
                 <a href="mailto:me@zhangwenli.com" target="_blank">Email</a> |
-                <a href="http://localhost:4000/feed.xml">RSS</a> |
-                <a href="http://localhost:4000/meta">More</a> |
+                <a href="/feed.xml">RSS</a> |
+                <a href="/meta">More</a> |
             </div>
 
             <div id="footer-follow">
@@ -398,8 +398,8 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        <script type="text/javascript" src="http://localhost:4000/js/lazyLoad.js"></script>
-        <script type="text/javascript" src="http://localhost:4000/js/common.js"></script>
+        <script type="text/javascript" src="/js/lazyLoad.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
     </body>
 </html>
 
