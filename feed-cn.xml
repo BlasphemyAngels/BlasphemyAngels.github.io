@@ -53,7 +53,7 @@ e
 h&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;awk处理时可以根据&lt;code&gt;patten&lt;/code&gt;匹配特定的行进行`script`内的处理，不匹配的行则不处理。&lt;/p&gt;
+&lt;p&gt;awk处理时可以根据&lt;code&gt;patten&lt;/code&gt;匹配特定的行进行&lt;code&gt;script&lt;/code&gt;内的处理，不匹配的行则不处理。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;match&lt;/code&gt;一般格式是&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/regex/&lt;/code&gt;，两条斜线建的正则表达式可以提供丰富的匹配的方式对行进行匹配处理。
@@ -71,7 +71,7 @@ h&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;script&lt;/code&gt;内书写awk对匹配到的行要执行的命令语句，语法类&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C&lt;/code&gt;语言，如:&lt;/p&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{print $n}'&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{print($n)}'&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;意思就是打印文件&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;test&lt;/code&gt;中每一行的第&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n&lt;/code&gt;列。而列的定义是默认空格分割，可以使用&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-F&lt;/code&gt;选项指定，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$&lt;/code&gt;后面可以跟&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1,2,3,...,NF-1,NF&lt;/code&gt;，其中&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NF&lt;/code&gt;表示最后一列的号码。&lt;/p&gt;
 

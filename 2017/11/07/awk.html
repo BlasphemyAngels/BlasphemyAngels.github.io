@@ -148,7 +148,7 @@ e
 h</code></pre></figure>
 
 <blockquote>
-<p>awk处理时可以根据<code>patten</code>匹配特定的行进行`script`内的处理，不匹配的行则不处理。</p>
+<p>awk处理时可以根据<code>patten</code>匹配特定的行进行<code>script</code>内的处理，不匹配的行则不处理。</p>
 </blockquote>
 
 <p><code class="language-plaintext highlighter-rouge">match</code>一般格式是<code class="language-plaintext highlighter-rouge">/regex/</code>，两条斜线建的正则表达式可以提供丰富的匹配的方式对行进行匹配处理。
@@ -166,7 +166,7 @@ h</code></pre></figure>
 
 <p><code class="language-plaintext highlighter-rouge">script</code>内书写awk对匹配到的行要执行的命令语句，语法类<code class="language-plaintext highlighter-rouge">C</code>语言，如:</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="s1">'{print $n}'</span> <span class="nb">test</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="s1">'{print($n)}'</span> <span class="nb">test</span></code></pre></figure>
 
 <p>意思就是打印文件<code class="language-plaintext highlighter-rouge">test</code>中每一行的第<code class="language-plaintext highlighter-rouge">n</code>列。而列的定义是默认空格分割，可以使用<code class="language-plaintext highlighter-rouge">-F</code>选项指定，<code class="language-plaintext highlighter-rouge">$</code>后面可以跟<code class="language-plaintext highlighter-rouge">1,2,3,...,NF-1,NF</code>，其中<code class="language-plaintext highlighter-rouge">NF</code>表示最后一列的号码。</p>
 
@@ -412,14 +412,10 @@ c-123456-aaads
     </div>
     <div class="follow-me">
         <div class="follow-me-txt">Follow <strong>Lonny</strong> at</div>
-        <a class="social-share-element social-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', window.location.pathname]);"></a>
-<a class="social-share-element social-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', window.location.pathname]);"></a>
-<a class="social-share-element social-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', window.location.pathname]);"></a>
-<a class="social-share-element social-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', window.location.pathname]);"></a>
-<a class="social-share-element social-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', window.location.pathname]);"></a>
-<a class="social-share-element social-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', window.location.pathname]);"></a>
+        <a class="social-share-element social-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', window.location.pathname]);"></a>
 <a class="social-share-element social-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', window.location.pathname]);"></a>
 <a class="social-share-element social-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', window.location.pathname]);"></a>
+<a class="social-share-element social-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', window.location.pathname]);"></a>
 
     </div>
     <div style="clear: both"></div>
