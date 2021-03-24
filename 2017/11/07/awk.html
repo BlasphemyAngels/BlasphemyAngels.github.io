@@ -25,7 +25,7 @@
         <meta name="viewport" content="width=100%, initial-scale=1" />
 
         <link rel="shortcut icon" href="/img/owl.ico" />
-        <link rel="stylesheet" type="text/css" href="/css/default.min.css" />
+        <link rel="stylesheet" type="text/css" href="http://localhost:4000/css/default.min.css" />
     </head>
 
     <body>
@@ -42,7 +42,7 @@
         
         
         <div id="mobile-nav">
-          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
+          <a href="{ site.url }" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InNavMobile', window.location.pathname]);">首页</a><a href="http://localhost:4000" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InNavMobile', window.location.pathname]);">博客</a>
         </div>
         <div class="contentDiv">
 
@@ -63,7 +63,7 @@
 
     <div class="simpleNav">
         <a href="http://zhangwenli.com" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InPost', window.location.pathname]);">首页</a>
-        <a href="" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
+        <a href="http://localhost:4000" class="pageDiv" onclick="_gaq.push(['_trackEvent', 'ToBlog', 'InPost', window.location.pathname]);">博客</a>
     </div>
 
     
@@ -74,7 +74,7 @@
     <div class="pageTitle">文本处理三剑客之剑仙awk</div>
 
     <div class="tagPanel">
-    <a href="/all?tag=linux" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">linux</div></a>
+    <a href="http://localhost:4000/all?tag=linux" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">linux</div></a>
     </div>
 
     
@@ -87,6 +87,8 @@
     
     
         
+    
+        
             
                 <li class="series-self">
             
@@ -97,6 +99,10 @@
 
             
             </li>
+        
+    
+        
+    
         
     
     </ul>
@@ -117,9 +123,36 @@
 <p>本文将带你走进awk的世界。</p>
 </blockquote>
 
-<p><a href="http://stackoverflow.com/users/1306809/matt-coughlin" target="_blank">Matt Coughlin</a> gives a very clear <a href="http://stackoverflow.com/questions/15985875/effect-of-declared-and-undeclared-variables#answer-16007360" target="_blank">answer</a>.</p>
-
 <!--more-->
+
+<h4 id="引子">引子</h4>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat </span>file
+output-&gt;
+a-b-c-d-e
+f-g-e-h-g
+1-2-3-4-5
+</code></pre></div></div>
+
+<p>看到了文件的内容了吧？有些小伙伴可能会回答：看到了，文件内有3行内容。
+这是正确的回答吗？也对也不对。</p>
+
+<p>更严谨的回答是：</p>
+
+<blockquote>
+  <p><em>文件内有一些内容（字符流），如果用\n作为记录分隔符，则可以将内容看做3条记录（行）。</em></p>
+</blockquote>
+
+<p>记住这个定义，这很重要，因为我们可以以别的字符当做记录分隔符。记录分隔符的不同将产生不同的记录。</p>
+
+<p>同样对于每条记录来说，使用域分隔符可以将每条记录分割成不同的域。</p>
+
+<p>例如，指定记录分隔符为\n，域分隔符为-，则上面的文件含有3条记录，每条记录有5个域。通过指定哪一条记录以及哪一个域，
+即可准确得到文件中的数据，比如第2条记录的第3个域为”e”。</p>
+
+<p><code class="language-plaintext highlighter-rouge">awk</code>的运作方式跟上面所说的有什么关系呢？其实<code class="language-plaintext highlighter-rouge">awk</code>通过事先指定好记录分隔符（默认\n）以及域分隔符（默认空格）将文件
+内容分成多条记录，每条记录中有多个域，然后<code class="language-plaintext highlighter-rouge">awk</code>会依次读入每条记录，对其中的域做一些定制化的处理，完成我们所需要做的
+工作。</p>
 
 <h4 id="基本知识">基本知识</h4>
 
@@ -127,16 +160,24 @@
 
 <p>命令一般格式：</p>
 
-<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="o">[</span>参数] <span class="s1">'[match] {script}'</span> filename</code></pre></figure>
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="o">[</span>参数] <span class="s1">'[match] {action script}'</span> filename</code></pre></figure>
+
+<blockquote>
+  <p>awk的[match] {action script}可以有多个:</p>
+  <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'match {script} match {script} match {script} ...'</span> filename
+</code></pre></div>  </div>
+</blockquote>
 
 <blockquote>
 <p>awk常用的参数有两个：<code>-v</code>和<code>-F</code>。
-啊？还有没有别的，不要问，肯定有，但是我不会。</p>
+啊？还有没有别的，不要问，问就是没有，因为我不会。</p>
 </blockquote>
 
-<p><code class="language-plaintext highlighter-rouge">-F</code>比较简单，就是定义awk处理时文件一行内容中列的分隔符，如果不设置默认是空格。</p>
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/否认三连.gif?raw=true" alt="否认三连" /></p>
 
-<p>如文件中一行内容为<code class="language-plaintext highlighter-rouge">a-b-c</code>，然后指定<code class="language-plaintext highlighter-rouge">awk -F '-' ...</code>，则awk处理时就会以<code class="language-plaintext highlighter-rouge">a</code>为第一列,<code class="language-plaintext highlighter-rouge">b</code>为第二列……,回想一下<code class="language-plaintext highlighter-rouge">linux</code>中的命令<code class="language-plaintext highlighter-rouge">cut</code>，它也是用来取文件中某一列内容的，他的<code class="language-plaintext highlighter-rouge">-d</code>参数指定列分隔符，然后用<code class="language-plaintext highlighter-rouge">-f</code>指定取那一列，如:</p>
+<p><code class="language-plaintext highlighter-rouge">-F</code>比较简单，就是定义awk处理时文件一条记录中域的分隔符，如果不设置默认是空格。</p>
+
+<p>如文件中一条记录为<code class="language-plaintext highlighter-rouge">a-b-c</code>，然后指定<code class="language-plaintext highlighter-rouge">awk -F '-' ...</code>，则awk处理时就会以<code class="language-plaintext highlighter-rouge">a</code>为第1个域,<code class="language-plaintext highlighter-rouge">b</code>为第2个域……,回想一下<code class="language-plaintext highlighter-rouge">linux</code>中的命令<code class="language-plaintext highlighter-rouge">cut</code>，它也是用来取文件中某一列内容的，他的<code class="language-plaintext highlighter-rouge">-d</code>参数指定列分隔符，然后用<code class="language-plaintext highlighter-rouge">-f</code>指定取那一列，如:</p>
 
 <figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">$ </span><span class="nb">cat test
 </span>a-b-c
@@ -148,43 +189,56 @@ e
 h</code></pre></figure>
 
 <blockquote>
-<p>awk处理时可以根据<code>patten</code>匹配特定的行进行<code>script</code>内的处理，不匹配的行则不处理。</p>
+<p>awk处理时可以根据<code>match</code>匹配特定的记录进行<code>script</code>内的处理，不匹配的记录则不处理。</p>
 </blockquote>
 
-<p><code class="language-plaintext highlighter-rouge">match</code>一般格式是<code class="language-plaintext highlighter-rouge">/regex/</code>，两条斜线建的正则表达式可以提供丰富的匹配的方式对行进行匹配处理。
-如<code class="language-plaintext highlighter-rouge">awk -F '-' '/^rex*/ {script}' filename</code>就表示只处理以<code class="language-plaintext highlighter-rouge">rex</code>开头的行。</p>
+<p><code class="language-plaintext highlighter-rouge">match</code>一般格式是<code class="language-plaintext highlighter-rouge">/regex/</code>，两条斜线建的正则表达式可以提供丰富的匹配的方式对记录进行匹配处理。
+如<code class="language-plaintext highlighter-rouge">awk -F '-' '/^rex*/ {script}' filename</code>就表示只处理以<code class="language-plaintext highlighter-rouge">rex</code>开头的记录。不写<code class="language-plaintext highlighter-rouge">match</code>会匹配所有记录。</p>
 
 <blockquote>
 <p>
-    awk还提供了两个比较特殊的匹配模式，`BEGIN`和`END`。
+    awk还提供了两个比较特殊的匹配模式，<code>BEGIN</code>和<code>END</code>。
 </p>
 </blockquote>
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">BEGIN {script}</code>表示在文件读取所有行之前执行<code class="language-plaintext highlighter-rouge">script</code>内容。</li>
-  <li><code class="language-plaintext highlighter-rouge">END {script}</code>表示在文件读取所有行之后执行<code class="language-plaintext highlighter-rouge">script</code>内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">BEGIN {script}</code>表示在文件读取所有记录之前执行<code class="language-plaintext highlighter-rouge">script</code>内容。</li>
+  <li><code class="language-plaintext highlighter-rouge">END {script}</code>表示在文件读取所有记录之后执行<code class="language-plaintext highlighter-rouge">script</code>内容。</li>
 </ul>
 
-<p><code class="language-plaintext highlighter-rouge">script</code>内书写awk对匹配到的行要执行的命令语句，语法类<code class="language-plaintext highlighter-rouge">C</code>语言，如:</p>
+<p><code class="language-plaintext highlighter-rouge">script</code>内书写awk对匹配到的记录要执行的命令语句，语法类<code class="language-plaintext highlighter-rouge">C</code>语言，如:</p>
 
 <figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">awk</span> <span class="s1">'{print($n)}'</span> <span class="nb">test</span></code></pre></figure>
 
-<p>意思就是打印文件<code class="language-plaintext highlighter-rouge">test</code>中每一行的第<code class="language-plaintext highlighter-rouge">n</code>列。而列的定义是默认空格分割，可以使用<code class="language-plaintext highlighter-rouge">-F</code>选项指定，<code class="language-plaintext highlighter-rouge">$</code>后面可以跟<code class="language-plaintext highlighter-rouge">1,2,3,...,NF-1,NF</code>，其中<code class="language-plaintext highlighter-rouge">NF</code>表示最后一列的号码。</p>
+<p>意思就是打印文件<code class="language-plaintext highlighter-rouge">test</code>中每一记录的第<code class="language-plaintext highlighter-rouge">n</code>个域。而列的定义是默认空格分割，可以使用<code class="language-plaintext highlighter-rouge">-F</code>选项指定，<code class="language-plaintext highlighter-rouge">$</code>后面可以跟<code class="language-plaintext highlighter-rouge">1,2,3,...,NF-1,NF</code>，其中<code class="language-plaintext highlighter-rouge">NF</code>表示最后一列的号码。</p>
 
-<p>除了<code class="language-plaintext highlighter-rouge">NF</code>，<code class="language-plaintext highlighter-rouge">awk</code>中还有哪些特殊符号呢？</p>
+<p>除了<code class="language-plaintext highlighter-rouge">NF</code>，<code class="language-plaintext highlighter-rouge">awk</code>中的<code class="language-plaintext highlighter-rouge">script</code>代码中还有哪些特殊符号呢？</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">NR</code> 行号</li>
-  <li><code class="language-plaintext highlighter-rouge">NF</code> 最后一列列号</li>
+  <li><code class="language-plaintext highlighter-rouge">NR</code> 当前处理到第几条记录</li>
+  <li><code class="language-plaintext highlighter-rouge">NF</code> 每条记录域的数目</li>
   <li><code class="language-plaintext highlighter-rouge">ARGC</code> 命令行参数个数</li>
   <li><code class="language-plaintext highlighter-rouge">ARGV</code> 命令行参数数组</li>
-  <li><code class="language-plaintext highlighter-rouge">ENVIRON</code> 支持队列中系统环境变量的使用</li>
+  <li><code class="language-plaintext highlighter-rouge">ARGIND</code>	命令行正在处理的当前文件的AGV的索引。</li>
   <li><code class="language-plaintext highlighter-rouge">FILENAME</code> awk浏览的文件名</li>
   <li><code class="language-plaintext highlighter-rouge">FNR</code> 浏览文件的记录数</li>
-  <li><code class="language-plaintext highlighter-rouge">FS</code> 设置输入列分隔符，等价于命令行 -F选项</li>
-  <li><code class="language-plaintext highlighter-rouge">OFS</code> 输出列分隔符</li>
-  <li><code class="language-plaintext highlighter-rouge">RS</code> 输入行分隔符</li>
-  <li><code class="language-plaintext highlighter-rouge">ORS</code> 输出行分隔符</li>
+  <li><code class="language-plaintext highlighter-rouge">FS</code> 设置输入域分隔符，等价于命令行 -F选项</li>
+  <li><code class="language-plaintext highlighter-rouge">OFS</code> 输出域分隔符</li>
+  <li><code class="language-plaintext highlighter-rouge">RS</code> 输入记录分隔符</li>
+  <li><code class="language-plaintext highlighter-rouge">ORS</code> 输出记录分隔符</li>
+  <li><code class="language-plaintext highlighter-rouge">CONVFMT</code>	转换数字格式</li>
+  <li><code class="language-plaintext highlighter-rouge">ENVIRON</code>	从shell中传递来的包含当前环境变量的数组</li>
+  <li><code class="language-plaintext highlighter-rouge">ERRNO</code>	当使用close函数或者通过getline函数读取的时候，发生的重新定向错误的描述信息就保存在这个变量中</li>
+  <li><code class="language-plaintext highlighter-rouge">FIELDWIDTHS</code>	在对记录进行固定域宽的分割时，可以替代FS的分隔符的列表</li>
+  <li><code class="language-plaintext highlighter-rouge">IGNORECASE</code>	在正则表达式和字符串操作中关闭大小写敏感</li>
+  <li><code class="language-plaintext highlighter-rouge">OFMT</code>	数字输出格式,如<code class="language-plaintext highlighter-rouge">OFMT=%.2lf</code></li>
+  <li><code class="language-plaintext highlighter-rouge">RLENGTH</code>	通过match函数匹配的字符串的长度</li>
+  <li><code class="language-plaintext highlighter-rouge">RSTART</code>	通过match函数匹配的字符串的偏移量</li>
+  <li><code class="language-plaintext highlighter-rouge">SUBSEP</code>	下标分隔符，多用于二位数组使用</li>
 </ul>
+
+<blockquote>
+<p><code>awk</code>打印的小技巧：打印小数时可以使用强大的<code>printf</code>函数，它能像c语言中一样使用，如<code>printf("%.2f", x)</code>；也可以使用<code>OFMT</code>变量，如<code>awk '{OFMT="%.2f"; print(3.1415926)}'</code>，<code>OFMT</code>默认值是"%.6f"。</p>
+</blockquote>
 
 <h4 id="awk数组">awk数组</h4>
 
@@ -198,7 +252,7 @@ a-f
 c-g
 f-z
 </code></pre></div></div>
-<p>每一行的两个字母构成了一个字母对，现在需要根据第一个字母进行去重，对于第一个字母相同的字母对只保留最后出现的那一个字母对。应该怎么做？</p>
+<p>每一条记录的两个字母构成了一个字母对，现在需要根据第一个字母进行去重，对于第一个字母相同的字母对只保留最后出现的那一个字母对。应该怎么做？</p>
 
 <p>使用<code class="language-plaintext highlighter-rouge">awk</code>数组即可。</p>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">awk</span> <span class="nt">-F</span> <span class="s1">'-'</span> <span class="s1">'{a[$1]=$2}END{for(k in a) print k,a[k]}'</span> <span class="nb">test
@@ -207,9 +261,14 @@ b e
 c g
 f z
 </code></pre></div></div>
-<p>这里有一个问题，有些同学会将命令写为<code class="language-plaintext highlighter-rouge">awk -F '-' 'BEGIN{a[$1]=$2}END{for(k in a) print k,a[k]}' test</code>，但是这样的话会发现将什么也不输出。这是为什么呢？</p>
+<p>这里有一个问题，有些同学会将命令写为：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="nt">-F</span> <span class="s1">'-'</span> <span class="s1">'BEGIN{a[$1]=$2}END{for(k in a) print k,a[k]}'</span> <span class="nb">test</span>
+</code></pre></div></div>
+<p>但是这样的话会发现将什么也不输出。</p>
 
-<p>这就跟<code class="language-plaintext highlighter-rouge">awk</code>提供的两个特殊的表达式<code class="language-plaintext highlighter-rouge">BEGIN</code>和<code class="language-plaintext highlighter-rouge">END</code>相关了。</p>
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/没想到吧意不意外.jpg?raw=true" alt="意不意外" /></p>
+
+<p>这就跟<code class="language-plaintext highlighter-rouge">awk</code>前面讲的<code class="language-plaintext highlighter-rouge">BEGIN</code>和<code class="language-plaintext highlighter-rouge">END</code>相关了。</p>
 
 <p><code class="language-plaintext highlighter-rouge">awk</code>提供<code class="language-plaintext highlighter-rouge">BEGIN</code>和<code class="language-plaintext highlighter-rouge">END</code>的作用是在程序开始之能够初始化一些状态，在程序结束之后能够做一些扫尾工作。</p>
 
@@ -287,46 +346,330 @@ c-123456-aaads
       2 f hehe f
 </code></pre></div></div>
 <p>也可以使用<code class="language-plaintext highlighter-rouge">awk</code>：</p>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'{print $2}'</span> <span class="nb">test</span> | <span class="nb">sort</span> | <span class="nb">uniq</span> <span class="nt">-c</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="nt">-F</span> <span class="s1">'-'</span> <span class="s1">'{print $2}'</span> <span class="nb">test</span> | <span class="nb">sort</span> | <span class="nb">uniq</span> <span class="nt">-c</span>
 </code></pre></div></div>
 
-<table>
-  <tbody>
-    <tr>
-      <td>zcat brec_likee_mixer_d.log.[1-9].gz</td>
-      <td>grep ‘rrk_bd_exp1’</td>
-      <td>awk -F ‘recall ts:’ ‘{print$2}’</td>
-      <td>cut -d ‘ ‘ -f 1</td>
-      <td>awk ‘{sum+=$1}END{print(sum/NR)}’</td>
-    </tr>
-  </tbody>
-</table>
+<h4 id="进阶">进阶</h4>
 
-<p>function __readINI() {
-    INIFILE=$1; SECTION=$2; ITEM=$3
-    #res=<code class="language-plaintext highlighter-rouge">awk -F '=' '{if($0~/^\['$SECTION'\]\s*$/){a=1}else if(a==1&amp;&amp;$1=="'$ITEM'"){print $2;exit}else if(a==1&amp;&amp;($0~/^\[/||$0~/^$/))exit}' $INIFILE</code>
-    res=<code class="language-plaintext highlighter-rouge">awk -F '=' '{if($0~/^\['$SECTION'\]\s*$/){a=1}else if(a==1&amp;&amp;$1=="'$ITEM'"){for(i=2;i&lt;NF;i++){printf("%s=",$i)};print $NF;exit}else if(a==1&amp;&amp;$0~/^\[/)exit}' $INIFILE</code>
-    if [[ -z <code class="language-plaintext highlighter-rouge">echo $res</code> ]];then
-        SECTION=globalParamDefault
-        res=<code class="language-plaintext highlighter-rouge">awk -F '=' '{if($0~/^\['$SECTION'\]\s*$/){a=1}else if(a==1&amp;&amp;$1=="'$ITEM'"){for(i=2;i&lt;NF;i++){printf("%s=",$i)};print $NF;exit}else if(a==1&amp;&amp;$0~/^\[/)exit}' $INIFILE</code>
-    fi
-    echo $res
-}</p>
+<h5 id="匹配操作符">匹配操作符</h5>
 
-<h3 id="参考链接">参考链接</h3>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="o">[</span>参数] <span class="s1">'[match] {action script}'</span> filename
+</code></pre></div></div>
+<p>上面降到<code class="language-plaintext highlighter-rouge">awk</code>的基本格式如上所述。其中<code class="language-plaintext highlighter-rouge">[match]</code>中书写匹配模式来匹配要处理的记录，但是默认匹配模式是匹配记录的所有内容的，
+如果我只想筛选匹配出某一个域满足一定模式的记录，这时改怎么办呢？</p>
+
+<p><code class="language-plaintext highlighter-rouge">~</code>运算符就派上用场了，它可以用来在某个域中匹配模式。</p>
+
+<p>如：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'$2 ~ /[Cc]houdidi/'</span> text   <span class="c"># 匹配text中第2个域为Choudidi以及choudidi的记录</span>
+</code></pre></div></div>
+<blockquote>
+  <p>可以用<code class="language-plaintext highlighter-rouge">!~</code>表示不匹配。</p>
+</blockquote>
+
+<h5 id="匹配范围">匹配范围</h5>
+
+<p>匹配范围的一般写法是：</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'pattern1,pattern2 {}'</span> file
+</code></pre></div></div>
+
+<p>匹配的范围是:</p>
+<ol>
+  <li>pattern1的第一次匹配到pattern2的第一次匹配</li>
+  <li>pattern1的第二次匹配到pattern2的第二次匹配</li>
+  <li>pattern1匹配，而pattern2为匹配，则范围是从pattern1到文件结尾</li>
+</ol>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'/^lonny/,/^angel/ {print$2}'</span> file
+<span class="c"># 打印以lonny开头到以angel开头的所有记录的第2个域</span>
+<span class="nb">awk</span> <span class="s1">'$2 &lt; 1024 &amp;&amp; /lonny/ {print}'</span> file
+<span class="c"># 打印第2个域小于1024且记录中包含lonny的所有记录</span>
+<span class="nb">awk</span> <span class="nt">-F</span>: <span class="s1">'{OFS = "?"}; /lonny/{print($1, $2);}'</span> file
+<span class="c"># 1. 指定:为域分隔符</span>
+<span class="c"># 2. 指定?为输出的域分隔符</span>
+<span class="c"># 3. 匹配所有包含lonny的记录的第1个和第2个域</span>
+<span class="nb">awk</span> <span class="s1">'$3 == "Lonny" || $1 ~ /angel/ {print($2, $3)}'</span> file
+<span class="c"># 打印第3个域等于Lonny或者第一个域匹配angel的记录的第2个和第3个域</span>
+<span class="nb">awk</span> <span class="s1">'!($4 &gt; 13) {print($8)}'</span> file
+<span class="c"># 打印第4个域不大于13的记录的第8个域</span>
+</code></pre></div></div>
+
+<h6 id="赋值">赋值</h6>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>6.  赋值符号：
+#找到第三个域等于Ann的记录，然后给该域重新赋值为Christian，之后再打印输出该记录。 ```sh awk '$3 == "lonny" { $3 = "Angel"; print}' file # 找到第三个域等于lonny的记录，将此域重新赋值为Angel，然后再打印这一条的记录 ```
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'/lonny/{$8 += 12; print($8)}'</span> file
+<span class="c"># 找到包含lonny的记录，将此记录的第8个域的值加12，再打印这个域的值</span>
+</code></pre></div></div>
+
+<h5 id="io以及重定向">IO以及重定向</h5>
+
+<p><code class="language-plaintext highlighter-rouge">awk</code>中使用<code class="language-plaintext highlighter-rouge">getline</code>函数完成输入重定向。它能够从标准输入、管道或者当前正在处理的文件之外的其他文件获得输入。
+它负责从输入中获得下一条记录的内容，并给<code class="language-plaintext highlighter-rouge">NF</code>、<code class="language-plaintext highlighter-rouge">NR</code>和<code class="language-plaintext highlighter-rouge">FNR</code>等内置变量赋值。如果得到一个记录，getline就返回1，
+到达文件末尾则返回0，遇到异常则返回-1。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN {"date" | getline dt; print dt}'</span>
+<span class="c"># 1. 执行shell命令date</span>
+<span class="c"># 2. 通过管道将结果给getline</span>
+<span class="c"># 3. getline将结果赋值给变量dt</span>
+<span class="c"># 4. 打印输出dt</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN { "date" | getline d; split(d,mon); print mon[2]}'</span>
+<span class="c"># 1. 执行shell命令date</span>
+<span class="c"># 2. 通过管道将结果给getline</span>
+<span class="c"># 3. getline将结果赋值给变量d</span>
+<span class="c"># 4. 将变量d使用内置函数split拆分成mom数组</span>
+<span class="c"># 5. 打印数组的第2个元素</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN { while("ls" | getline) print}'</span>
+a.txt
+b.jpg
+c.png
+<span class="c"># 1. 将ls的输出传递给getline作为输入，每个依次循环输入</span>
+<span class="c"># 2. getline依次读出每一条记录并打印</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN { printf "What is your name? "; \
+    getline name &lt; "/dev/tty"}\
+    $1 ~ name {print "Found" name " on line ", NR "."}\
+    END {print "See ya, " name "."}'</span> text
+<span class="c"># 1. 处理BEGIN模块, 打印"What is your name?"</span>
+<span class="c"># 2. 等待用户从/dev/tty输入，将输入数据赋值给变量name, BEGIN模块处理完成</span>
+<span class="c"># 3. 依次匹配处理text文件每一条记录，将第1个域跟name变量内容匹配的记录进行打印相关信息</span>
+<span class="c"># 4. 处理END模块，打印相关信息，结束</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN { while(getline &lt; "/etc/passwd" &gt; 0) lc++; print lc}'</span>
+<span class="c"># 1. 逐条记录读取/etc/passwd的内容，每正常读到一条记录,lc计数器增加1</span>
+<span class="c"># 2. 到达末尾时打印lc值,这时lc的值就是/etc/passwd文件的记录条数</span>
+</code></pre></div></div>
+
+<blockquote>
+<p>由于awk中同时打开的管道只有一个，那么在打开下一个管道之前必须关闭它，管道符号右边可以通过双引
+号关闭管道。如果不关闭，它将始终保持打开状态，直到awk退出。
+</p>
+</blockquote>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="o">{</span>print <span class="nv">$1</span>,<span class="nv">$2</span>,<span class="nv">$3</span> | <span class="s2">"sort -4 +1 -2 +0 -1"</span><span class="o">}</span> END <span class="o">{</span>close<span class="o">(</span><span class="s2">"sort -4 +1 -2 +0 -1"</span><span class="o">)</span> <span class="o">}</span> filename
+
+</code></pre></div></div>
+<p>上例中END模块中的close显示关闭了sort的管道，需要注意的是close中关闭的命令必须和当初打开时的完全匹配，
+否则END模块产生的输出会和以前的输出一起被sort分类。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'$4 &gt;= 70 {print $1,$2 &gt; "passing_file"}'</span> filename  <span class="c">#注意这里的文件名需要用双引号括起来。</span>
+<span class="c"># 1. &gt; 可以完成输出重定向</span>
+<span class="c"># 2. 使用&gt;时原文件被清空，文件持续打开，知道文件被关闭或者awk程序停止</span>
+<span class="c"># 3. 来自后面的打印语句的输出都会追加到文件内</span>
+</code></pre></div></div>
+<blockquote>
+<p>
+使用&gt;&gt;可以打开一个文件但是不清空原文件内容，只追加!
+</p>
+</blockquote>
+
+<h5 id="内置函数">内置函数</h5>
+<h6 id="时间函数">时间函数</h6>
+
+<p><code class="language-plaintext highlighter-rouge">systime()</code> 返回当前时间距离1970年1月1日之间相差的秒数</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{print systime()}'</span>
+</code></pre></div></div>
+
+<h6 id="sub和gsub">sub和gsub</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sub<span class="o">(</span>regular expression, substitution string<span class="o">)</span><span class="p">;</span>   <span class="c"># 没有指定target string，则操作对象为读到的整条记录</span>
+sub<span class="o">(</span>regular expression, substitution string, target string<span class="o">)</span><span class="p">;</span> <span class="c"># 将target汇总的regular替换为substitution</span>
+gsub<span class="o">(</span>regular expression, substitution string<span class="o">)</span><span class="p">;</span>
+gsub<span class="o">(</span>regular expression, substitution string,target string<span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>gsub和sub的差别在于：如果第一个参数中正则表达式在记录中出现多次，那么gsub将完成多次替换，
+而sub只替换第一次出现。</p>
+
+<h6 id="index">index</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>index<span class="o">(</span>string, substring<span class="o">)</span>
+</code></pre></div></div>
+
+<p>将返回第二个参数在第一个参数中出现的位置，偏移量从1开始。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{print index("hello","el")}'</span>
+output-&gt; 2
+</code></pre></div></div>
+
+<h6 id="length">length</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>length<span class="o">(</span>string<span class="o">)</span>
+</code></pre></div></div>
+
+<p>该函数返回字符串的长度。</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{print length("hello")}'</span>
+output-&gt; 5
+</code></pre></div></div>
+
+<h6 id="substr">substr</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>substr<span class="o">(</span>string,starting position<span class="o">)</span>
+<span class="c"># 截取string中从starting position开始到结尾的子串</span>
+substr<span class="o">(</span>string,starting position,length of string<span class="o">)</span>
+<span class="c"># 截取string中从starting position开始的length字符构成的子串</span>
+</code></pre></div></div>
+
+<blockquote>
+<p>
+函数偏移量均为1.
+</p>
+</blockquote>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{name = substr("Hello World",2,3); print name}'</span>
+ell
+</code></pre></div></div>
+
+<h6 id="match">match</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>match<span class="o">(</span>string,regular expression<span class="o">)</span>
+</code></pre></div></div>
+
+<p>正则表达式匹配函数，返回正则表达式在字符串中的位置，如果没有匹配的返回0；</p>
+
+<p><code class="language-plaintext highlighter-rouge">match</code>函数有两个内置变量：</p>
 <ul>
-  <li><a href="http://blog.csdn.net/panpan639944806/article/details/19932543">awk的BEGIN和END</a></li>
+  <li>RSTART 表示匹配到的字符串的起始位置</li>
+  <li>RLENGTH 表示匹配到的字符串的长度</li>
 </ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{start=match("I love the string: 1024", /[0-9]+$/); print(start)}'</span>
+output-&gt; 20
+<span class="c"># 1. 正则表达式[0-9]+$表示在字符串的末尾搜索连续的数字串</span>
+<span class="c"># 2. 在"I love the string: 1024"中第20个位置找到"1024"是匹配的</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{match("I love the string: 1024", /[0-9]+$/); print(RSTART, RLENGTH)}'</span>
+output-&gt; 20 4
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{string="I love the string: 1024"; start=match(string, /[0-9]+$/); print(substr(string, RSTART, RLENGTH));}'</span>
+output-&gt; 1024
+</code></pre></div></div>
+
+<h6 id="toupper和tolower">toupper和tolower</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>toupper<span class="o">(</span>string<span class="o">)</span>
+tolower<span class="o">(</span>string<span class="o">)</span>
+</code></pre></div></div>
+
+<p>返回字符串的大写和小写形式。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{print(toupper("lonny")); print(tolower("XIAOSHIYU"));}'</span>
+output-&gt;
+LONNY
+xiaoshiyu
+</code></pre></div></div>
+
+<h6 id="split">split</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">split</span><span class="o">(</span>string,array,field seperator<span class="o">)</span>
+<span class="nb">split</span><span class="o">(</span>string,array<span class="o">)</span>
+</code></pre></div></div>
+
+<p>使用<code class="language-plaintext highlighter-rouge">field seperator</code>将<code class="language-plaintext highlighter-rouge">string</code>分割成一个数组，如果没有指定field seperator则使用的<code class="language-plaintext highlighter-rouge">FS</code>值。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{split("i love philosophy", strs, " "); for(idx in strs) print(str[idx]);}'</span>
+output-&gt;
+love
+philosophy
+i
+</code></pre></div></div>
+
+<h6 id="sprintf">sprintf</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>variable <span class="o">=</span> sprintf<span class="o">(</span><span class="s2">"string with format specifiers "</span>,expr1,expr2,...<span class="o">)</span>
+</code></pre></div></div>
+<p>该函数和printf的差别等同于C语言中printf和sprintf的差别。
+前者将格式化后的结果输出到输出流，而后者输出到函数的返回值中。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN{line = sprintf("%-15s %6.2f", "lonny", 3.1415); print(line);}'</span>
+output-&gt;
+lonny             3.14
+</code></pre></div></div>
+
+<h6 id="argc和argv">ARGC和ARGV</h6>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'BEGIN {for(i = 0; i &lt; ARGC; ++i) printf("argv[%d] is %s.\n", i, ARGV[i]); printf("The number of arguments, ARGC=%d\n", ARGC)}'</span> file <span class="s2">"Lonny"</span> 12
+output-&gt;
+argv[0] is awk.
+argv[1] is file.
+argv[2] is Lonny.
+argv[3] is 12.
+The number of arguments, <span class="nv">ARGC</span><span class="o">=</span>4
+</code></pre></div></div>
+
+<h4 id="实践应用">实践应用</h4>
+
+<h5 id="日志分析">日志分析</h5>
+<p>在实际工作中，经常进行的就是日志分析</p>
+
+<p>m.log:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>I123 [recommend log] [re ts: 10ms] [nk ts: 9ms] [angel abflag: china_lonny i2rank: 987
+I love drinking, I love apple.]
+</code></pre></div></div>
+
+<p>统计<code class="language-plaintext highlighter-rouge">nk ts</code>的毫秒数：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zcat m.log.[1-9].gz | <span class="nb">grep</span> <span class="s1">'china_lonny'</span>|awk <span class="nt">-F</span> <span class="s1">'nk ts:'</span> <span class="s1">'{print$2}'</span>
+| <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">' '</span> <span class="nt">-f</span> 1|awk <span class="s1">'{sum+=$1}END{print(sum/NR)}'</span>
+</code></pre></div></div>
+
+<h5 id="配置读取">配置读取</h5>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>main] <span class="c"># section</span>
+<span class="nv">file</span><span class="o">=</span>lonny
+<span class="nv">search_num</span><span class="o">=</span>10
+<span class="nv">path</span><span class="o">=</span>/data1/lonny/
+
+<span class="o">[</span>chain]
+<span class="nv">file</span><span class="o">=</span>angel
+<span class="nv">search_num</span><span class="o">=</span>9
+<span class="nv">path</span><span class="o">=</span>/data1/bob/
+</code></pre></div></div>
+
+<p>类似上面这样的配置文件，怎么通过制定section以及配置项读取到相应的配置值呢？
+可能有人想到了python中有一个模块可以用来做这个工作，但是太繁琐了，而且在shell中也无法使用。</p>
+
+<p>而用<code class="language-plaintext highlighter-rouge">awk</code>可以完美解决:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function </span>__readINI<span class="o">()</span> <span class="o">{</span>
+    <span class="nv">INIFILE</span><span class="o">=</span><span class="nv">$1</span><span class="p">;</span> <span class="nv">SECTION</span><span class="o">=</span><span class="nv">$2</span><span class="p">;</span> <span class="nv">ITEM</span><span class="o">=</span><span class="nv">$3</span>
+    <span class="nv">res</span><span class="o">=</span><span class="sb">`</span><span class="nb">awk</span> <span class="nt">-F</span> <span class="s1">'='</span> <span class="s1">'{
+        if($0~/^\['</span><span class="nv">$SECTION</span><span class="s1">'\]\s*$/){
+            a=1
+        }
+        else if(a==1&amp;&amp;$1=="'</span><span class="nv">$ITEM</span><span class="s1">'"){
+            for(i=2;i&lt;NF;i++){
+                printf("%s=",$i);
+            }
+            print $NF;
+            exit;
+        }
+        else if(a==1&amp;&amp;$0~/^\[/)
+            exit;
+    }'</span> <span class="nv">$INIFILE</span><span class="sb">`</span>
+    <span class="nb">echo</span> <span class="nv">$res</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
 
     </div>
 
     <div class="clear"></div>
 
-    <a class="tip-btn" href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
-        <img src="/img/tip.png" style="width: 80px" />
+    <a class="tip-btn" href="http://localhost:4000/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPostImg', window.location.pathname]);">
+        <img src="http://localhost:4000/img/tip.png" style="width: 80px" />
     </a>
-    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
+    <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="http://localhost:4000/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
 
     
         <blockquote class="seriesNote">
@@ -336,6 +679,8 @@ c-123456-aaads
 
     <ul>
     
+    
+        
     
         
             
@@ -348,6 +693,10 @@ c-123456-aaads
 
             
             </li>
+        
+    
+        
+    
         
     
     </ul>
@@ -363,15 +712,15 @@ c-123456-aaads
     <!-- <p class="no-indent">微信公众号</p> -->
 
     <div class="social-share">
-        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=文本处理三剑客之剑仙awk&url=/2017/11/07/awk.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
-        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=文本处理三剑客之剑仙awk&u=/2017/11/07/awk.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
-        <a class="social-share-element social-google" href="https://plus.google.com/share?url=/2017/11/07/awk.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
-        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=文本处理三剑客之剑仙awk&url=/2017/11/07/awk.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
-        <a class="social-share-element social-digg" href="http://digg.com/submit?url=/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
-        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
-        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
-        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：文本处理三剑客之剑仙awk&url=/2017/11/07/awk.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
-        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=/2017/11/07/awk.html&name=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=文本处理三剑客之剑仙awk&url=http://localhost:4000/2017/11/07/awk.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=文本处理三剑客之剑仙awk&u=http://localhost:4000/2017/11/07/awk.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=http://localhost:4000/2017/11/07/awk.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=文本处理三剑客之剑仙awk&url=http://localhost:4000/2017/11/07/awk.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=http://localhost:4000/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=http://localhost:4000/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=http://localhost:4000/2017/11/07/awk.html&title=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：文本处理三剑客之剑仙awk&url=http://localhost:4000/2017/11/07/awk.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=http://localhost:4000/2017/11/07/awk.html&name=文本处理三剑客之剑仙awk" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
     </div>
 
     <blockquote class="relatedPosts">
@@ -379,6 +728,39 @@ c-123456-aaads
         
             
             
+                
+                
+                    
+                
+                
+            
+                
+                
+                    
+                
+                
+            
+        
+            
+            
+                
+                
+                    
+                
+                
+            
+        
+            
+            
+                
+            
+        
+            
+            
+                
+                
+                    
+                
                 
             
         
@@ -388,7 +770,27 @@ c-123456-aaads
         <ul>
         
             <li class="relatedPost">
-                <a href="/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                <a href="http://localhost:4000/2020/03/22/economics.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    经济学思维入门
+                
+                </a>
+            </li>
+        
+            <li class="relatedPost">
+                <a href="http://localhost:4000/2018/01/02/intsplit.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    整数划分
+                
+                </a>
+            </li>
+        
+            <li class="relatedPost">
+                <a href="http://localhost:4000/2017/11/07/awk.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
                 
                 
                 
@@ -397,8 +799,18 @@ c-123456-aaads
                 </a>
             </li>
         
+            <li class="relatedPost">
+                <a href="http://localhost:4000/2017/07/04/m-Rnn.html" onclick="_gaq.push(['_trackEvent', 'ToPost', 'InRecent', window.location.pathname]);">
+                
+                
+                
+                    m-RNN
+                
+                </a>
+            </li>
+        
         </ul>
-        <a class="button" href="/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
+        <a class="button" href="http://localhost:4000/all" onclick="_gaq.push(['_trackEvent', 'ToAllPost', 'InPost', window.location.pathname]);">View All Posts</a></p>
     </blockquote>
 
 
@@ -406,9 +818,9 @@ c-123456-aaads
     <div class="about-author">
     <div class="license">
         <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">
-            <img alt="Creative Commons License" style="border-width:0" src="/img/cc.png" />
+            <img alt="Creative Commons License" style="border-width:0" src="http://localhost:4000/img/cc.png" />
         </a>
-        <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://zhangwenli.com" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>. </div>
+        <div><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Every blog post in this site</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://lonny.life" property="cc:attributionName" rel="cc:attributionURL">Lonny</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC 3.0 License</a>. </div>
     </div>
     <div class="follow-me">
         <div class="follow-me-txt">Follow <strong>Lonny</strong> at</div>
@@ -446,20 +858,16 @@ c-123456-aaads
 
             <div id="footer-nav">
                 | <a href="#">Top</a> |
-                <a href="">Blog</a> |
-                <a href="http://zhangwenli.com/#ovilia-home">About Me</a> |
-                <a href="mailto:me@zhangwenli.com" target="_blank">Email</a> |
-                <a href="/feed.xml">RSS</a> |
-                <a href="/meta">More</a> |
+                <a href="http://localhost:4000">Blog</a> |
+                <a href="http://lonny.life/">About Me</a> |
+                <a href="mailto:notblaspheme@gmail.com" target="_blank">Email</a> |
+                <a href="http://localhost:4000/feed.xml">RSS</a> |
+                <a href="http://localhost:4000/meta">More</a> |
             </div>
 
             <div id="footer-follow">
-                <a class="footer-follow-element footer-follow-twitter" href="https://twitter.com/OviliaZhang" target="_blank" title="Follow me on Twitter" onclick="_gaq.push(['_trackEvent', 'Follow', 'Twitter', 'Footer']);"></a>
-                <a class="footer-follow-element footer-follow-google" href="https://plus.google.com/u/0/112802684720065263732?rel=author" target="_blank" title="Follow me on Google Plus" onclick="_gaq.push(['_trackEvent', 'Follow', 'GPlus', 'Footer']);"></a>
-                <a class="footer-follow-element footer-follow-github" href="https://github.com/Ovilia" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', 'Footer']);"></a>
-                <a class="footer-follow-element footer-follow-so" href="http://stackoverflow.com/users/760314/ovilia" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', 'Footer']);"></a>
-                <a class="footer-follow-element footer-follow-linkedin" href="http://www.linkedin.com/profile/view?id=148742016" target="_blank" title="Follow me on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Follow', 'LinkedIn', 'Footer']);"></a>
-                <a class="footer-follow-element footer-follow-dribbble" href="https://dribbble.com/wenli" target="_blank" title="Follow me on Dribbble" onclick="_gaq.push(['_trackEvent', 'Follow', 'Dribbble', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-github" href="https://github.com/BlasphemyAngels" target="_blank" title="Follow me on GitHub" onclick="_gaq.push(['_trackEvent', 'Follow', 'GitHub', 'Footer']);"></a>
+                <a class="footer-follow-element footer-follow-so" href="https://stackoverflow.com/users/5597978/innocent" target="_blank" title="Follow me on StackOverflow" onclick="_gaq.push(['_trackEvent', 'Follow', 'StackOverflow', 'Footer']);"></a>
                 <a class="footer-follow-element footer-follow-weibo" href="http://weibo.com/plainjane" target="_blank" title="Follow me on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Follow', 'Weibo', 'Footer']);"></a>
                 <a class="footer-follow-element footer-follow-douban" href="http://www.douban.com/people/ovilia1024/" target="_blank" title="Follow me on Douban" onclick="_gaq.push(['_trackEvent', 'Follow', 'Douban', 'Footer']);"></a>
             </div>
@@ -478,8 +886,8 @@ c-123456-aaads
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        <script type="text/javascript" src="/js/lazyLoad.js"></script>
-        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="http://localhost:4000/js/lazyLoad.js"></script>
+        <script type="text/javascript" src="http://localhost:4000/js/common.js"></script>
     </body>
 </html>
 

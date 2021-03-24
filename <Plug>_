@@ -1,0 +1,40 @@
+#include<stdio.h>
+const int N = 32778;
+int prime[N + 10], is_prime[N + 10], k = 0;
+int main()
+{
+    for (int i = 2; i <= N; ++i)
+    {
+        if (!is_prime[i])
+            prime[k++] = i;
+        for (int j = 0; j < k && prime[j] * i <= N; ++j)
+        {
+            is_prime[prime[j] * i] = 1;
+            if (i % prime[j] == 0)
+                break;
+        }
+    }
+    int n;
+    while(~scanf("%d", &n))
+    {
+        int t = n;
+        int ans = 0;
+        for (int i = 0; i < k; ++i)
+        {
+            if (t % prime[i] == 0){
+                if (ans){
+                    printf(" ");
+                }
+                printf("%d", prime[i]);
+                ans++;
+                while(t % prime[i] == 0)
+                {
+                    t /= prime[i];
+                }
+            }
+        }
+        putchar(10);
+    }
+
+    return 0;
+}

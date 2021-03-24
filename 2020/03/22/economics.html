@@ -47,7 +47,9 @@
         <div class="contentDiv">
 
 
-<title>时间序列分析之隐马尔科夫模型
+<title>经济学思维入门
+    
+        : 经济学
     
  - 酒醉久伴</title>
 
@@ -66,95 +68,94 @@
 
     
     
-    <div class="timeago cn" title="+08:00"></div>
+    <div class="timeago cn" title="2021-03-22T10:00:00+08:00">2021.03.22 10:00:00</div>
 
     
-    <div class="pageTitle">时间序列分析之隐马尔科夫模型</div>
+    <div class="pageTitle">经济学思维入门</div>
 
     <div class="tagPanel">
-    <a href="http://localhost:4000/all?tag=时间序列" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">时间序列</div></a><a href="http://localhost:4000/all?tag=hmm" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">hmm</div></a><a href="http://localhost:4000/all?tag=概率图" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">概率图</div></a>
+    <a href="http://localhost:4000/all?tag=经济学思维" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">经济学思维</div></a><a href="http://localhost:4000/all?tag=读书笔记" onclick="_gaq.push(['_trackEvent', 'ToTag', 'InPost', window.location.pathname]);"><div class="tag">读书笔记</div></a>
     </div>
+
+    
+        <blockquote class="seriesNote">
+
+    <h4>系列博文：经济学</h4>
+
+
+    <ul>
+    
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <li class="series-self">
+            
+
+            
+                经济学思维入门
+            
+
+            
+            </li>
+        
+    
+    </ul>
+</blockquote>
 
     
 
     <div id="page-view"></div>
 
     <div class="post-content ">
-    <h2 id="正文">正文</h2>
-
-<p>HMM曾经统治过语音识别领域，虽然它现在已经在一定程度上被RNN取代，但是其思想还是值得理解的。而且其在很多领域还有广泛的应用。</p>
-
-<h3 id="预习阅读">预习阅读</h3>
-
-<p><a href="https://blasphemyangels.github.io/2017/03/bayes/">图模型</a></p>
-
-<h3 id="条件概率的贝叶斯模型">条件概率的贝叶斯模型</h3>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(AB|C)=P(A|BC)P(B|C)" style="border:none;" /></p>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(A|BC)=\frac{P(AB|C)}{P(B|C)}=\frac{P(B|AC)P(A|C)}{P(B|C)}" style="border:none;" /></p>
+    <p>一直想学一下经济学的东西，换一换思想，也静下心来学一下东西，收拾卧室时偶然翻出了吃灰已久的《经济学思维》。
+就抱着试试看的态度读了一下，一发不可收拾。</p>
 
 <!--more-->
 
-<h3 id="引子">引子</h3>
+<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/经济学思维方式.png?raw=true" alt="思维导图" /></p>
 
-<p>首先从一个例子开始。俗话说，人心不可测，而妹子的心更不可测。现在想这样一个模型。如下图，有两个状态，一个是妹子的心情X，和妹子的心情的外在表现(如摔东西，哭等)Y，那么如何通过Y推测X呢？</p>
+<p>经济学思维方式由社会理论家创造，为的是解释秩序与协作产生的原因，因为从表面开来，个体的互动并无协调，
+人人都追逐自己的利益，对于自己合作伙伴的利益几乎一无所知。</p>
 
-<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/hmmgirl.png?raw=true" alt="hmmgirl" /></p>
+<blockquote>
+<p>经济学是关于选择及其无意后果的理论。</p>
+</blockquote>
 
-<p>由贝叶斯公司可以得到：</p>
+<p>经济学的思维方式的基本假设是：</p>
 
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X|Y) = \frac{P(Y|X)P(X)}{P(Y)}" style="border:none;" /></p>
+<p><em>所有社会现象均愿意个体的行为以及与他人的互动，其间人们根据各自期望的收益与成本进行选择。</em></p>
 
-<p>其中P(Y|X)，P(X)，P(Y)可以通过统计得到，那么这就可以得到一个能够通过妹子的外在表现推测妹子心情的模型。</p>
+<p>只有个体进行选择，他们可能会自己做决定，也可能因为在集体（家庭、企业、政府机构等）中与他人协作儿做决定。
+但这不应该是我们忽略下述事实：以集体名义的选择实际上是由个体做出的，他们在追求自己目标和计划的过程中衡
+量取舍并进行优化。人们因为资源稀缺进行优化，这为他人创造了多种选择机会，他们的行为产生不断变动的净收益，
+而对此净收益持续的相互调整过程协调了个体间的互动。</p>
 
-<h3 id="hmm">HMM</h3>
+<blockquote>
+  <p><em>经济学理论在研究人类行为和协作互动时，特别重视个体的选择。</em></p>
+</blockquote>
 
-<p>将上面的模型，扩展一下，想一想，妹子的心情是多种多样的，而且可以相互变换，于是得到下面的模型。</p>
+<p>个体一直在比较期望的额外收益与成本，我们常常称为优化行为。尽管这种视角有偏或局限，但是若要解释复杂的社
+会生活现状，理论时必不可少的。</p>
 
-<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/hmm3.png?raw=true" alt="hmm3" /></p>
+<blockquote>
+  <p>人天生，并且永远，是自私的动物。–《国富论》</p>
+</blockquote>
 
-<p>首先，Y1，Y2，Y3，这些外在特征是可以通过观测数据得到的。</p>
+<p>经济学的思维方式还强调游戏规则的重要性，以及游戏规则影响我们选择的方式。</p>
 
-<p>首先想一想，怎么得到<img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_{1:t-1})" style="border:none;" /></p>
+<p>产权是游戏规则的一个关键要素，它通过法律来指定稀缺物品的所有权。“社会产权”是指把所有权指派给全社会，而
+不是某个特定的人。但问题在于社会本身并不能做出选择和决策，只有个体才可以。私有产权制度把所有权指派给特
+定的个体，产权可以自由交易。</p>
 
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_{1:t-1})=\sum_{X_{t-1}}P(X_t, X_{t-1}|Y_{1:t-1})" style="border:none;" /></p>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= =\sum_{X_{t-1}}P(X_t|X_{t-1}, Y_{1:t-1})P(X_{t-1}|Y_{1:t-1})" style="border:none;" /></p>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= =\sum_{X_{t-1}}P(X_t|X_{t-1})P(X_{t-1}|Y_{1:t-1})" style="border:none;" /></p>
-
-<p>现在再来考虑<img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_t)" style="border:none;" /></p>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_t)=P(X_t|Y_{1:t-1}, Y_t)=\frac{P(Y_t|X_t, Y_{1:t-1})P(X_t|Y_{1:t-1})}{P(Y_t|Y_{1:t-1})}" style="border:none;" /></p>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_t)=P(X_t|Y_{1:t-1}, Y_t)=\frac{P(Y_t|X_t, Y_{1:t-1})P(X_t|Y_{1:t-1})}{\sum_{X_t}P(Y_t|X_t, Y_{1:t-1})P(X_t|Y_{1:t-1})}" style="border:none;" /></p>
-
-<p>由图模型假设没有边相连的变量是相互独立的。</p>
-
-<p><img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_t)=P(X_t|Y_{1:t-1}, Y_t)=\frac{P(Y_t|X_t)P(X_t|Y_{1:t-1})}{\sum_{X_t}P(Y_t|X_t)P(X_t|Y_{1:t-1})}" style="border:none;" /></p>
-
-<p>再将带入<img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_{1:t-1})" style="border:none;" />可得到一个递归方程，根据这个方程进行动态规划就能求得<img src="http://chart.googleapis.com/chart?cht=tx&amp;chl= P(X_t|Y_t)" style="border:none;" /></p>
-
-<h3 id="time-machine">Time Machine</h3>
-
-<p>看下面一个模型：</p>
-
-<p><img src="https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/hmm4.png?raw=true" alt="hmm4" /></p>
-
-<p>模型中事件序列x1,x2,…,xt存在相关性，如图中x3是x1和x2的线性组合，其实就是加权和。这种模型称为auto regressive model。模型中的参数是可学的，也可以称可fit的。这是最简单的时间序列模型。</p>
-
-<h3 id="rnn初涉">RNN初涉</h3>
-
-<p>RNN是一种神经网络结构，它在一些方面能够替代HMM，且效果更好。LSTM是一种特殊的 RNN,把sigmod函数变成了另一系列的东西。RNN能并行运算，所以它能处理大的数据，RNN存在梯度消失问题，LSTM就是为了解决这个问题，这里只是粗略提及一点，后面会详细介绍。</p>
-
-<h3 id="总结">总结</h3>
-
-<p>HMM是一个思想，没有统一的形式，在不同的问题中不一样，要看实际问题仔细分析，然后借鉴其思想解决问题。</p>
-
-<p><br /></p>
-
-<p>转载请注明:<a href="[https://BlasphemyAngels.github.io">Artemis的博客</a>–&gt; <a href="https://blasphemyangels.github.io/2017/03/hmm/">点此看原文 </a></p>
+<blockquote>
+  <p>因此，私有产权能帮我们澄清不同的选择和机会，同时也构成了市场交换经济的基础。</p>
+</blockquote>
 
 
     </div>
@@ -167,6 +168,37 @@
     <div style="text-align: center; color: #666;">博文对你有帮助吗？如果有的话，要不要<a href="http://localhost:4000/tip/" onclick="_gaq.push(['_trackEvent', 'ToTip', 'InPost', window.location.pathname]);">送我一本书</a>呢？:heart_eyes:</div>
 
     
+        <blockquote class="seriesNote">
+
+    <h4>系列博文：经济学</h4>
+
+
+    <ul>
+    
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <li class="series-self">
+            
+
+            
+                经济学思维入门
+            
+
+            
+            </li>
+        
+    
+    </ul>
+</blockquote>
+
+    
 
     
     
@@ -176,15 +208,15 @@
     <!-- <p class="no-indent">微信公众号</p> -->
 
     <div class="social-share">
-        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=时间序列分析之隐马尔科夫模型&url=http://localhost:4000/old_posts/2017-03-14-hmm.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
-        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=时间序列分析之隐马尔科夫模型&u=http://localhost:4000/old_posts/2017-03-14-hmm.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
-        <a class="social-share-element social-google" href="https://plus.google.com/share?url=http://localhost:4000/old_posts/2017-03-14-hmm.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
-        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=时间序列分析之隐马尔科夫模型&url=http://localhost:4000/old_posts/2017-03-14-hmm.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
-        <a class="social-share-element social-digg" href="http://digg.com/submit?url=http://localhost:4000/old_posts/2017-03-14-hmm.html&title=时间序列分析之隐马尔科夫模型" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
-        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=http://localhost:4000/old_posts/2017-03-14-hmm.html&title=时间序列分析之隐马尔科夫模型" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
-        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=http://localhost:4000/old_posts/2017-03-14-hmm.html&title=时间序列分析之隐马尔科夫模型" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
-        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：时间序列分析之隐马尔科夫模型&url=http://localhost:4000/old_posts/2017-03-14-hmm.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
-        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=http://localhost:4000/old_posts/2017-03-14-hmm.html&name=时间序列分析之隐马尔科夫模型" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
+        <a class="social-share-element social-twitter" href="https://twitter.com/intent/tweet?text=经济学思维入门&url=http://localhost:4000/2020/03/22/economics.html&via=OviliaZhang&hashtags=" target="_blank" title="Share this post on Twitter" onclick="_gaq.push(['_trackEvent', 'Share', 'Twitter', window.location.pathname]);"></a>
+        <a class="social-share-element social-facebook" href="https://www.facebook.com/sharer/sharer.php?t=经济学思维入门&u=http://localhost:4000/2020/03/22/economics.html" target="_blank" title="Share this post on Facebook" onclick="_gaq.push(['_trackEvent', 'Share', 'Facebook', window.location.pathname]);"></a>
+        <a class="social-share-element social-google" href="https://plus.google.com/share?url=http://localhost:4000/2020/03/22/economics.html" target="_blank" title="Share this post on Google Plus" onclick="_gaq.push(['_trackEvent', 'Share', 'GPlus', window.location.pathname]);"></a>
+        <a class="social-share-element social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&title=经济学思维入门&url=http://localhost:4000/2020/03/22/economics.html&source=http%3a%2f%2fzhangwenli.com" target="_blank" title="Share this post on LinkedIn" onclick="_gaq.push(['_trackEvent', 'Share', 'LinkedIn', window.location.pathname]);"></a>
+        <a class="social-share-element social-digg" href="http://digg.com/submit?url=http://localhost:4000/2020/03/22/economics.html&title=经济学思维入门" target="_blank" title="Share this post on Digg" onclick="_gaq.push(['_trackEvent', 'Share', 'Digg', window.location.pathname]);"></a>
+        <a class="social-share-element social-reddit" href="http://reddit.com/submit?url=http://localhost:4000/2020/03/22/economics.html&title=经济学思维入门" target="_blank" title="Share this post on Reddit" onclick="_gaq.push(['_trackEvent', 'Share', 'Reddit', window.location.pathname]);"></a>
+        <a class="social-share-element social-stumble" href="http://www.stumbleupon.com/submit?url=http://localhost:4000/2020/03/22/economics.html&title=经济学思维入门" target="_blank" title="Share this post on StumbleUpon" onclick="_gaq.push(['_trackEvent', 'Share', 'StumbleUpon', window.location.pathname]);"></a>
+        <a class="social-share-element social-weibo" href="http://v.t.sina.com.cn/share/share.php?title=来看看+%40qlonny+的博文吧：经济学思维入门&url=http://localhost:4000/2020/03/22/economics.html" target="_blank" title="Share this post on Sina Weibo" onclick="_gaq.push(['_trackEvent', 'Share', 'Weibo', window.location.pathname]);"></a>
+        <a class="social-share-element social-douban" href="http://shuo.douban.com/!service/share?href=http://localhost:4000/2020/03/22/economics.html&name=经济学思维入门" target="_blank" title="Share this post on Dounban" onclick="_gaq.push(['_trackEvent', 'Share', 'Douban', window.location.pathname]);"></a>
     </div>
 
     <blockquote class="relatedPosts">
@@ -193,18 +225,13 @@
             
             
                 
-                
-                    
-                
-                    
-                
-                    
-                
-                
             
                 
+            
+        
+            
+            
                 
-                    
                 
                     
                 
@@ -221,29 +248,12 @@
                 
                     
                 
-                    
-                
                 
             
         
             
             
                 
-                
-                    
-                
-                    
-                
-                    
-                
-                
-            
-        
-            
-            
-                
-                
-                    
                 
                     
                 
