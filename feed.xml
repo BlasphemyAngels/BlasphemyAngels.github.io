@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-03-24T10:53:48+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Blog of Lonny</title><subtitle></subtitle><entry><title type="html">经济学思维入门</title><link href="http://localhost:4000/2020/03/22/economics.html" rel="alternate" type="text/html" title="经济学思维入门" /><published>2020-03-22T00:00:00+08:00</published><updated>2020-03-22T00:00:00+08:00</updated><id>http://localhost:4000/2020/03/22/economics</id><content type="html" xml:base="http://localhost:4000/2020/03/22/economics.html">&lt;p&gt;一直想学一下经济学的东西，换一换思想，也静下心来学一下东西，收拾卧室时偶然翻出了吃灰已久的《经济学思维》。
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-03-30T16:03:38+08:00</updated><id>/feed.xml</id><title type="html">Blog of Lonny</title><subtitle></subtitle><entry><title type="html">经济学思维入门</title><link href="/2021/03/22/economics.html" rel="alternate" type="text/html" title="经济学思维入门" /><published>2021-03-22T00:00:00+08:00</published><updated>2021-03-22T00:00:00+08:00</updated><id>/2021/03/22/economics</id><content type="html" xml:base="/2021/03/22/economics.html">&lt;p&gt;一直想学一下经济学的东西，换一换思想，也静下心来学一下东西，收拾卧室时偶然翻出了吃灰已久的《经济学思维》。
 就抱着试试看的态度读了一下，一发不可收拾。&lt;/p&gt;
 
 &lt;!--more--&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/经济学思维方式.png?raw=true&quot; alt=&quot;思维导图&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;思维导图：
+&lt;img src=&quot;https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/经济学思维方式.png?raw=true&quot; alt=&quot;思维导图&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;经济学思维方式由社会理论家创造，为的是解释秩序与协作产生的原因，因为从表面开来，个体的互动并无协调，
 人人都追逐自己的利益，对于自己合作伙伴的利益几乎一无所知。&lt;/p&gt;
@@ -40,7 +41,31 @@
 
 &lt;blockquote&gt;
   &lt;p&gt;因此，私有产权能帮我们澄清不同的选择和机会，同时也构成了市场交换经济的基础。&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name></name></author><category term="经济学思维" /><category term="读书笔记" /><summary type="html">初读经济学，写写笔记，以后常来看。</summary></entry><entry><title type="html">整数划分</title><link href="http://localhost:4000/2018/01/02/intsplit.html" rel="alternate" type="text/html" title="整数划分" /><published>2018-01-02T00:00:00+08:00</published><updated>2018-01-02T00:00:00+08:00</updated><id>http://localhost:4000/2018/01/02/intsplit</id><content type="html" xml:base="http://localhost:4000/2018/01/02/intsplit.html">&lt;h3 id=&quot;分苹果问题&quot;&gt;分苹果问题&lt;/h3&gt;
+&lt;/blockquote&gt;</content><author><name></name></author><category term="经济学思维" /><category term="读书笔记" /><summary type="html">初读经济学，写写笔记，以后常来看。</summary></entry><entry><title type="html">经典概率问题</title><link href="/2020/11/13/introductiontoalgorithms.html" rel="alternate" type="text/html" title="经典概率问题" /><published>2020-11-13T00:00:00+08:00</published><updated>2020-11-13T00:00:00+08:00</updated><id>/2020/11/13/introductiontoalgorithms</id><content type="html" xml:base="/2020/11/13/introductiontoalgorithms.html">&lt;h3 id=&quot;等概率随机数生成&quot;&gt;等概率随机数生成&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;
+假设你希望以1/2的概率输出0和1.你可以自由使用一个输出0或1的过程BIASED-RANDOM。
+它以某概率p输出1，概率1-p输出0，其中&lt;code&gt;0&amp;lt;p&amp;lt;1&lt;/code&gt;，但是p的值未知。请给出一个利用BIASED-RANDOM
+作为子程序的算法，返回一个无偏的结果，能以概率1/2返回0，以概率1/2返回1。
+作为p的函数，你的算法的期望运行时间是多少？
+&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;已经有一个概率为p的随机数生成器，可以生成两次，那么可能的结果以及概率是：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;0 0 (1-p)(1-p)&lt;/li&gt;
+  &lt;li&gt;0 1 (1-p)p&lt;/li&gt;
+  &lt;li&gt;1 0 p(1-p)&lt;/li&gt;
+  &lt;li&gt;1 1 pp&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;期望运行时间:&lt;/p&gt;
+
+&lt;p&gt;假设BIASED-RANDOM的运行时间为T，则&lt;/p&gt;
+
+&lt;p&gt;可以看到&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0 1&lt;/code&gt;和&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 0&lt;/code&gt;的概率是一样的，所以运行两次01随机数生成器，如果生成为&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0 1&lt;/code&gt;时表示为0，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 0&lt;/code&gt;时表示为1，
+其他情况则继续生成即可。&lt;/p&gt;</content><author><name></name></author><category term="算法导论" /><category term="概率问题" /><summary type="html">记录了以前遇到做过的一些有意思的概率问题。</summary></entry><entry><title type="html">Transformer</title><link href="/2019/08/13/transformer.html" rel="alternate" type="text/html" title="Transformer" /><published>2019-08-13T00:00:00+08:00</published><updated>2019-08-13T00:00:00+08:00</updated><id>/2019/08/13/transformer</id><content type="html" xml:base="/2019/08/13/transformer.html"></content><author><name></name></author><category term="NLP" /><category term="Attention" /><category term="DeepLearning" /><category term="MachineTranslation" /><summary type="html">Attention is All your need一文在今年大放异彩，其中的Transformer结构也被迅速应用于各大领域。</summary></entry><entry><title type="html">优化算法</title><link href="/2018/02/03/optimizer.html" rel="alternate" type="text/html" title="优化算法" /><published>2018-02-03T00:00:00+08:00</published><updated>2018-02-03T00:00:00+08:00</updated><id>/2018/02/03/optimizer</id><content type="html" xml:base="/2018/02/03/optimizer.html"></content><author><name></name></author><category term="DeepLearning" /><summary type="html">aa</summary></entry><entry><title type="html">整数划分</title><link href="/2018/01/02/intsplit.html" rel="alternate" type="text/html" title="整数划分" /><published>2018-01-02T00:00:00+08:00</published><updated>2018-01-02T00:00:00+08:00</updated><id>/2018/01/02/intsplit</id><content type="html" xml:base="/2018/01/02/intsplit.html">&lt;h3 id=&quot;分苹果问题&quot;&gt;分苹果问题&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;m&lt;/code&gt;个苹果放入&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n&lt;/code&gt;个盘子里面，问有多少种分法，不同顺序如1,1,5和5,1,1算一种分法。&lt;/p&gt;
 
@@ -86,7 +111,7 @@
         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><category term="动态规划" /><summary type="html">整数划分可以看做是一类比较经典的动态规划问题，很多问题抽象出基本模型都可以归为整数划分问题。</summary></entry><entry><title type="html">文本处理三剑客之剑仙awk</title><link href="http://localhost:4000/2017/11/07/awk.html" rel="alternate" type="text/html" title="文本处理三剑客之剑仙awk" /><published>2017-11-07T00:00:00+08:00</published><updated>2017-11-07T00:00:00+08:00</updated><id>http://localhost:4000/2017/11/07/awk</id><content type="html" xml:base="http://localhost:4000/2017/11/07/awk.html">&lt;blockquote&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><category term="动态规划" /><summary type="html">整数划分可以看做是一类比较经典的动态规划问题，很多问题抽象出基本模型都可以归为整数划分问题。</summary></entry><entry><title type="html">文本处理三剑客之剑仙awk</title><link href="/2017/11/07/awk.html" rel="alternate" type="text/html" title="文本处理三剑客之剑仙awk" /><published>2017-11-07T00:00:00+08:00</published><updated>2017-11-07T00:00:00+08:00</updated><id>/2017/11/07/awk</id><content type="html" xml:base="/2017/11/07/awk.html">&lt;blockquote&gt;
   &lt;p&gt;&lt;em&gt;文本处理谁为峰，一见awk皆成空&lt;/em&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -632,7 +657,7 @@ I love drinking, I love apple.]
     }'&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$INIFILE&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
     &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$res&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><category term="linux" /><summary type="html">工欲善其事，必先利其器。初次使用linux就被文本处理三剑客以及编辑器之神vim所折服。</summary></entry><entry><title type="html">m-RNN</title><link href="http://localhost:4000/2017/07/04/m-Rnn.html" rel="alternate" type="text/html" title="m-RNN" /><published>2017-07-04T00:00:00+08:00</published><updated>2017-07-04T00:00:00+08:00</updated><id>http://localhost:4000/2017/07/04/m-Rnn</id><content type="html" xml:base="http://localhost:4000/2017/07/04/m-Rnn.html">&lt;p&gt;&lt;a href=&quot;https://arxiv.org/pdf/1412.6632v5.pdf&quot;&gt;论文地址&lt;/a&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><category term="linux" /><summary type="html">工欲善其事，必先利其器。初次使用linux就被文本处理三剑客以及编辑器之神vim所折服。</summary></entry><entry><title type="html">m-RNN</title><link href="/2017/07/04/m-Rnn.html" rel="alternate" type="text/html" title="m-RNN" /><published>2017-07-04T00:00:00+08:00</published><updated>2017-07-04T00:00:00+08:00</updated><id>/2017/07/04/m-Rnn</id><content type="html" xml:base="/2017/07/04/m-Rnn.html">&lt;p&gt;&lt;a href=&quot;https://arxiv.org/pdf/1412.6632v5.pdf&quot;&gt;论文地址&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;文章提出一种多模态图像文本匹配的方法，使用CNN-RNN架构，如下图。&lt;/p&gt;
 

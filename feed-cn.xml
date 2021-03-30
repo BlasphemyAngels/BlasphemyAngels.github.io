@@ -3,8 +3,8 @@
     <channel>
         <title></title>
         <description></description>
-        <link>http://localhost:4000</link>
-        <atom:link href="http://localhost:4000/feed-cn.xml" rel="self" type="application/rss+xml" />
+        <link></link>
+        <atom:link href="/feed-cn.xml" rel="self" type="application/rss+xml" />
         
             
 
@@ -17,7 +17,8 @@
 
 &lt;!--more--&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/经济学思维方式.png?raw=true&quot; alt=&quot;思维导图&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;思维导图：
+&lt;img src=&quot;https://github.com/BlasphemyAngels/MarkDownPhotos/blob/master/经济学思维方式.png?raw=true&quot; alt=&quot;思维导图&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;经济学思维方式由社会理论家创造，为的是解释秩序与协作产生的原因，因为从表面开来，个体的互动并无协调，
 人人都追逐自己的利益，对于自己合作伙伴的利益几乎一无所知。&lt;/p&gt;
@@ -57,9 +58,78 @@
 &lt;/blockquote&gt;
 
 </description>
-                <pubDate>Sun, 22 Mar 2020 00:00:00 +0800</pubDate>
-                <link>http://localhost:4000/2020/03/22/economics.html</link>
-                <guid isPermaLink="true">http://localhost:4000/2020/03/22/economics.html</guid>
+                <pubDate>Mon, 22 Mar 2021 00:00:00 +0800</pubDate>
+                <link>/2021/03/22/economics.html</link>
+                <guid isPermaLink="true">/2021/03/22/economics.html</guid>
+            </item>
+            
+            
+        
+            
+
+            
+            
+            <item>
+                <title>经典概率问题</title>
+                <description>&lt;h3 id=&quot;等概率随机数生成&quot;&gt;等概率随机数生成&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;
+假设你希望以1/2的概率输出0和1.你可以自由使用一个输出0或1的过程BIASED-RANDOM。
+它以某概率p输出1，概率1-p输出0，其中&lt;code&gt;0&amp;lt;p&amp;lt;1&lt;/code&gt;，但是p的值未知。请给出一个利用BIASED-RANDOM
+作为子程序的算法，返回一个无偏的结果，能以概率1/2返回0，以概率1/2返回1。
+作为p的函数，你的算法的期望运行时间是多少？
+&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;已经有一个概率为p的随机数生成器，可以生成两次，那么可能的结果以及概率是：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;0 0 (1-p)(1-p)&lt;/li&gt;
+  &lt;li&gt;0 1 (1-p)p&lt;/li&gt;
+  &lt;li&gt;1 0 p(1-p)&lt;/li&gt;
+  &lt;li&gt;1 1 pp&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;期望运行时间:&lt;/p&gt;
+
+&lt;p&gt;假设BIASED-RANDOM的运行时间为T，则&lt;/p&gt;
+
+&lt;p&gt;可以看到&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0 1&lt;/code&gt;和&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 0&lt;/code&gt;的概率是一样的，所以运行两次01随机数生成器，如果生成为&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0 1&lt;/code&gt;时表示为0，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 0&lt;/code&gt;时表示为1，
+其他情况则继续生成即可。&lt;/p&gt;
+</description>
+                <pubDate>Fri, 13 Nov 2020 00:00:00 +0800</pubDate>
+                <link>/2020/11/13/introductiontoalgorithms.html</link>
+                <guid isPermaLink="true">/2020/11/13/introductiontoalgorithms.html</guid>
+            </item>
+            
+            
+        
+            
+
+            
+            
+            <item>
+                <title>Transformer</title>
+                <description>
+</description>
+                <pubDate>Tue, 13 Aug 2019 00:00:00 +0800</pubDate>
+                <link>/2019/08/13/transformer.html</link>
+                <guid isPermaLink="true">/2019/08/13/transformer.html</guid>
+            </item>
+            
+            
+        
+            
+
+            
+            
+            <item>
+                <title>优化算法</title>
+                <description>
+</description>
+                <pubDate>Sat, 03 Feb 2018 00:00:00 +0800</pubDate>
+                <link>/2018/02/03/optimizer.html</link>
+                <guid isPermaLink="true">/2018/02/03/optimizer.html</guid>
             </item>
             
             
@@ -119,8 +189,8 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
                 <pubDate>Tue, 02 Jan 2018 00:00:00 +0800</pubDate>
-                <link>http://localhost:4000/2018/01/02/intsplit.html</link>
-                <guid isPermaLink="true">http://localhost:4000/2018/01/02/intsplit.html</guid>
+                <link>/2018/01/02/intsplit.html</link>
+                <guid isPermaLink="true">/2018/01/02/intsplit.html</guid>
             </item>
             
             
@@ -681,8 +751,8 @@ I love drinking, I love apple.]
 
 </description>
                 <pubDate>Tue, 07 Nov 2017 00:00:00 +0800</pubDate>
-                <link>http://localhost:4000/2017/11/07/awk.html</link>
-                <guid isPermaLink="true">http://localhost:4000/2017/11/07/awk.html</guid>
+                <link>/2017/11/07/awk.html</link>
+                <guid isPermaLink="true">/2017/11/07/awk.html</guid>
             </item>
             
             
@@ -761,8 +831,8 @@ I love drinking, I love apple.]
 &lt;/ul&gt;
 </description>
                 <pubDate>Tue, 04 Jul 2017 00:00:00 +0800</pubDate>
-                <link>http://localhost:4000/2017/07/04/m-Rnn.html</link>
-                <guid isPermaLink="true">http://localhost:4000/2017/07/04/m-Rnn.html</guid>
+                <link>/2017/07/04/m-Rnn.html</link>
+                <guid isPermaLink="true">/2017/07/04/m-Rnn.html</guid>
             </item>
             
             
